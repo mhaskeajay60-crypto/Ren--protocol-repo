@@ -11,3 +11,11 @@ The Author Dashboard loads with local daily and manuscript progress, revision co
 ## AI Organizer Validation
 
 The Brain Dump Inbox presented its privacy explanation before any external request. A non-sensitive fictional sample was sent only after selecting **Organize with AI**. The server returned fourteen structured, review-first proposals covering characters, world rules, a location, lore, a faction, an artifact, a scene, plot threads, and revision issues. None had been filed automatically; every proposal remained selectable for author review.
+
+## Chapter Composer Validation
+
+A non-sensitive scene brief, requirements, point of view, and tone were supplied to the Chapter Composer. The service produced one editable prose section in a separate review panel, along with a craft note. The active chapter remained unchanged while the section was under review; explicit actions for discard, copy, replace, append, and insert-at-cursor were visible. Temporary sample content will be removed after merge validation.
+
+## Tagged Organization Validation
+
+The Brain Dump Organizer processed a non-sensitive fictional sample and returned thirteen review-first proposals. Each proposal showed an explicit review category, its local filing type, and concise tag chips. Tags and categories are now preserved when the author chooses to file selected items; they remain suggestions until that explicit action.

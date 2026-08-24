@@ -275,7 +275,29 @@
       .suggestion-card small { color: var(--gold); font: 8px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
       .suggestion-card strong { display: block; margin-top: 6px; color: #e9e4d9; font: 600 15px/1.12 var(--serif); }
       .suggestion-card p { margin: 6px 0 0; color: #96959b; font-size: 10px; line-height: 1.45; }
+      .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+      .tag-chip { display: inline-flex; align-items: center; border: 1px solid rgba(201,168,76,.32); border-radius: 999px; padding: 3px 6px; color: #d9bf7c; background: rgba(201,168,76,.07); font: 8px/1 var(--mono); letter-spacing: .04em; }
       .suggestion-footer { display: flex; gap: 8px; justify-content: flex-end; padding: 13px 16px; border-top: 1px solid var(--line); }
+
+      .composer-layout { display: grid; grid-template-columns: minmax(0, .94fr) minmax(320px, 1.06fr); gap: 18px; align-items: start; }
+      .composer-brief { padding: 21px; border: 1px solid rgba(237,232,218,.36); border-radius: 4px 15px 4px 4px; background: linear-gradient(135deg, rgba(245,238,219,.98), rgba(229,222,204,.96)); color: #302c23; box-shadow: 0 22px 55px rgba(0,0,0,.2); }
+      .composer-brief h2 { margin: 7px 0 0; font: 500 29px/1 var(--serif); }
+      .composer-brief > p { margin: 8px 0 16px; color: #676154; font-size: 12px; line-height: 1.52; }
+      .composer-brief label { display: block; margin: 13px 0 6px; color: #6a5d43; font: 9px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+      .composer-brief textarea, .composer-brief input, .composer-brief select { box-sizing: border-box; width: 100%; border: 1px solid rgba(57,48,32,.2); padding: 10px 11px; outline: 0; background: rgba(255,255,255,.42); color: #302d25; font: 12px/1.5 var(--sans); }
+      .composer-brief textarea { min-height: 92px; resize: vertical; }
+      .composer-brief textarea:focus, .composer-brief input:focus, .composer-brief select:focus { border-color: rgba(161,127,47,.75); box-shadow: 0 0 0 3px rgba(201,168,76,.13); }
+      .composer-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .composer-disclosure { margin-top: 16px; color: #6d675b; font-size: 10px; line-height: 1.45; }
+      .composer-output { overflow: hidden; border: 1px solid var(--line); border-radius: 4px 15px 4px 4px; background: rgba(16,18,26,.86); }
+      .composer-output-head { padding: 17px; border-bottom: 1px solid var(--line); }
+      .composer-output-head h2 { margin: 7px 0 0; color: #efe9dd; font: 500 25px/1 var(--serif); }
+      .composer-output-head p { margin: 8px 0 0; color: #a7a39c; font-size: 11px; line-height: 1.45; }
+      .composer-output textarea { box-sizing: border-box; width: calc(100% - 28px); min-height: 480px; margin: 14px; border: 1px solid rgba(237,232,218,.13); padding: 17px; resize: vertical; outline: 0; background: #e8dfca; color: #29251d; font: 16px/1.7 var(--serif); }
+      .composer-output textarea:focus { border-color: rgba(201,168,76,.82); }
+      .composer-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding: 13px 15px; border-top: 1px solid var(--line); }
+      .composer-empty { min-height: 510px; display: grid; place-items: center; padding: 30px; text-align: center; color: #8f8d91; }
+      .composer-empty strong { display: block; margin-bottom: 7px; color: #dad4c8; font: 500 25px/1 var(--serif); }
 
       .palette-results { display: grid; gap: 6px; margin-top: 14px; }
       .palette-result { width: 100%; padding: 10px 11px; border: 1px solid transparent; border-left-color: var(--line-gold); background: rgba(255,255,255,.02); color: inherit; text-align: left; }
@@ -373,12 +395,13 @@
         .top-actions .button:not(.inspector-toggle) { display: none; }
         .view-head { display: block; margin-bottom: 17px; }
         .view-head h1 { font-size: 35px; }
-        .chapter-layout, .masterbook-layout, .dashboard-grid, .planner-layout, .inbox-layout { display: block; }
+        .chapter-layout, .masterbook-layout, .dashboard-grid, .planner-layout, .inbox-layout, .composer-layout { display: block; }
         .dashboard-side, .planner-layout > aside { margin-top: 15px; }
         .metric-row { grid-template-columns: 1fr 1fr; }
         .scene-board { grid-template-columns: repeat(4, 205px); }
         .notes-grid { grid-template-columns: 1fr; }
         .inbox-layout > aside { margin-top: 15px; }
+        .composer-layout > .composer-output { margin-top: 15px; }
         .chapter-index { position: static; margin-bottom: 11px; }
         .chapter-list { display: flex; gap: 5px; max-height: none; overflow: auto; }
         .chapter-row { flex: 0 0 130px; }
@@ -464,7 +487,7 @@
         }
         function blankState() {
           const chapter = newChapter();
-          return { project: { title: 'Neo Domain Online', author: '', premise: '', dailyGoal: 750, targetWords: 90000, fontScale: 'Standard' }, masterbook: { characters: [], worldRules: [], locations: [], lore: [], factions: [], artifacts: [], plotThreads: [] }, chapters: [chapter], scenes: [], notes: [], issues: [], inbox: { draft: '', suggestions: [], summary: '' }, stats: { dailyWords: {} }, bookmarks: [], activeChapterId: chapter.id, timeline: [], intentional: [], collapsed: [], activeView: 'dashboard', draft: '', lastSavedAt: null, selectedVersion: 'main' };
+          return { project: { title: 'Neo Domain Online', author: '', premise: '', dailyGoal: 750, targetWords: 90000, fontScale: 'Standard' }, masterbook: { characters: [], worldRules: [], locations: [], lore: [], factions: [], artifacts: [], plotThreads: [] }, chapters: [chapter], scenes: [], notes: [], issues: [], inbox: { draft: '', suggestions: [], summary: '' }, composer: { brief: '', requirements: '', pov: '', tone: '', length: 'medium', generated: '', sectionTitle: '', craftNote: '' }, stats: { dailyWords: {} }, bookmarks: [], activeChapterId: chapter.id, timeline: [], intentional: [], collapsed: [], activeView: 'dashboard', draft: '', lastSavedAt: null, selectedVersion: 'main' };
         }
         function loadState() {
           try {
@@ -508,7 +531,7 @@
             <aside class="rail" aria-label="Primary navigation">
               <div class="brand"><img class="brand-mark" src="/manus-storage/ren-protocol-sigil_fa90a1ba.png" alt="The Ren Protocol mark"><div class="brand-text"><strong>The Ren Protocol</strong><span>Private manuscript archive</span></div></div>
               <div class="protocol-label">Archive navigation</div>
-              <nav class="nav">${navButton('dashboard','grid','Author Desk','Daily folio')}${navButton('chapter','write','Chapter Stream','Write & revise')}${navButton('inbox','archive','Brain Dump','AI organization')}${navButton('planner','grid','Scene Ledger','Scenes & beats')}${navButton('masterbook','book','Masterbook','World bible')}${navButton('notes','note','Notes Cabinet','Research & fragments')}${navButton('timeline','clock','Chronicle','Change log')}</nav>
+              <nav class="nav">${navButton('dashboard','grid','Author Desk','Daily folio')}${navButton('chapter','write','Chapter Stream','Write & revise')}${navButton('composer','write','Chapter Composer','Guided drafting')}${navButton('inbox','archive','Brain Dump','AI organization')}${navButton('planner','grid','Scene Ledger','Scenes & beats')}${navButton('masterbook','book','Masterbook','World bible')}${navButton('notes','note','Notes Cabinet','Research & fragments')}${navButton('timeline','clock','Chronicle','Change log')}</nav>
               <div class="rail-bottom"><div class="local-card"><div class="eyebrow">Novel / ${esc(project().title)}</div><p>Your manuscript, scenes, notes, and continuity intentions remain in this browser’s local storage.</p></div><div class="rail-footer">Archive no. 01 · local-only</div></div>
             </aside>
             <main class="workspace">
@@ -520,7 +543,7 @@
         }
         function render() {
           const view = data.activeView;
-          document.getElementById('app').innerHTML = view === 'masterbook' ? appShell(renderMasterbook()) : view === 'timeline' ? appShell(renderTimeline()) : view === 'planner' ? appShell(renderPlanner()) : view === 'notes' ? appShell(renderNotes()) : view === 'inbox' ? appShell(renderInbox()) : view === 'dashboard' ? appShell(renderDashboard()) : appShell(renderChapter());
+          document.getElementById('app').innerHTML = view === 'masterbook' ? appShell(renderMasterbook()) : view === 'timeline' ? appShell(renderTimeline()) : view === 'planner' ? appShell(renderPlanner()) : view === 'notes' ? appShell(renderNotes()) : view === 'inbox' ? appShell(renderInbox()) : view === 'composer' ? appShell(renderComposer()) : view === 'dashboard' ? appShell(renderDashboard()) : appShell(renderChapter());
           bindInputEvents();
         }
         function renderDashboard() {
@@ -546,7 +569,13 @@
         function renderInbox() {
           const box = inbox();
           const suggestions = box.suggestions || [];
-          return `<section class="main-view"><div class="view-head"><div><div class="eyebrow">Brain Dump / Review-first organization</div><h1>Put the whole tangle <em>on the desk.</em></h1><p>Paste rough ideas, research, lore, character scraps, or scene thoughts. The organizer proposes records; nothing becomes canonical until you choose to file it.</p></div></div><div class="inbox-layout"><section class="inbox-paper"><div class="eyebrow">Unsorted material</div><h2>Brain Dump Inbox</h2><p>Write freely. Structure is not required here.</p><textarea id="brain-dump" placeholder="Paste anything here: character fragments, loose scenes, world rules, questions, research, dialogue, timelines…">${esc(box.draft || '')}</textarea><div class="inbox-footer"><span class="mention-helper">Only press <strong>Organize with AI</strong> when you want this text sent for analysis.</span><button class="paper-button" data-action="organize-dump">Organize with AI</button></div></section><aside style="display:grid;gap:12px"><section class="privacy-slip"><h3>Private by default</h3><p>The Brain Dump stays in your browser. When you press Organize, only the text in this Inbox is sent to the AI service to create suggestions. Suggestions return here for your review; they are not automatically saved to the Masterbook.</p></section><section class="suggestion-panel"><div class="suggestion-head"><div><div class="eyebrow">Organization review</div><h2>${suggestions.length ? `${suggestions.length} proposed filing${suggestions.length === 1 ? '' : 's'}` : 'No proposals yet'}</h2></div>${suggestions.length ? '<button class="button small" data-action="select-all-suggestions">Select all</button>' : ''}</div>${box.summary ? `<p class="suggestion-summary">${esc(box.summary)}</p>` : ''}<div class="suggestion-list">${suggestions.length ? suggestions.map((item,index) => `<label class="suggestion-card"><input type="checkbox" data-suggestion-index="${index}" ${item.selected !== false ? 'checked' : ''}><span><small>${esc(displayType(item.type))}${item.linked ? ` · ${esc(item.linked)}` : ''}</small><strong>${esc(item.title)}</strong><p>${esc(item.description)}</p></span></label>`).join('') : '<div class="book-empty">Your reviewed proposals will appear here. You can keep or uncheck each one before filing.</div>'}</div>${suggestions.length ? '<div class="suggestion-footer"><button class="button" data-action="clear-inbox-suggestions">Discard proposals</button><button class="button gold" data-action="file-suggestions">File selected</button></div>' : ''}</section></aside></div></section>`;
+          return `<section class="main-view"><div class="view-head"><div><div class="eyebrow">Brain Dump / Review-first organization</div><h1>Put the whole tangle <em>on the desk.</em></h1><p>Paste rough ideas, research, lore, character scraps, or scene thoughts. The organizer proposes records; nothing becomes canonical until you choose to file it.</p></div></div><div class="inbox-layout"><section class="inbox-paper"><div class="eyebrow">Unsorted material</div><h2>Brain Dump Inbox</h2><p>Write freely. Structure is not required here.</p><textarea id="brain-dump" placeholder="Paste anything here: character fragments, loose scenes, world rules, questions, research, dialogue, timelines…">${esc(box.draft || '')}</textarea><div class="inbox-footer"><span class="mention-helper">Only press <strong>Organize with AI</strong> when you want this text sent for analysis.</span><button class="paper-button" data-action="organize-dump">Organize with AI</button></div></section><aside style="display:grid;gap:12px"><section class="privacy-slip"><h3>Private by default</h3><p>The Brain Dump stays in your browser. When you press Organize, only the text in this Inbox is sent to the AI service to create suggestions. Suggestions return here for your review; they are not automatically saved to the Masterbook.</p></section><section class="suggestion-panel"><div class="suggestion-head"><div><div class="eyebrow">Organization review</div><h2>${suggestions.length ? `${suggestions.length} proposed filing${suggestions.length === 1 ? '' : 's'}` : 'No proposals yet'}</h2></div>${suggestions.length ? '<button class="button small" data-action="select-all-suggestions">Select all</button>' : ''}</div>${box.summary ? `<p class="suggestion-summary">${esc(box.summary)}</p>` : ''}<div class="suggestion-list">${suggestions.length ? suggestions.map((item,index) => { const typeLabel = displayType(item.type); const label = item.category && item.category !== typeLabel ? `${item.category} · ${typeLabel}` : (item.category || typeLabel); return `<label class="suggestion-card"><input type="checkbox" data-suggestion-index="${index}" ${item.selected !== false ? 'checked' : ''}><span><small>${esc(label)}${item.linked ? ` · ${esc(item.linked)}` : ''}</small><strong>${esc(item.title)}</strong><p>${esc(item.description)}</p>${item.tags?.length ? `<div class="tag-row">${item.tags.map(tag => `<span class="tag-chip">#${esc(tag)}</span>`).join('')}</div>` : ''}</span></label>`; }).join('') : '<div class="book-empty">Your reviewed proposals will appear here. You can keep or uncheck each one before filing.</div>'}</div>${suggestions.length ? '<div class="suggestion-footer"><button class="button" data-action="clear-inbox-suggestions">Discard proposals</button><button class="button gold" data-action="file-suggestions">File selected</button></div>' : ''}</section></aside></div></section>`;
+        }
+        function composer() { return data.composer || (data.composer = { brief: '', requirements: '', pov: '', tone: '', length: 'medium', generated: '', sectionTitle: '', craftNote: '' }); }
+        function canonForComposer() { return Object.entries(data.masterbook).flatMap(([category,items]) => items.slice(0,8).map(item => `${categories[category]?.label || category}: ${item.name || ''}. ${item.description || item.definition || ''} ${item.status ? `Status: ${item.status}.` : ''}`)).join('\n').slice(0,6500); }
+        function renderComposer() {
+          const state = composer(); const chapter = currentChapter();
+          return `<section class="main-view"><div class="view-head"><div><div class="eyebrow">Chapter composer / Author-guided drafting</div><h1>Draft the next move <em>your way.</em></h1><p>Give the scene’s purpose, constraints, tone, and point of view. The AI drafts one section for review; it cannot change the chapter until you choose a merge action.</p></div><button class="button small" data-action="set-view" data-view="chapter">Return to folio</button></div><div class="composer-layout"><section class="composer-brief"><div class="eyebrow">Your instructions</div><h2>Build one section</h2><p>Target folio: <strong>${esc(chapter.title)}</strong> · ${esc(data.selectedVersion === 'first' ? 'First Draft' : data.selectedVersion === 'final' ? 'Final Draft' : 'Main Draft')}</p><label for="compose-brief">What must happen?</label><textarea id="compose-brief" placeholder="Describe the scene beat, conflict, revelation, or transition you want written.">${esc(state.brief)}</textarea><label for="compose-requirements">Non-negotiable details</label><textarea id="compose-requirements" placeholder="Names, actions, lines of dialogue, limits, facts that must appear—or must not appear.">${esc(state.requirements)}</textarea><div class="composer-row"><div><label for="compose-pov">Point of view</label><input id="compose-pov" value="${esc(state.pov || chapter.pov || '')}" placeholder="e.g. Close third, Aren"></div><div><label for="compose-tone">Tone</label><input id="compose-tone" value="${esc(state.tone)}" placeholder="e.g. Tense, intimate"></div></div><label for="compose-length">Section size</label><select id="compose-length"><option value="short" ${state.length === 'short' ? 'selected' : ''}>Short · 350–550 words</option><option value="medium" ${state.length === 'medium' ? 'selected' : ''}>Medium · 700–1000 words</option><option value="long" ${state.length === 'long' ? 'selected' : ''}>Long · 1100–1500 words</option></select><p class="composer-disclosure">Only this instruction set, the active chapter context, and compact Masterbook facts are sent when you press <strong>Draft section with AI</strong>. Nothing is merged automatically.</p><button class="paper-button" style="margin-top:15px" data-action="generate-section">Draft section with AI</button></section><section class="composer-output"><div class="composer-output-head"><div class="eyebrow">Draft review / Separate from manuscript</div><h2>${esc(state.sectionTitle || 'No draft generated')}</h2><p>${esc(state.craftNote || 'Your requested section will appear here as an editable working draft.')}</p></div>${state.generated ? `<textarea id="generated-section" aria-label="Editable generated section">${esc(state.generated)}</textarea><div class="composer-actions"><button class="button" data-action="discard-generated">Discard</button><button class="button" data-action="copy-generated">Copy text</button><button class="button" data-action="replace-with-generated">Replace folio</button><button class="button gold" data-action="append-generated">Append to folio</button><button class="button gold" data-action="insert-generated">Insert at cursor</button></div>` : '<div class="composer-empty"><div><strong>Your controlled draft will appear here.</strong><span>It remains separate until you choose to append, replace, or insert it into the selected folio.</span></div></div>'}</section></div></section>`;
         }
         function renderChapter() {
           const chapter = currentChapter();
@@ -663,10 +692,11 @@
         }
         function bindInputEvents() {
           const editor = document.getElementById('chapter-editor');
-          if (editor) editor.addEventListener('input', event => { setDraft(event.target.value); setTimeout(() => updateMentionStrip(event.target.value), 0); });
+          if (editor) { editor.addEventListener('input', event => { setDraft(event.target.value); data.cursorPosition = event.target.selectionStart; setTimeout(() => updateMentionStrip(event.target.value), 0); }); editor.addEventListener('click', event => { data.cursorPosition = event.target.selectionStart; }); editor.addEventListener('keyup', event => { data.cursorPosition = event.target.selectionStart; }); }
           document.getElementById('chapter-title')?.addEventListener('input', event => { currentChapter().title = event.target.value; });
           document.getElementById('book-search')?.addEventListener('input', event => { searchTerm = event.target.value; render(); document.getElementById('book-search')?.focus(); });
           document.getElementById('brain-dump')?.addEventListener('input', event => { inbox().draft = event.target.value; persist('', true); });
+          ['brief','requirements','pov','tone','length'].forEach(key => document.getElementById(`compose-${key}`)?.addEventListener('input', () => { composerInputValues(); persist('', true); }));
         }
         function updateMentionStrip(text) {
           const strip = document.querySelector('.mention-strip');
@@ -789,7 +819,7 @@
           }
         }
         function recordFromSuggestion(key, item) {
-          const base = { id: uid(), name: item.title, history: [{ at: now(), action: 'Filed from Brain Dump', summary: 'Reviewed AI suggestion filed by author.' }] };
+          const base = { id: uid(), name: item.title, tags: item.tags || [], reviewCategory: item.category || '', history: [{ at: now(), action: 'Filed from Brain Dump', summary: 'Reviewed AI suggestion filed by author.' }] };
           if (key === 'characters') return { ...base, role: item.role, description: item.description, stats: '', relationships: item.linked, status: item.status || 'Unknown' };
           if (key === 'worldRules') return { ...base, description: item.description, watchTerms: item.linked, conflictTerms: '', status: item.status || 'Canonical' };
           if (key === 'locations') return { ...base, description: item.description, connected: item.linked, danger: item.status || 'Moderate', notes: '' };
@@ -806,15 +836,56 @@
           selected.forEach(item => {
             const category = categoryMap[item.type];
             if (category) data.masterbook[category].unshift(recordFromSuggestion(category, item));
-            else if (item.type === 'scene') data.scenes.unshift({ id: uid(), title: item.title, summary: item.description, stage: ['Seed','Planned','Drafting','Complete'].includes(item.stage) ? item.stage : 'Planned', pov: item.pov, chapter: '', thread: item.linked, notes: item.role, createdAt: now(), updatedAt: now() });
-            else if (item.type === 'note') data.notes.unshift({ id: uid(), title: item.title, body: item.description, kind: item.role || 'Brain Dump', linked: item.linked, createdAt: now(), updatedAt: now() });
-            else if (item.type === 'revision_issue') data.issues.unshift({ id: uid(), title: item.title, note: item.description, type: item.role || 'Revision', priority: item.status || 'Normal', chapterId: null, createdAt: now(), resolved: false });
+            else if (item.type === 'scene') data.scenes.unshift({ id: uid(), title: item.title, summary: item.description, stage: ['Seed','Planned','Drafting','Complete'].includes(item.stage) ? item.stage : 'Planned', pov: item.pov, chapter: '', thread: item.linked, notes: item.role, tags: item.tags || [], reviewCategory: item.category || '', createdAt: now(), updatedAt: now() });
+            else if (item.type === 'note') data.notes.unshift({ id: uid(), title: item.title, body: item.description, kind: item.role || 'Brain Dump', linked: item.linked, tags: item.tags || [], reviewCategory: item.category || '', createdAt: now(), updatedAt: now() });
+            else if (item.type === 'revision_issue') data.issues.unshift({ id: uid(), title: item.title, note: item.description, type: item.role || 'Revision', priority: item.status || 'Normal', chapterId: null, tags: item.tags || [], reviewCategory: item.category || '', createdAt: now(), resolved: false });
             logEvent('Brain Dump filed', item.title, `${displayType(item.type)} filed after author review.`);
           });
           inbox().suggestions = [];
           inbox().summary = '';
           persist(`${selected.length} reviewed proposal${selected.length === 1 ? '' : 's'} filed locally.`);
           render();
+        }
+        function composerInputValues() {
+          const state = composer();
+          ['brief','requirements','pov','tone','length'].forEach(key => { const input = document.getElementById(`compose-${key}`); if (input) state[key] = input.value; });
+          return state;
+        }
+        async function generateSection() {
+          const state = composerInputValues();
+          if ((state.brief || '').trim().length < 20) return toast('Describe what needs to happen in this section before drafting.');
+          const button = document.querySelector('[data-action="generate-section"]');
+          const original = button?.textContent;
+          if (button) { button.disabled = true; button.textContent = 'Drafting…'; }
+          try {
+            const response = await fetch('/api/trpc/composer.generate?batch=1', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ 0: { json: { chapterTitle: currentChapter().title, brief: state.brief.trim(), requirements: (state.requirements || '').trim(), pov: (state.pov || '').trim(), tone: (state.tone || '').trim(), length: state.length || 'medium', chapterContext: currentDraft().slice(-6500), canonContext: canonForComposer() } } }) });
+            const payload = await response.json();
+            if (!response.ok || payload?.[0]?.error) throw new Error(payload?.[0]?.error?.json?.message || 'The chapter composer could not prepare this section.');
+            const result = payload?.[0]?.result?.data?.json || payload?.result?.data?.json;
+            if (!result?.section) throw new Error('The chapter composer returned an unexpected draft format.');
+            Object.assign(state, { generated: result.section, sectionTitle: result.sectionTitle || 'Untitled section', craftNote: result.craftNote || '' });
+            logEvent('Guided section drafted', state.sectionTitle, 'A separate AI draft is ready for author review; nothing was merged.', currentChapter().id);
+            persist('Guided section ready for review.');
+            render();
+          } catch (error) {
+            toast(error?.message || 'The chapter composer is unavailable. Try again in a moment.');
+            if (button) { button.disabled = false; button.textContent = original || 'Draft section with AI'; }
+          }
+        }
+        function reviewedGeneratedText() { return (document.getElementById('generated-section')?.value || composer().generated || '').trim(); }
+        function mergeGenerated(mode) {
+          const text = reviewedGeneratedText();
+          if (!text) return toast('There is no reviewed section to merge.');
+          const chapter = currentChapter(); const before = chapter.versions[data.selectedVersion] || '';
+          const cursor = Math.max(0, Math.min(Number(data.cursorPosition || before.length), before.length));
+          const join = before.trim() ? '\n\n' : '';
+          const next = mode === 'replace' ? text : mode === 'insert' ? `${before.slice(0,cursor)}${before.slice(0,cursor).trim() ? '\n\n' : ''}${text}${before.slice(cursor).trim() ? '\n\n' : ''}${before.slice(cursor)}` : `${before}${join}${text}`;
+          chapter.versions[data.selectedVersion] = next; chapter.updatedAt = now(); data.draft = next;
+          trackDailyWords(before, next, data.selectedVersion);
+          logEvent('Guided section merged', chapter.title, `${mode === 'replace' ? 'Replaced the' : mode === 'insert' ? 'Inserted into the' : 'Appended to the'} active draft after author review.`, chapter.id);
+          composer().generated = ''; composer().sectionTitle = ''; composer().craftNote = '';
+          data.activeView = 'chapter'; persist('Reviewed section merged into the local folio.'); render();
+          setTimeout(() => { const editor = document.getElementById('chapter-editor'); if (editor) { editor.focus(); editor.selectionStart = editor.selectionEnd = mode === 'insert' ? Math.min(next.length, cursor + text.length + (cursor ? 2 : 0)) : next.length; } }, 20);
         }
 
         document.addEventListener('click', event => {
@@ -828,6 +899,12 @@
           else if (action === 'open-settings') openSettings();
           else if (action === 'open-export') openExport();
           else if (action === 'organize-dump') organizeBrainDump();
+          else if (action === 'generate-section') generateSection();
+          else if (action === 'discard-generated') { composer().generated = ''; composer().sectionTitle = ''; composer().craftNote = ''; persist('Unmerged guided draft discarded.'); render(); }
+          else if (action === 'copy-generated') { navigator.clipboard?.writeText(reviewedGeneratedText()); toast('Reviewed section copied to your clipboard.'); }
+          else if (action === 'replace-with-generated') mergeGenerated('replace');
+          else if (action === 'append-generated') mergeGenerated('append');
+          else if (action === 'insert-generated') mergeGenerated('insert');
           else if (action === 'file-suggestions') fileBrainDumpSuggestions();
           else if (action === 'clear-inbox-suggestions') { inbox().suggestions = []; inbox().summary = ''; persist('Brain Dump proposals discarded.'); render(); }
           else if (action === 'select-all-suggestions') { document.querySelectorAll('[data-suggestion-index]').forEach(check => { check.checked = true; }); }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseOrganizerResponse } from "./routers";
+import { parseComposerResponse, parseOrganizerResponse } from "./routers";
 
 describe("Brain Dump organizer response validation", () => {
   it("accepts a complete structured suggestion", () => {
@@ -7,6 +7,8 @@ describe("Brain Dump organizer response validation", () => {
       summary: "One potential character and one plot thread were identified.",
       items: [{
         type: "character",
+        category: "Character",
+        tags: ["protagonist", "cartography"],
         title: "Aren Vale",
         description: "A threshold cartographer mentioned in the material.",
         role: "Cartographer",
@@ -23,5 +25,16 @@ describe("Brain Dump organizer response validation", () => {
 
   it("rejects a suggestion that lacks required review fields", () => {
     expect(() => parseOrganizerResponse(JSON.stringify({ summary: "Incomplete", items: [{ type: "note", title: "Loose idea" }] }))).toThrow();
+  });
+
+  it("accepts a guided chapter draft that remains separate from any manuscript", () => {
+    const result = parseComposerResponse(JSON.stringify({
+      sectionTitle: "The Gate Answers",
+      section: "Aren stepped into the gate and the light forgot its own name. She held the map tight enough to crease the ink, listening for the first thing it would take from her.",
+      craftNote: "The section follows close third-person tension and preserves the stated memory-cost rule.",
+    }));
+
+    expect(result.sectionTitle).toBe("The Gate Answers");
+    expect(result.section).toContain("Aren");
   });
 });
