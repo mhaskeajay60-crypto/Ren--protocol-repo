@@ -7,3 +7,7 @@
 ## Expansion Validation
 
 The Author Dashboard loads with local daily and manuscript progress, revision counters, shortcuts, activity, and bookmarks. The Story Board scene form was used to create a temporary planned scene; the scene persisted locally, generated a timeline event, and appeared in the Planned lane. The temporary test content will be removed before delivery so the archive remains clean for the author’s own material.
+
+## AI Organizer Validation
+
+The Brain Dump Inbox presented its privacy explanation before any external request. A non-sensitive fictional sample was sent only after selecting **Organize with AI**. The server returned fourteen structured, review-first proposals covering characters, world rules, a location, lore, a faction, an artifact, a scene, plot threads, and revision issues. None had been filed automatically; every proposal remained selectable for author review.

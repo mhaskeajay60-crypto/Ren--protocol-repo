@@ -254,6 +254,29 @@
       .note-card p { display: -webkit-box; overflow: hidden; margin: 9px 0 0; color: #a4a29f; font-size: 11px; line-height: 1.5; -webkit-line-clamp: 4; -webkit-box-orient: vertical; }
       .note-card footer { margin-top: 12px; color: #7d7d84; font: 8px/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
 
+      .inbox-layout { display: grid; grid-template-columns: minmax(0, 1.14fr) minmax(290px, .86fr); gap: 18px; align-items: start; }
+      .inbox-paper { padding: 22px; border: 1px solid rgba(237,232,218,.35); border-radius: 4px 16px 4px 4px; background: linear-gradient(135deg, rgba(245,238,219,.98), rgba(229,222,204,.96)); color: #2d2a22; box-shadow: 0 22px 55px rgba(0,0,0,.22); }
+      .inbox-paper .eyebrow { color: #746242; }
+      .inbox-paper h2 { margin: 8px 0 0; font: 500 30px/1 var(--serif); }
+      .inbox-paper p { margin: 10px 0 0; color: #696154; font-size: 12px; line-height: 1.55; }
+      .inbox-paper textarea { width: 100%; min-height: 365px; margin-top: 18px; border: 1px solid rgba(57,48,32,.2); padding: 15px; resize: vertical; outline: 0; background: rgba(255,255,255,.4); color: #302d25; font: 16px/1.65 var(--serif); }
+      .inbox-paper textarea:focus { border-color: rgba(161,127,47,.65); box-shadow: 0 0 0 3px rgba(201,168,76,.13); }
+      .inbox-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; }
+      .privacy-slip { padding: 15px; border: 1px solid rgba(201,168,76,.35); border-left: 2px solid var(--gold); border-radius: 3px 10px 3px 3px; background: linear-gradient(145deg, rgba(201,168,76,.12), rgba(20,22,29,.68)); }
+      .privacy-slip h3 { margin: 0; color: #f0e5c4; font: 600 15px/1 var(--serif); }
+      .privacy-slip p { margin: 8px 0 0; color: #b8b0a1; font-size: 11px; line-height: 1.5; }
+      .suggestion-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 4px 14px 4px 4px; background: rgba(16,18,26,.85); }
+      .suggestion-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 16px; border-bottom: 1px solid var(--line); }
+      .suggestion-head h2 { margin: 6px 0 0; color: #eee8dc; font: 600 22px/1 var(--serif); }
+      .suggestion-summary { margin: 0; padding: 13px 16px; color: #aaa7a1; font: 11px/1.5 var(--sans); border-bottom: 1px solid var(--line); }
+      .suggestion-list { display: grid; gap: 8px; max-height: 480px; overflow: auto; padding: 10px; }
+      .suggestion-card { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 10px; padding: 11px; border: 1px solid rgba(237,232,218,.09); border-radius: 3px 9px 3px 3px; background: rgba(255,255,255,.025); }
+      .suggestion-card input { accent-color: var(--gold); margin-top: 3px; }
+      .suggestion-card small { color: var(--gold); font: 8px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+      .suggestion-card strong { display: block; margin-top: 6px; color: #e9e4d9; font: 600 15px/1.12 var(--serif); }
+      .suggestion-card p { margin: 6px 0 0; color: #96959b; font-size: 10px; line-height: 1.45; }
+      .suggestion-footer { display: flex; gap: 8px; justify-content: flex-end; padding: 13px 16px; border-top: 1px solid var(--line); }
+
       .palette-results { display: grid; gap: 6px; margin-top: 14px; }
       .palette-result { width: 100%; padding: 10px 11px; border: 1px solid transparent; border-left-color: var(--line-gold); background: rgba(255,255,255,.02); color: inherit; text-align: left; }
       .palette-result:hover { border-color: rgba(201,168,76,.42); background: var(--gold-dim); }
@@ -350,11 +373,12 @@
         .top-actions .button:not(.inspector-toggle) { display: none; }
         .view-head { display: block; margin-bottom: 17px; }
         .view-head h1 { font-size: 35px; }
-        .chapter-layout, .masterbook-layout, .dashboard-grid, .planner-layout { display: block; }
+        .chapter-layout, .masterbook-layout, .dashboard-grid, .planner-layout, .inbox-layout { display: block; }
         .dashboard-side, .planner-layout > aside { margin-top: 15px; }
         .metric-row { grid-template-columns: 1fr 1fr; }
         .scene-board { grid-template-columns: repeat(4, 205px); }
         .notes-grid { grid-template-columns: 1fr; }
+        .inbox-layout > aside { margin-top: 15px; }
         .chapter-index { position: static; margin-bottom: 11px; }
         .chapter-list { display: flex; gap: 5px; max-height: none; overflow: auto; }
         .chapter-row { flex: 0 0 130px; }
@@ -440,7 +464,7 @@
         }
         function blankState() {
           const chapter = newChapter();
-          return { project: { title: 'Neo Domain Online', author: '', premise: '', dailyGoal: 750, targetWords: 90000, fontScale: 'Standard' }, masterbook: { characters: [], worldRules: [], locations: [], lore: [], factions: [], artifacts: [], plotThreads: [] }, chapters: [chapter], scenes: [], notes: [], issues: [], stats: { dailyWords: {} }, bookmarks: [], activeChapterId: chapter.id, timeline: [], intentional: [], collapsed: [], activeView: 'dashboard', draft: '', lastSavedAt: null, selectedVersion: 'main' };
+          return { project: { title: 'Neo Domain Online', author: '', premise: '', dailyGoal: 750, targetWords: 90000, fontScale: 'Standard' }, masterbook: { characters: [], worldRules: [], locations: [], lore: [], factions: [], artifacts: [], plotThreads: [] }, chapters: [chapter], scenes: [], notes: [], issues: [], inbox: { draft: '', suggestions: [], summary: '' }, stats: { dailyWords: {} }, bookmarks: [], activeChapterId: chapter.id, timeline: [], intentional: [], collapsed: [], activeView: 'dashboard', draft: '', lastSavedAt: null, selectedVersion: 'main' };
         }
         function loadState() {
           try {
@@ -484,7 +508,7 @@
             <aside class="rail" aria-label="Primary navigation">
               <div class="brand"><img class="brand-mark" src="/manus-storage/ren-protocol-sigil_fa90a1ba.png" alt="The Ren Protocol mark"><div class="brand-text"><strong>The Ren Protocol</strong><span>Private manuscript archive</span></div></div>
               <div class="protocol-label">Archive navigation</div>
-              <nav class="nav">${navButton('dashboard','grid','Author Desk','Daily folio')}${navButton('chapter','write','Chapter Stream','Write & revise')}${navButton('planner','grid','Scene Ledger','Scenes & beats')}${navButton('masterbook','book','Masterbook','World bible')}${navButton('notes','note','Notes Cabinet','Research & fragments')}${navButton('timeline','clock','Chronicle','Change log')}</nav>
+              <nav class="nav">${navButton('dashboard','grid','Author Desk','Daily folio')}${navButton('chapter','write','Chapter Stream','Write & revise')}${navButton('inbox','archive','Brain Dump','AI organization')}${navButton('planner','grid','Scene Ledger','Scenes & beats')}${navButton('masterbook','book','Masterbook','World bible')}${navButton('notes','note','Notes Cabinet','Research & fragments')}${navButton('timeline','clock','Chronicle','Change log')}</nav>
               <div class="rail-bottom"><div class="local-card"><div class="eyebrow">Novel / ${esc(project().title)}</div><p>Your manuscript, scenes, notes, and continuity intentions remain in this browser’s local storage.</p></div><div class="rail-footer">Archive no. 01 · local-only</div></div>
             </aside>
             <main class="workspace">
@@ -496,7 +520,7 @@
         }
         function render() {
           const view = data.activeView;
-          document.getElementById('app').innerHTML = view === 'masterbook' ? appShell(renderMasterbook()) : view === 'timeline' ? appShell(renderTimeline()) : view === 'planner' ? appShell(renderPlanner()) : view === 'notes' ? appShell(renderNotes()) : view === 'dashboard' ? appShell(renderDashboard()) : appShell(renderChapter());
+          document.getElementById('app').innerHTML = view === 'masterbook' ? appShell(renderMasterbook()) : view === 'timeline' ? appShell(renderTimeline()) : view === 'planner' ? appShell(renderPlanner()) : view === 'notes' ? appShell(renderNotes()) : view === 'inbox' ? appShell(renderInbox()) : view === 'dashboard' ? appShell(renderDashboard()) : appShell(renderChapter());
           bindInputEvents();
         }
         function renderDashboard() {
@@ -516,6 +540,13 @@
         function renderNotes() {
           const notes = [...data.notes].sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt));
           return `<section class="main-view"><div class="view-head"><div><div class="eyebrow">Notes desk / Research cabinet</div><h1>Keep the loose threads <em>nearby.</em></h1><p>Collect research, scraps of dialogue, questions, and solutions without disturbing the manuscript draft.</p></div><button class="button gold" data-action="open-note-form">${svg.plus} New note</button></div><div class="notes-toolbar"><button class="button small" data-action="open-note-form" data-kind="Research">Research note</button><button class="button small" data-action="open-note-form" data-kind="Fragment">Story fragment</button><button class="button small" data-action="open-note-form" data-kind="Question">Open question</button><span class="status" style="margin-left:auto"><i class="status-dot"></i><span>${notes.length} local note${notes.length === 1 ? '' : 's'}</span></span></div><section class="notes-grid">${notes.length ? notes.map(note => `<button class="note-card" data-action="open-note-form" data-id="${note.id}"><small>${esc(note.kind || 'Note')} ${note.linked ? `· ${esc(note.linked)}` : ''}</small><h2>${esc(note.title || 'Untitled note')}</h2><p>${esc(note.body || 'No content yet.')}</p><footer>Filed ${timeAgo(note.updatedAt)}</footer></button>`).join('') : '<div class="book-empty" style="grid-column:1/-1">No notes filed. Save a research lead, dialogue fragment, or question that the next draft must answer.</div>'}</section></section>`;
+        }
+        function inbox() { return data.inbox || (data.inbox = { draft: '', suggestions: [], summary: '' }); }
+        function displayType(type) { return ({ character: 'Character', world_rule: 'World Rule', location: 'Location', lore: 'Lore', faction: 'Faction', artifact: 'Artifact', plot_thread: 'Plot Thread', scene: 'Scene', note: 'Note', revision_issue: 'Revision Issue' }[type] || 'Record'); }
+        function renderInbox() {
+          const box = inbox();
+          const suggestions = box.suggestions || [];
+          return `<section class="main-view"><div class="view-head"><div><div class="eyebrow">Brain Dump / Review-first organization</div><h1>Put the whole tangle <em>on the desk.</em></h1><p>Paste rough ideas, research, lore, character scraps, or scene thoughts. The organizer proposes records; nothing becomes canonical until you choose to file it.</p></div></div><div class="inbox-layout"><section class="inbox-paper"><div class="eyebrow">Unsorted material</div><h2>Brain Dump Inbox</h2><p>Write freely. Structure is not required here.</p><textarea id="brain-dump" placeholder="Paste anything here: character fragments, loose scenes, world rules, questions, research, dialogue, timelines…">${esc(box.draft || '')}</textarea><div class="inbox-footer"><span class="mention-helper">Only press <strong>Organize with AI</strong> when you want this text sent for analysis.</span><button class="paper-button" data-action="organize-dump">Organize with AI</button></div></section><aside style="display:grid;gap:12px"><section class="privacy-slip"><h3>Private by default</h3><p>The Brain Dump stays in your browser. When you press Organize, only the text in this Inbox is sent to the AI service to create suggestions. Suggestions return here for your review; they are not automatically saved to the Masterbook.</p></section><section class="suggestion-panel"><div class="suggestion-head"><div><div class="eyebrow">Organization review</div><h2>${suggestions.length ? `${suggestions.length} proposed filing${suggestions.length === 1 ? '' : 's'}` : 'No proposals yet'}</h2></div>${suggestions.length ? '<button class="button small" data-action="select-all-suggestions">Select all</button>' : ''}</div>${box.summary ? `<p class="suggestion-summary">${esc(box.summary)}</p>` : ''}<div class="suggestion-list">${suggestions.length ? suggestions.map((item,index) => `<label class="suggestion-card"><input type="checkbox" data-suggestion-index="${index}" ${item.selected !== false ? 'checked' : ''}><span><small>${esc(displayType(item.type))}${item.linked ? ` · ${esc(item.linked)}` : ''}</small><strong>${esc(item.title)}</strong><p>${esc(item.description)}</p></span></label>`).join('') : '<div class="book-empty">Your reviewed proposals will appear here. You can keep or uncheck each one before filing.</div>'}</div>${suggestions.length ? '<div class="suggestion-footer"><button class="button" data-action="clear-inbox-suggestions">Discard proposals</button><button class="button gold" data-action="file-suggestions">File selected</button></div>' : ''}</section></aside></div></section>`;
         }
         function renderChapter() {
           const chapter = currentChapter();
@@ -635,6 +666,7 @@
           if (editor) editor.addEventListener('input', event => { setDraft(event.target.value); setTimeout(() => updateMentionStrip(event.target.value), 0); });
           document.getElementById('chapter-title')?.addEventListener('input', event => { currentChapter().title = event.target.value; });
           document.getElementById('book-search')?.addEventListener('input', event => { searchTerm = event.target.value; render(); document.getElementById('book-search')?.focus(); });
+          document.getElementById('brain-dump')?.addEventListener('input', event => { inbox().draft = event.target.value; persist('', true); });
         }
         function updateMentionStrip(text) {
           const strip = document.querySelector('.mention-strip');
@@ -712,18 +744,77 @@
           return results.length ? results.join('') : '<div class="book-empty">No matching folio, record, scene, or note was found.</div>';
         }
         function openPalette() { modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Archive index / Search</div><h2 id="modal-title">Find anything</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><div class="searchbox" style="max-width:none">${svg.search}<input id="palette-input" placeholder="Search folios, lore, scenes, notes, and commands"></div><div id="palette-results" class="palette-results">${searchArchive('')}</div></div></div>`, () => { const input = document.getElementById('palette-input'); input.addEventListener('input', event => document.getElementById('palette-results').innerHTML = searchArchive(event.target.value)); setTimeout(()=>input.focus(),30); }); }
-        function openExport() { modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Archive export / Local backup</div><h2 id="modal-title">Carry the work safely</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">Export an editable archive backup or a clean text manuscript. Import restores a previously exported archive in this browser.</p><div class="quick-grid" style="margin-top:17px"><button class="quick-action" data-action="export-data">${svg.archive}<span><strong>Archive JSON</strong><small>Full local backup</small></span></button><button class="quick-action" data-action="export-current-text">${svg.write}<span><strong>Current folio</strong><small>Plain text draft</small></span></button><button class="quick-action" data-action="export-manuscript-text">${svg.book}<span><strong>Main manuscript</strong><small>All main drafts</small></span></button><button class="quick-action" data-action="import-data">${svg.download}<span><strong>Import archive</strong><small>Restore a JSON backup</small></span></button></div></div></div>`); }
+        function openExport() { modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Archive export / Local backup</div><h2 id="modal-title">Carry the work safely</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">Export an editable archive backup or a clean text manuscript. Import restores a previously exported archive in this browser. The email-ready option downloads your archive and opens your own mail app; it never sends anything without you attaching and sending it yourself.</p><div class="quick-grid" style="margin-top:17px"><button class="quick-action" data-action="export-data">${svg.archive}<span><strong>Archive JSON</strong><small>Full local backup</small></span></button><button class="quick-action" data-action="email-ready-backup">${svg.download}<span><strong>Email-ready backup</strong><small>Download, then attach yourself</small></span></button><button class="quick-action" data-action="export-current-text">${svg.write}<span><strong>Current folio</strong><small>Plain text draft</small></span></button><button class="quick-action" data-action="export-manuscript-text">${svg.book}<span><strong>Main manuscript</strong><small>All main drafts</small></span></button><button class="quick-action" data-action="import-data">${svg.download}<span><strong>Import archive</strong><small>Restore a JSON backup</small></span></button></div></div></div>`); }
         function modal(content, onOpen) { document.getElementById('modal-root').innerHTML = `<div class="modal-backdrop" data-action="close-modal-backdrop">${content}</div>`; onOpen?.(); }
         function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
         function exportData() {
           const file = new Blob([JSON.stringify({ exportedAt: now(), archive: data }, null, 2)], { type: 'application/json' });
           const link = document.createElement('a'); link.href = URL.createObjectURL(file); link.download = 'ren-protocol-archive.json'; link.click(); URL.revokeObjectURL(link.href); toast('Local archive exported as JSON.');
         }
+        function prepareEmailBackup() {
+          exportData();
+          const subject = encodeURIComponent(`${project().title || 'The Ren Protocol'} — local archive backup`);
+          const body = encodeURIComponent('A local archive backup has been downloaded from The Ren Protocol. Attach the downloaded ren-protocol-archive.json file to this email, then send it to your own email address or trusted cloud mailbox. The app does not send anything automatically.');
+          window.location.href = `mailto:?subject=${subject}&body=${body}`;
+          toast('Backup downloaded. Attach it in your email app if you want a cloud copy.');
+        }
         function exportText(filename, text) { const file = new Blob([text], { type: 'text/plain;charset=utf-8' }); const link = document.createElement('a'); link.href = URL.createObjectURL(file); link.download = filename; link.click(); URL.revokeObjectURL(link.href); toast('Writing export downloaded locally.'); }
         function exportCurrentText() { const chapter = currentChapter(); exportText(`${chapter.title.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase() || 'folio'}.txt`, `${chapter.title}\n\n${currentDraft()}`); }
         function exportManuscriptText() { const title = project().title || 'manuscript'; const body = data.chapters.map(chapter => `${chapter.title}\n\n${chapter.versions.main || ''}`).join('\n\n\n'); exportText(`${title.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase() || 'manuscript'}.txt`, `${title}\n\n${body}`); }
         function importData() {
           const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json'; input.onchange = () => { const file = input.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const parsed = JSON.parse(reader.result); if (!parsed.archive?.masterbook || !Array.isArray(parsed.archive?.chapters)) throw new Error(); data = { ...blankState(), ...parsed.archive }; data.draft = currentChapter().versions[data.selectedVersion || 'main'] || ''; persist('Archive imported locally.'); render(); } catch { toast('That file is not a valid Ren Protocol archive.'); } }; reader.readAsText(file); }; input.click();
+        }
+        async function organizeBrainDump() {
+          const input = document.getElementById('brain-dump');
+          const text = (input?.value || inbox().draft || '').trim();
+          if (text.length < 30) return toast('Add a little more material before organizing.');
+          inbox().draft = text;
+          const button = document.querySelector('[data-action="organize-dump"]');
+          const original = button?.textContent;
+          if (button) { button.disabled = true; button.textContent = 'Organizing…'; }
+          try {
+            const response = await fetch('/api/trpc/organizer.organize?batch=1', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ 0: { json: { text } } }) });
+            const payload = await response.json();
+            if (!response.ok || payload?.[0]?.error) throw new Error(payload?.[0]?.error?.json?.message || 'The organizer could not complete this review.');
+            const result = payload?.[0]?.result?.data?.json || payload?.result?.data?.json;
+            if (!result?.items || !Array.isArray(result.items)) throw new Error('The organizer returned an unexpected proposal format.');
+            inbox().summary = result.summary || '';
+            inbox().suggestions = result.items.map(item => ({ ...item, selected: true }));
+            logEvent('Brain Dump organized', 'AI proposals prepared', `${result.items.length} suggestions are ready for author review.`);
+            persist('AI proposals are ready for review.');
+            render();
+          } catch (error) {
+            toast(error?.message || 'The organizer is unavailable. Try again in a moment.');
+            if (button) { button.disabled = false; button.textContent = original || 'Organize with AI'; }
+          }
+        }
+        function recordFromSuggestion(key, item) {
+          const base = { id: uid(), name: item.title, history: [{ at: now(), action: 'Filed from Brain Dump', summary: 'Reviewed AI suggestion filed by author.' }] };
+          if (key === 'characters') return { ...base, role: item.role, description: item.description, stats: '', relationships: item.linked, status: item.status || 'Unknown' };
+          if (key === 'worldRules') return { ...base, description: item.description, watchTerms: item.linked, conflictTerms: '', status: item.status || 'Canonical' };
+          if (key === 'locations') return { ...base, description: item.description, connected: item.linked, danger: item.status || 'Moderate', notes: '' };
+          if (key === 'lore') return { ...base, definition: item.description, culturalNotes: item.role, related: item.linked };
+          if (key === 'factions') return { ...base, description: item.description, alignment: item.role, members: item.linked, status: item.status || 'Active' };
+          if (key === 'artifacts') return { ...base, description: item.description, ability: item.role, holder: item.linked, status: item.status || 'Known' };
+          return { ...base, description: item.description, stage: item.stage || 'Seed', stakes: item.role, linked: item.linked };
+        }
+        function fileBrainDumpSuggestions() {
+          const checks = Array.from(document.querySelectorAll('[data-suggestion-index]'));
+          const selected = checks.filter(check => check.checked).map(check => inbox().suggestions[Number(check.dataset.suggestionIndex)]).filter(Boolean);
+          if (!selected.length) return toast('Choose at least one proposal to file.');
+          const categoryMap = { character: 'characters', world_rule: 'worldRules', location: 'locations', lore: 'lore', faction: 'factions', artifact: 'artifacts', plot_thread: 'plotThreads' };
+          selected.forEach(item => {
+            const category = categoryMap[item.type];
+            if (category) data.masterbook[category].unshift(recordFromSuggestion(category, item));
+            else if (item.type === 'scene') data.scenes.unshift({ id: uid(), title: item.title, summary: item.description, stage: ['Seed','Planned','Drafting','Complete'].includes(item.stage) ? item.stage : 'Planned', pov: item.pov, chapter: '', thread: item.linked, notes: item.role, createdAt: now(), updatedAt: now() });
+            else if (item.type === 'note') data.notes.unshift({ id: uid(), title: item.title, body: item.description, kind: item.role || 'Brain Dump', linked: item.linked, createdAt: now(), updatedAt: now() });
+            else if (item.type === 'revision_issue') data.issues.unshift({ id: uid(), title: item.title, note: item.description, type: item.role || 'Revision', priority: item.status || 'Normal', chapterId: null, createdAt: now(), resolved: false });
+            logEvent('Brain Dump filed', item.title, `${displayType(item.type)} filed after author review.`);
+          });
+          inbox().suggestions = [];
+          inbox().summary = '';
+          persist(`${selected.length} reviewed proposal${selected.length === 1 ? '' : 's'} filed locally.`);
+          render();
         }
 
         document.addEventListener('click', event => {
@@ -736,6 +827,10 @@
           else if (action === 'open-palette') openPalette();
           else if (action === 'open-settings') openSettings();
           else if (action === 'open-export') openExport();
+          else if (action === 'organize-dump') organizeBrainDump();
+          else if (action === 'file-suggestions') fileBrainDumpSuggestions();
+          else if (action === 'clear-inbox-suggestions') { inbox().suggestions = []; inbox().summary = ''; persist('Brain Dump proposals discarded.'); render(); }
+          else if (action === 'select-all-suggestions') { document.querySelectorAll('[data-suggestion-index]').forEach(check => { check.checked = true; }); }
           else if (action === 'toggle-inspector') document.getElementById('app').classList.toggle('inspector-open');
           else if (action === 'toggle-focus') document.getElementById('app').classList.toggle('focus-mode');
           else if (action === 'toggle-bookmark') { const chapter = currentChapter(); data.bookmarks = data.bookmarks.includes(chapter.id) ? data.bookmarks.filter(item => item !== chapter.id) : [...data.bookmarks, chapter.id]; persist(data.bookmarks.includes(chapter.id) ? 'Folio bookmarked.' : 'Folio bookmark removed.'); render(); }
@@ -759,6 +854,7 @@
           else if (action === 'mark-intentional') { if (!data.intentional.some(item => item.fingerprint === fingerprint)) { data.intentional.unshift({ fingerprint, message, at: now() }); logEvent('Continuity intention', 'Exception marked intentional', message); persist('Intent bubble recorded. This rule will remain quiet.'); render(); } }
           else if (action === 'remove-intentional') { data.intentional = data.intentional.filter(item => item.fingerprint !== fingerprint); persist('Intent bubble removed. The checker will watch this line again.'); render(); }
           else if (action === 'export-data') { exportData(); closeModal(); }
+          else if (action === 'email-ready-backup') { prepareEmailBackup(); closeModal(); }
           else if (action === 'export-current-text') { exportCurrentText(); closeModal(); }
           else if (action === 'export-manuscript-text') { exportManuscriptText(); closeModal(); }
           else if (action === 'import-data') { closeModal(); importData(); }

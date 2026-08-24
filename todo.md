@@ -9,4 +9,4 @@
 - [x] Add revision issue tracking, richer continuity checks, and navigation from flags to records.
 - [x] Add import, writing exports, project settings, and a safe reset workflow.
 - [x] Validate desktop/mobile workflows, local persistence, and production build.
-- [ ] Save the enhanced checkpoint and deliver testing guidance.
+- [x] Save the enhanced checkpoint and deliver testing guidance.

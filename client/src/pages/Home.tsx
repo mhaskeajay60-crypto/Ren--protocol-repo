@@ -1,4 +1,4 @@
-/** THE EMBER ARCHIVE — The author-facing app is supplied as a single local-first HTML document. */
+/** THE EMBER ARCHIVE — The author-facing workspace is supplied by the standalone local-first document. */
 export default function Home() {
   return null;
 }
