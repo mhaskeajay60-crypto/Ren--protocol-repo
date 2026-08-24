@@ -59,3 +59,6 @@
 - Archive Gold is reserved for the protocol line, active trail, key status numerals, and decisive writing actions; it is not a general decorative fill.
 - Labels use archival-local language such as folios, records, and manuscript archive rather than network or command-console language.
 - Evidence panels use small-caps folio labels, fine rules, and dossier hierarchy so continuity work reads as literary stewardship rather than generic dashboard monitoring.
+- The active folio or author’s current writing desk must be the calmest, most paper-like material plane; supporting research and review remain dark archival evidence surfaces.
+- Gold marks active trails, decisive actions, meaningful status numerals, and connection points only. Secondary structure relies on parchment, smoke, and ink.
+- Product vocabulary favors author desk, folio, ledger, filing, record, slip, and manuscript over generic dashboard language.
