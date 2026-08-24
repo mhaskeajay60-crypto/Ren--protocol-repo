@@ -23,3 +23,7 @@ The Brain Dump Organizer processed a non-sensitive fictional sample and returned
 ## Guided Writing Toolkit Validation
 
 The new in-app **Back** control returned from the Chapter Stream to the Author Desk without relying on browser navigation. A reusable Scene Turn outline was added to a chapter brief while manuscript prose stayed empty. A non-sensitive sample passage was selected, rewritten through the explicit review request, and remained unchanged until the dedicated **Replace selected passage** action was used. A chapter-level consistency summary then returned separate strengths, watch items, and open questions without altering the manuscript or Masterbook. Temporary sample text and planning content will be cleared before delivery.
+
+## Final Novel PDF Validation
+
+A temporary finalized chapter was compiled through the **Final Novel PDF** workflow. The browser produced a downloadable two-page PDF containing a clean unnumbered title page, a chapter opener, readable book-style body text, a chapter divider, and conventional body-page numbering. The temporary chapter will be removed before delivery; the export capability remains entirely local to the author’s browser.

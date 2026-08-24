@@ -30,3 +30,9 @@
 - [x] Save the improved checkpoint and deliver use guidance.
 
 - [x] Add reliable in-app back controls that return from guided writing and review workflows to the active Chapter Stream.
+
+- [x] Add final-manuscript export settings for title, author, and finalized chapter selection.
+- [x] Add local PDF generation with a cover page, chapter headings, reading typography, and page numbers.
+- [x] Add a clear Final Novel PDF action to the existing export workflow.
+- [x] Validate a multi-chapter formatted PDF download and retain the local-first data model.
+- [x] Save the final-export checkpoint and deliver concise use guidance.
