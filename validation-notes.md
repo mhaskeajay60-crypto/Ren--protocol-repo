@@ -19,3 +19,7 @@ A non-sensitive scene brief, requirements, point of view, and tone were supplied
 ## Tagged Organization Validation
 
 The Brain Dump Organizer processed a non-sensitive fictional sample and returned thirteen review-first proposals. Each proposal showed an explicit review category, its local filing type, and concise tag chips. Tags and categories are now preserved when the author chooses to file selected items; they remain suggestions until that explicit action.
+
+## Guided Writing Toolkit Validation
+
+The new in-app **Back** control returned from the Chapter Stream to the Author Desk without relying on browser navigation. A reusable Scene Turn outline was added to a chapter brief while manuscript prose stayed empty. A non-sensitive sample passage was selected, rewritten through the explicit review request, and remained unchanged until the dedicated **Replace selected passage** action was used. A chapter-level consistency summary then returned separate strengths, watch items, and open questions without altering the manuscript or Masterbook. Temporary sample text and planning content will be cleared before delivery.

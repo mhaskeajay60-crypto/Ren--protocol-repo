@@ -20,3 +20,13 @@
 - [x] Add a section review surface with discard, copy, replace, append, and insert-at-cursor actions.
 - [x] Keep every generated section separate until the author explicitly merges it into a local draft.
 - [x] Validate a sample guided draft, revision, and merge flow, then save the updated checkpoint.
+
+- [x] Add reusable chapter-outline templates that can populate a chapter brief without overwriting manuscript prose.
+- [x] Add secure AI selection-rewrite and chapter-consistency endpoints with structured review output.
+- [x] Add tone, focus, and instruction controls for author-initiated selection rewrites.
+- [x] Add explicit review and replacement actions so rewrites never alter prose automatically.
+- [x] Add a chapter-level consistency summary that highlights confirmed strengths, possible conflicts, and open questions.
+- [x] Validate template application, rewrite review, consistency output, local persistence, and responsive layouts.
+- [x] Save the improved checkpoint and deliver use guidance.
+
+- [x] Add reliable in-app back controls that return from guided writing and review workflows to the active Chapter Stream.

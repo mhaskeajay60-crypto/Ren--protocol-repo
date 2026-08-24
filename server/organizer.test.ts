@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseComposerResponse, parseOrganizerResponse } from "./routers";
+import { parseComposerResponse, parseConsistencyResponse, parseOrganizerResponse, parseRewriteResponse } from "./routers";
 
 describe("Brain Dump organizer response validation", () => {
   it("accepts a complete structured suggestion", () => {
@@ -36,5 +36,12 @@ describe("Brain Dump organizer response validation", () => {
 
     expect(result.sectionTitle).toBe("The Gate Answers");
     expect(result.section).toContain("Aren");
+  });
+
+  it("accepts a review-only rewrite proposal and a structured consistency summary", () => {
+    const rewrite = parseRewriteResponse(JSON.stringify({ rewrittenText: "Mara listened to the rain at the window and finally unfolded the letter with care.", craftNote: "Tightened the action and retained close-third tension." }));
+    const consistency = parseConsistencyResponse(JSON.stringify({ summary: "The chapter holds a clear tense mood and introduces the letter effectively.", strengths: ["The archive setting anchors the scene."], flags: [{ severity: "watch", focus: "Letter timing", detail: "Clarify whether the letter is known to Mara before this chapter." }], openQuestions: ["What consequence follows the opening of the letter?"] }));
+    expect(rewrite.rewrittenText).toContain("Mara");
+    expect(consistency.flags[0]?.severity).toBe("watch");
   });
 });

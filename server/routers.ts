@@ -37,6 +37,32 @@ export function parseComposerResponse(content: string) {
   return composerResponseSchema.parse(JSON.parse(content));
 }
 
+export const rewriteResponseSchema = z.object({
+  rewrittenText: z.string().min(20).max(12000),
+  craftNote: z.string().max(700),
+});
+
+export function parseRewriteResponse(content: string) {
+  return rewriteResponseSchema.parse(JSON.parse(content));
+}
+
+const consistencyFlagSchema = z.object({
+  severity: z.enum(["note", "watch", "conflict"]),
+  focus: z.string().min(1).max(160),
+  detail: z.string().min(1).max(700),
+});
+
+export const consistencyResponseSchema = z.object({
+  summary: z.string().min(1).max(900),
+  strengths: z.array(z.string().min(1).max(320)).max(6),
+  flags: z.array(consistencyFlagSchema).max(8),
+  openQuestions: z.array(z.string().min(1).max(320)).max(6),
+});
+
+export function parseConsistencyResponse(content: string) {
+  return consistencyResponseSchema.parse(JSON.parse(content));
+}
+
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
@@ -163,6 +189,86 @@ export const appRouter = router({
           throw new Error("The chapter composer returned no usable draft. Please try again.");
         }
         return parseComposerResponse(content);
+      }),
+  }),
+
+  revision: router({
+    rewrite: publicProcedure
+      .input(z.object({
+        selectedText: z.string().min(20, "Select at least a short passage to rewrite.").max(12000),
+        focus: z.enum(["clarity", "pacing", "dialogue", "description", "emotion", "show_dont_tell", "custom"]),
+        tone: z.enum(["preserve", "more_atmospheric", "more_direct", "more_tense", "more_tender", "more_literary", "custom"]),
+        instruction: z.string().max(2500),
+        chapterTitle: z.string().max(180),
+        chapterContext: z.string().max(7000),
+        canonContext: z.string().max(7000),
+      }))
+      .mutation(async ({ input }) => {
+        const response = await invokeLLM({
+          model: "gpt-5-mini",
+          messages: [
+            {
+              role: "system",
+              content: "You are an author-controlled prose editor. Rewrite only the selected passage according to the requested focus and tone. Preserve the story facts, point of view, tense, and character names unless the author explicitly instructs otherwise. Do not add commentary inside rewrittenText. Return a concise craftNote explaining the main change. This is a proposal for review, never an automatic manuscript edit.",
+            },
+            {
+              role: "user",
+              content: `CHAPTER: ${input.chapterTitle || 'Untitled'}\n\nREVISION FOCUS: ${input.focus}\nTONE DIRECTION: ${input.tone}\nAUTHOR INSTRUCTION: ${input.instruction || 'No additional instruction.'}\n\nSELECTED PASSAGE TO REWRITE:\n${input.selectedText}\n\nCHAPTER CONTEXT:\n${input.chapterContext || 'No additional chapter context supplied.'}\n\nMASTERBOOK CANON:\n${input.canonContext || 'No Masterbook facts supplied.'}`,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "author_reviewed_rewrite",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: { rewrittenText: { type: "string" }, craftNote: { type: "string" } },
+                required: ["rewrittenText", "craftNote"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+        const content = response.choices[0]?.message?.content;
+        if (!content || typeof content !== "string") throw new Error("The rewrite assistant returned no usable proposal. Please try again.");
+        return parseRewriteResponse(content);
+      }),
+
+    consistency: publicProcedure
+      .input(z.object({ chapterTitle: z.string().max(180), chapterText: z.string().min(80, "Add more chapter text before requesting a consistency review.").max(16000), canonContext: z.string().max(8000) }))
+      .mutation(async ({ input }) => {
+        const response = await invokeLLM({
+          model: "gpt-5-mini",
+          messages: [
+            {
+              role: "system",
+              content: "You are a careful novel-development continuity reader. Compare the supplied chapter only against the supplied Masterbook canon. State confirmed strengths separately from possible conflicts and open questions. Never invent canon or present a possibility as a fact. This is an author review aid, not a verdict. Keep items concrete and useful.",
+            },
+            { role: "user", content: `CHAPTER: ${input.chapterTitle || 'Untitled'}\n\nCHAPTER TEXT:\n${input.chapterText}\n\nMASTERBOOK CANON:\n${input.canonContext || 'No Masterbook facts are available yet. Identify only internal questions, not canon conflicts.'}` },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "chapter_consistency_review",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  summary: { type: "string" },
+                  strengths: { type: "array", items: { type: "string" }, maxItems: 6 },
+                  flags: { type: "array", items: { type: "object", properties: { severity: { type: "string", enum: ["note", "watch", "conflict"] }, focus: { type: "string" }, detail: { type: "string" } }, required: ["severity", "focus", "detail"], additionalProperties: false }, maxItems: 8 },
+                  openQuestions: { type: "array", items: { type: "string" }, maxItems: 6 },
+                },
+                required: ["summary", "strengths", "flags", "openQuestions"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+        const content = response.choices[0]?.message?.content;
+        if (!content || typeof content !== "string") throw new Error("The consistency reader returned no usable review. Please try again.");
+        return parseConsistencyResponse(content);
       }),
   }),
 
