@@ -1,7 +1,9 @@
 export const DUMP_BOOK_IMAGE_LIMIT = 1_000_000;
 export const DUMP_BOOK_TEXT_LIMIT = 300_000;
+export const DUMP_BOOK_LOCKER_FILE_LIMIT = 10 * 1024 * 1024;
 
 export type DumpBookFileKind = "image" | "text" | null;
+export type DumpBookLockerFileKind = "image" | "text" | "pdf" | null;
 export type DumpBookMaterialKind = "text" | "link" | "image" | "text_file" | "note";
 export type DumpBookFilter = "all" | DumpBookMaterialKind;
 
@@ -48,6 +50,18 @@ export function classifyDumpBookFile(name: string, mimeType: string): DumpBookFi
 export function isDumpBookSizeAllowed(kind: DumpBookFileKind, size: number): boolean {
   if (!Number.isFinite(size) || size < 0 || !kind) return false;
   return kind === "image" ? size <= DUMP_BOOK_IMAGE_LIMIT : size <= DUMP_BOOK_TEXT_LIMIT;
+}
+
+export function classifyDumpBookLockerFile(name: string, mimeType: string): DumpBookLockerFileKind {
+  const lowerName = String(name || "").toLowerCase();
+  if (["image/png", "image/jpeg", "image/webp"].includes(mimeType)) return "image";
+  if (["text/plain", "text/markdown"].includes(mimeType) || /\.(txt|md|markdown)$/.test(lowerName)) return "text";
+  if (mimeType === "application/pdf" || lowerName.endsWith(".pdf")) return "pdf";
+  return null;
+}
+
+export function isDumpBookLockerSizeAllowed(kind: DumpBookLockerFileKind, size: number): boolean {
+  return Boolean(kind) && Number.isFinite(size) && size >= 0 && size <= DUMP_BOOK_LOCKER_FILE_LIMIT;
 }
 
 export function matchesDumpBookDiscovery(item: SearchableDumpBookItem, query: string, filter: DumpBookFilter): boolean {

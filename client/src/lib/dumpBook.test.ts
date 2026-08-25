@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookTags, normalizeDumpBookUrl } from "./dumpBook";
+import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_LOCKER_FILE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, classifyDumpBookLockerFile, isDumpBookLockerSizeAllowed, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookTags, normalizeDumpBookUrl } from "./dumpBook";
 
 describe("Dump Book helpers", () => {
   it("keeps only safe HTTP(S) links", () => {
@@ -18,6 +18,15 @@ describe("Dump Book helpers", () => {
     expect(isDumpBookSizeAllowed("image", DUMP_BOOK_IMAGE_LIMIT + 1)).toBe(false);
     expect(isDumpBookSizeAllowed("text", DUMP_BOOK_TEXT_LIMIT)).toBe(true);
     expect(isDumpBookSizeAllowed("text", DUMP_BOOK_TEXT_LIMIT + 1)).toBe(false);
+  });
+
+  it("accepts approved local-locker files through 10 MB and refuses larger or unsupported files", () => {
+    expect(classifyDumpBookLockerFile("map.webp", "image/webp")).toBe("image");
+    expect(classifyDumpBookLockerFile("chapter-notes.md", "")).toBe("text");
+    expect(classifyDumpBookLockerFile("world-guide.pdf", "application/pdf")).toBe("pdf");
+    expect(classifyDumpBookLockerFile("archive.zip", "application/zip")).toBeNull();
+    expect(isDumpBookLockerSizeAllowed("pdf", DUMP_BOOK_LOCKER_FILE_LIMIT)).toBe(true);
+    expect(isDumpBookLockerSizeAllowed("text", DUMP_BOOK_LOCKER_FILE_LIMIT + 1)).toBe(false);
   });
 
   it("searches saved titles, contents, filenames, and links while honoring type filters", () => {

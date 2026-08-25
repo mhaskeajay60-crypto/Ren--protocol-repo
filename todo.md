@@ -113,4 +113,13 @@
 - [x] Reproduce the reported live phone failure and backward-moving search input.
 - [x] Fix phone navigation and search-field input behavior without hiding author tools.
 - [x] Validate the repaired phone flows and search cursor direction on the live workspace.
-- [ ] Save and deliver the phone and search bugfix checkpoint.
+- [x] Save and deliver the phone and search bugfix checkpoint.
+- [x] Compare the repaired preview against the shared public link and explain the version mismatch.
+- [x] Evaluate automatic post-upload Dump Book organization, a 10 MB capture limit, and a separate temporary fill-from-dump workspace before implementation.
+- [x] Add a browser-local 10 MB Dump Book file locker using IndexedDB while keeping small archive metadata in localStorage.
+- [x] Add a separate Temporary Fill Desk populated locally from a chosen Dump Book item without altering Story Book records.
+- [x] Add explicit author-controlled actions to review, organize, save as a note, or discard the temporary filled material.
+- [x] Add storage-space and unsupported-file safeguards with clear privacy disclosures.
+- [x] Validate text, image, and larger-file capture limits; temporary-fill persistence and discard; local-only behavior; phone layout; tests; and build.
+- [x] Browser-test a supported image in the new 10 MB file locker, verify it stays local and can enter the Temporary Fill Desk, then clean all temporary image material.
+- [ ] Save and deliver the extended Dump Book checkpoint.
