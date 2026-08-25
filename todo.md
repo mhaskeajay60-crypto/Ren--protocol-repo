@@ -48,3 +48,7 @@
 - [x] Implement a backward-compatible local Dump Book data model for notes, pasted text, links, compact images, and TXT/Markdown files.
 - [x] Add the Dump Book workspace, source previews, local deletion, and friendly capture/import controls.
 - [x] Validate every Dump Book capture type in the browser and clear all temporary validation material.
+- [x] Add a local Dump Book search bar that finds titles, pasted text, filenames, and saved links.
+- [x] Add simple material-type filters for all items, notes/text, links, images, and text files.
+- [x] Validate Dump Book search/filter behavior, persistence, responsive layout, tests, and build.
+- [x] Save and deliver the Dump Book discovery update checkpoint.

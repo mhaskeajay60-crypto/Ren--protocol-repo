@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, isDumpBookSizeAllowed, normalizeDumpBookUrl } from "./dumpBook";
+import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookUrl } from "./dumpBook";
 
 describe("Dump Book helpers", () => {
   it("keeps only safe HTTP(S) links", () => {
@@ -18,5 +18,16 @@ describe("Dump Book helpers", () => {
     expect(isDumpBookSizeAllowed("image", DUMP_BOOK_IMAGE_LIMIT + 1)).toBe(false);
     expect(isDumpBookSizeAllowed("text", DUMP_BOOK_TEXT_LIMIT)).toBe(true);
     expect(isDumpBookSizeAllowed("text", DUMP_BOOK_TEXT_LIMIT + 1)).toBe(false);
+  });
+
+  it("searches saved titles, contents, filenames, and links while honoring type filters", () => {
+    const note = { kind: "text" as const, title: "Market clue", content: "The silver compass appears after rain." };
+    const link = { kind: "link" as const, title: "Transit research", url: "https://example.com/trains" };
+    const file = { kind: "text_file" as const, title: "Lore", fileName: "north-gate.md", content: "Gatekeeping customs" };
+
+    expect(matchesDumpBookDiscovery(note, "compass", "all")).toBe(true);
+    expect(matchesDumpBookDiscovery(link, "trains", "link")).toBe(true);
+    expect(matchesDumpBookDiscovery(file, "north", "text_file")).toBe(true);
+    expect(matchesDumpBookDiscovery(note, "market", "link")).toBe(false);
   });
 });
