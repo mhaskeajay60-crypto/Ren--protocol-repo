@@ -12,4 +12,4 @@
 - [x] Save the enhanced checkpoint and deliver testing guidance.
 - [x] Add the next-stage author toolkit: draft comparison, visual chronology, local scene ordering, expanded Final PDF preparation, and focus-sprint tracking.
 - [x] Validate the expanded toolkit with temporary local samples, a five-page PDF inspection, desktop and phone-sized layouts, and seven passing automated tests.
-- [ ] Save and deliver the completed next-stage author toolkit checkpoint.
+- [x] Save and deliver the completed next-stage author toolkit checkpoint.

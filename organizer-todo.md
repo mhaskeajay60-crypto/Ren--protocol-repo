@@ -43,4 +43,4 @@
 - [x] Add PDF front-matter fields, a generated table of contents, and trim-size choices.
 - [x] Add a focus timer, writing-sprint session tracking, and distraction-free writing controls.
 - [x] Validate the extended author workflow, local persistence, responsive behavior, and PDF output.
-- [ ] Save the completed next-stage author toolkit checkpoint and deliver use guidance.
+- [x] Save the completed next-stage author toolkit checkpoint and deliver use guidance.
