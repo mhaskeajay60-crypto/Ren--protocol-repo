@@ -27,3 +27,11 @@ The new in-app **Back** control returned from the Chapter Stream to the Author D
 ## Final Novel PDF Validation
 
 A temporary finalized chapter was compiled through the **Final Novel PDF** workflow. The browser produced a downloadable two-page PDF containing a clean unnumbered title page, a chapter opener, readable book-style body text, a chapter divider, and conventional body-page numbering. The temporary chapter will be removed before delivery; the export capability remains entirely local to the author’s browser.
+
+## Extended Author Toolkit Validation
+
+The Draft Comparison panel opens from the Chapter Stream, presents both saved versions with version selectors and a non-destructive red/green change lens, and offers an explicit revision-issue action. Direct native activation verified the panel; the automated visual driver did not activate this specific control in one earlier clean-state check, although no browser error occurred.
+
+The Chronicle exposes a dated in-world event form with event type, archive link, and consequence notes. A local focus sprint was started, showed a live countdown, and recorded a completed 25-minute session with its word gain in browser storage; the temporary session was then cleared. The Author Desk now summarizes today’s completed focus minutes and sprint count; a temporary 25-minute session displayed correctly.
+
+The expanded Final Novel PDF was validated with a temporary two-chapter paperback sample. The corrected trim selector displayed **Letter · US manuscript**, **A5 · compact reading**, and **6×9 · paperback**. The downloaded five-page PDF contained a cover, a dedication/epigraph/copyright page, generated contents with correct body page references, two chapter openers, and numbered body pages. Temporary validation material will be removed before delivery.

@@ -36,3 +36,11 @@
 - [x] Add a clear Final Novel PDF action to the existing export workflow.
 - [x] Validate a multi-chapter formatted PDF download and retain the local-first data model.
 - [x] Save the final-export checkpoint and deliver concise use guidance.
+
+- [x] Add side-by-side draft version comparison with clear change highlighting and review controls.
+- [x] Add a visual story timeline for dated chapter, scene, and Masterbook events with chronology alerts.
+- [x] Add scene ordering controls to arrange scenes within their linked chapters without changing prose.
+- [x] Add PDF front-matter fields, a generated table of contents, and trim-size choices.
+- [x] Add a focus timer, writing-sprint session tracking, and distraction-free writing controls.
+- [x] Validate the extended author workflow, local persistence, responsive behavior, and PDF output.
+- [ ] Save the completed next-stage author toolkit checkpoint and deliver use guidance.
