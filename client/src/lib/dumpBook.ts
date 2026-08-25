@@ -12,7 +12,22 @@ export type SearchableDumpBookItem = {
   content?: string;
   url?: string;
   mime?: string;
+  tags?: string[];
 };
+
+export function normalizeDumpBookTags(value: string | string[]): string[] {
+  const unique = new Map<string, string>();
+  const source = Array.isArray(value) ? value.join(",") : String(value || "");
+  source.split(",")
+    .map(tag => tag.trim().replace(/^#+/, "").replace(/\s+/g, " "))
+    .filter(Boolean)
+    .slice(0, 12)
+    .forEach(tag => {
+      const safe = tag.slice(0, 32);
+      if (!unique.has(safe.toLowerCase())) unique.set(safe.toLowerCase(), safe);
+    });
+  return Array.from(unique.values());
+}
 
 export function normalizeDumpBookUrl(value: string): string {
   try {
@@ -39,6 +54,6 @@ export function matchesDumpBookDiscovery(item: SearchableDumpBookItem, query: st
   if (filter !== "all" && item.kind !== filter) return false;
   const term = String(query || "").trim().toLowerCase();
   if (!term) return true;
-  return [item.title, item.fileName, item.content, item.url, item.mime, item.kind]
+  return [item.title, item.fileName, item.content, item.url, item.mime, item.kind, ...normalizeDumpBookTags(item.tags || [])]
     .some(value => String(value || "").toLowerCase().includes(term));
 }

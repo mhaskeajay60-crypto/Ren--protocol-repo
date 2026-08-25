@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookUrl } from "./dumpBook";
+import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookTags, normalizeDumpBookUrl } from "./dumpBook";
 
 describe("Dump Book helpers", () => {
   it("keeps only safe HTTP(S) links", () => {
@@ -29,5 +29,11 @@ describe("Dump Book helpers", () => {
     expect(matchesDumpBookDiscovery(link, "trains", "link")).toBe(true);
     expect(matchesDumpBookDiscovery(file, "north", "text_file")).toBe(true);
     expect(matchesDumpBookDiscovery(note, "market", "link")).toBe(false);
+  });
+
+  it("keeps compact unique custom tags and searches them like other local material", () => {
+    expect(normalizeDumpBookTags(" #Neo Domain, Aren, neo domain, Chapter   3 ")).toEqual(["Neo Domain", "Aren", "Chapter 3"]);
+    const item = { kind: "text" as const, title: "A clue", tags: ["Project Atlas", "Mira"] };
+    expect(matchesDumpBookDiscovery(item, "mira", "all")).toBe(true);
   });
 });

@@ -52,3 +52,7 @@
 - [x] Add simple material-type filters for all items, notes/text, links, images, and text files.
 - [x] Validate Dump Book search/filter behavior, persistence, responsive layout, tests, and build.
 - [x] Save and deliver the Dump Book discovery update checkpoint.
+- [x] Add custom browser-local tags for Dump Book materials, including projects, characters, and author-defined labels.
+- [x] Add simple tag display, editing, and tag-based discovery controls without changing existing material content.
+- [x] Validate custom tags, tag discovery, persistence, responsive layout, tests, and build.
+- [x] Save and deliver the Dump Book tagging update checkpoint.
