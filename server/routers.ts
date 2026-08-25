@@ -123,6 +123,23 @@ export function parseLoreResponse(content: string) {
   return loreResponseSchema.parse(JSON.parse(content));
 }
 
+const coWriterChoiceSchema = z.object({
+  label: z.string().min(1).max(90),
+  continuation: z.string().min(10).max(1800),
+  consequence: z.string().min(1).max(420),
+});
+
+export const coWriterResponseSchema = z.object({
+  title: z.string().min(1).max(160),
+  suggestion: z.string().min(20).max(6000),
+  craftNote: z.string().min(1).max(650),
+  choices: z.array(coWriterChoiceSchema).max(3),
+});
+
+export function parseCoWriterResponse(content: string) {
+  return coWriterResponseSchema.parse(JSON.parse(content));
+}
+
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
@@ -256,8 +273,8 @@ export const appRouter = router({
     rewrite: publicProcedure
       .input(z.object({
         selectedText: z.string().min(20, "Select at least a short passage to rewrite.").max(12000),
-        focus: z.enum(["clarity", "pacing", "dialogue", "description", "emotion", "show_dont_tell", "custom"]),
-        tone: z.enum(["preserve", "more_atmospheric", "more_direct", "more_tense", "more_tender", "more_literary", "custom"]),
+        focus: z.enum(["clarity", "pacing", "dialogue", "description", "emotion", "psychological", "environmental", "show_dont_tell", "custom"]),
+        tone: z.enum(["preserve", "darker", "slower", "psychological", "environmental", "more_atmospheric", "more_direct", "more_tense", "more_tender", "more_literary", "custom"]),
         instruction: z.string().max(2500),
         chapterTitle: z.string().max(180),
         chapterContext: z.string().max(7000),
@@ -444,6 +461,35 @@ export const appRouter = router({
         const content = response.choices[0]?.message?.content;
         if (!content || typeof content !== "string") throw new Error("Claude returned no usable lore proposals. Please try again.");
         return parseLoreResponse(content);
+      }),
+
+    coWriter: publicProcedure
+      .input(z.object({
+        mode: z.enum(["next_line", "prose_expand", "scene_decision"]),
+        seed: z.string().min(8, "Add a little more before asking for a co-writing suggestion.").max(6000),
+        pacing: z.enum(["glacial", "slow", "steady", "urgent"]),
+        tone: z.string().max(240),
+        chapterTitle: z.string().max(180),
+        chapterContext: z.string().max(7000),
+        canonContext: z.string().max(7000),
+      }))
+      .mutation(async ({ input }) => {
+        const modeInstruction = input.mode === "next_line"
+          ? "Offer one concise continuation of one to three sentences. Do not continue beyond the immediate next beat."
+          : input.mode === "prose_expand"
+            ? "Turn the supplied rough note into an editable 250–450 word dramatic paragraph or short passage. Keep the supplied plot facts; do not invent major canon."
+            : "Offer one short scene continuation plus exactly three separate author-review decision choices. Each choice must include a concrete consequence. Never assume inventory, stats, or faction facts that the author has not supplied.";
+        const response = await invokeLLM({
+          model: "claude-sonnet-4-6",
+          messages: [
+            { role: "system", content: "You are The Ren Protocol's author-controlled co-writer. Work only from the author-supplied seed, chapter context, and canon. Never auto-edit the manuscript, never claim a generated idea is canon, and never imitate a named author or reproduce another work. Honour pacing, tone, point of view, and any personal style-guide rules inside canon context. Return an editable suggestion and a concise craft note. " + modeInstruction },
+            { role: "user", content: `MODE: ${input.mode}\nPACING: ${input.pacing}\nTONE: ${input.tone || "Use the seed's tone."}\nCHAPTER: ${input.chapterTitle || "Untitled"}\n\nAUTHOR SEED OR CURRENT LINES:\n${input.seed}\n\nCHAPTER CONTEXT:\n${input.chapterContext || "No additional chapter context."}\n\nMASTERBOOK AND PERSONAL STYLE GUIDE:\n${input.canonContext || "No canon supplied."}` },
+          ],
+          response_format: { type: "json_schema", json_schema: { name: "author_controlled_co_writer", strict: true, schema: { type: "object", properties: { title: { type: "string" }, suggestion: { type: "string" }, craftNote: { type: "string" }, choices: { type: "array", maxItems: 3, items: { type: "object", properties: { label: { type: "string" }, continuation: { type: "string" }, consequence: { type: "string" } }, required: ["label", "continuation", "consequence"], additionalProperties: false } } }, required: ["title", "suggestion", "craftNote", "choices"], additionalProperties: false } } },
+        });
+        const content = response.choices[0]?.message?.content;
+        if (!content || typeof content !== "string") throw new Error("Claude returned no usable co-writing suggestion. Please try again.");
+        return parseCoWriterResponse(content);
       }),
   }),
 

@@ -27,3 +27,9 @@ Dialogue Lab and Lore Workshop are available from AI Studio as separate author-c
 The standalone Dump Book was rechecked after the full helper set was added. A temporary note titled **Archive pressure** with `Archive` and `Mara` tags saved normally; standalone `#Mara` filtering retained that item, and a live `keeper` text search found it through its body. Story Book reloaded with all seven canonical categories and record actions intact. Chapter Stream reloaded with its three draft-version controls, writing area, save action, and direct Critic entry. The regular Export panel, Feature Tour export, and Final Novel PDF path were available and had been visually verified in this same release cycle. The temporary browser archive was then cleared again.
 
 Post-helper phone-width captures were completed for Dump Book, Story Book, Chapter Stream, and AI Studio. The capture fields, Masterbook categories, draft controls, search/tag entry, and new helper hub all remained readable and tappable at 375 pixels without horizontal overflow.
+
+## Co-writer Validation — 2026-08-25
+
+The co-writer’s **Expand rough notes** route was first checked as a no-send preflight. It displays the exact seed, pacing, tone, compact chapter/Story Book scope, and a **Keep private** exit; opening the panel or typing does not send anything.
+
+With explicit user approval, a temporary original one-line fictional seed was submitted to the secure Claude request. The response returned a separate editable suggestion, a craft note, and a labelled scene decision with a likely consequence. The underlying chapter remained unchanged until the author would choose **Add to my draft**; that action was not used. The temporary proposal was discarded, and all temporary browser-local material was cleared after testing. Local creature preferences now accompany only future explicit AI requests as soft author rules, never as a claim about universal biology.

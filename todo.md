@@ -77,3 +77,27 @@
 - [x] Add remaining approved author-controlled helpers: Dialogue Lab, Lore Workshop, and an atmosphere/style guide layer.
 - [x] Re-run end-to-end Dump Book search/tag, final-novel PDF, export, Story Book, and chapter-writing regression checks after the hub and helpers are added.
 - [x] Save and deliver the integrated discovery-and-critic checkpoint.
+- [x] Review the newly supplied writing-app feature ideas against current author-controlled capabilities.
+- [x] Present a simple recommendation for the next useful additions without expanding the UI unnecessarily.
+- [x] Add an author-triggered prose expansion tool for notes-to-paragraphs with pacing and tone controls.
+- [x] Add on-demand inline suggestion cards instead of automatic ghost text, so no text is sent while typing.
+- [x] Add local configurable reptile-anatomy and behaviour flags with author-approved replacement options.
+- [x] Add review-first scene decision proposals, including inventory/stat or faction consequences only when the author supplies the relevant facts.
+- [x] Add focused paragraph rewrite controls for darker, slower, psychological, or environmental versions.
+- [x] Validate co-writing controls, author approval, local rule flags, persistence, tests, and build.
+- [ ] Save and deliver the author-controlled co-writing checkpoint.
+- [x] Audit missing or unclear Back actions and the discoverability of the Dump Book entry point.
+- [x] Explain the navigation findings and proposed plain-language fixes before changing the current layout.
+- [x] Implement and validate approved Back-button and Dump Book navigation improvements.
+- [ ] Save and deliver the navigation discoverability checkpoint.
+- [x] Create a focused internal web-app test checklist covering main flows, safe boundary cases, and desktop/phone layouts.
+- [x] Add a clearly named feature-oriented tab or section that makes the app’s tools easier to discover without crowding the writing space.
+- [x] Make Dump Book visible from the simple Home screen and primary navigation.
+- [x] Make Back return to the actual previous workspace and add clear escape routes from deeper tools.
+- [x] Refine the interface into a calmer, more distinctive premium author workspace while preserving readability and local-first privacy.
+- [x] Complete functional, boundary, and responsive browser checks; record results and clean temporary local test content.
+- [ ] Save and deliver the tested premium-polish checkpoint.
+- [x] Verify and, if needed, add focused darker, slower, psychological, and environmental rewrite modes.
+- [x] Browser-test a focused rewrite preflight and separate-result workflow with temporary text, then clear it.
+- [x] Submit an approved temporary focused rewrite, verify the separate result and no-auto-replace behavior, then discard it and clear the local test archive.
+- [x] Record the completed focused rewrite end-to-end validation.

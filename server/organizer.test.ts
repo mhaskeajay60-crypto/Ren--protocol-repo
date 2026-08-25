@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseComposerResponse, parseConsistencyResponse, parseCriticResponse, parseDialogueResponse, parseLoreResponse, parseOrganizerResponse, parseRewriteResponse } from "./routers";
+import { parseCoWriterResponse, parseComposerResponse, parseConsistencyResponse, parseCriticResponse, parseDialogueResponse, parseLoreResponse, parseOrganizerResponse, parseRewriteResponse } from "./routers";
 
 describe("Brain Dump organizer response validation", () => {
   it("accepts a complete structured suggestion", () => {
@@ -73,5 +73,20 @@ describe("Brain Dump organizer response validation", () => {
     const lore = parseLoreResponse(JSON.stringify({ summary: "A provisional archive faction seed.", ideas: [{ type: "faction", title: "The Inkwardens", concept: "Archivists who erase names to delay a prophecy.", storyUse: "They can pressure Mara's choice about the letter.", caution: "Decide whether erasure is literal, legal, or magical before filing.", tags: ["archive", "prophecy"] }] }));
     expect(dialogue.variants).toHaveLength(3);
     expect(lore.ideas[0]?.type).toBe("faction");
+  });
+
+  it("accepts an author-controlled co-writer suggestion with separate scene decisions", () => {
+    const result = parseCoWriterResponse(JSON.stringify({
+      title: "The clerk's refusal",
+      suggestion: "The clerk did not look up. A pale membrane crossed one eye as the coin returned across the slate.",
+      craftNote: "Keeps the slow bureaucratic pressure in close third person.",
+      choices: [
+        { label: "Refuse the bribe", continuation: "The clerk returns the coin and asks for a faction seal instead.", consequence: "The scene raises the political cost without assuming any existing inventory." },
+        { label: "Ask a question", continuation: "Ssziss asks who minted the coin before offering another word.", consequence: "The exchange opens a route into the enemy-swamp thread." },
+        { label: "Leave quietly", continuation: "Ssziss folds the coin away and studies the guard's badge.", consequence: "The scene preserves secrecy but delays access to the archive." },
+      ],
+    }));
+    expect(result.choices).toHaveLength(3);
+    expect(result.suggestion).toContain("clerk");
   });
 });
