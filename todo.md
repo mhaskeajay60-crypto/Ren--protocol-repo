@@ -39,4 +39,4 @@
 - [x] Save the friendly premium redesign checkpoint.
 - [x] Restore a clearly visible Final Novel PDF download option in the simplified save/share flow.
 - [x] Validate the PDF settings panel and generated local PDF with temporary material, then clear the archive.
-- [ ] Save and deliver the repaired PDF-download checkpoint.
+- [x] Save the repaired PDF-download checkpoint.
