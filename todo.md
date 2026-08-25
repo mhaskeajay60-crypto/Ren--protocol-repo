@@ -28,3 +28,12 @@
 - [x] Validate Story Map, Connections, revision shelf, and Progress at a phone-sized layout before final delivery.
 - [x] Support a safe local `?view=` workspace link for opening and validating an existing author-tool view directly.
 - [x] Save the expanded local-first workspace checkpoint.
+- [x] Define a bright premium visual system with plain-language labels and generous visual hierarchy.
+- [x] Replace the dark archive shell with a simplified white layout and clearer navigation.
+- [x] Redesign the Author Desk as an easy first-screen experience with one obvious next action.
+- [x] Simplify Chapter Stream and planning controls so essential actions are visible without tool overload.
+- [x] Apply the friendly visual system to Masterbook, Story Map, Connections, Progress, and export panels.
+- [x] Simplify Story Map and Connections copy directly, not only through shared styling.
+- [x] Validate the redesigned Story Map and Connections at desktop and phone sizes.
+- [x] Validate the simplified white experience at desktop and mobile sizes, with a clean local archive.
+- [ ] Save and deliver the friendly premium redesign checkpoint.

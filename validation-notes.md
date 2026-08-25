@@ -49,3 +49,9 @@ The new Progress desk was checked with temporary local word counts across six da
 The Markdown restore flow was rechecked end to end using a temporary two-folio file through the app’s actual import action and confirmation path. The archive correctly replaced the previous local record, restored the project title, produced two Folio cards, and preserved each imported prose passage. A fallback parser was added for the brief early-load case where the optional helper module has not yet initialized. The temporary imported archive was then cleared.
 
 A safe local `?view=` link was added for existing workspace names; it changes only the initial rendered view and does not overwrite the stored archive preference. Phone-sized screenshots verified the Story Map, Connections, Progress, and Chapter Stream—including the Revision Shelf—alongside the original dashboard. All tested layouts remained readable and usable.
+
+## Friendly Premium Redesign Validation
+
+The dark archive presentation was replaced with a bright white studio system using lavender accents, soft rounded cards, plain-language labels, and a reduced five-choice primary navigation. Advanced tools now stay behind **More tools**, and advanced writing controls stay behind **More writing tools**. The Home view was rebuilt around one visible writing action and simple choices for planning, story details, and ideas.
+
+Desktop and phone-sized screenshots verified the redesigned Home, Write, Story Map, Connections, and Progress views. A mobile-height issue that left an oversized navigation gap was corrected; the workspace now begins immediately after the compact phone navigation. A plain-text action-card wrapping issue in Story Map and Progress was also corrected. The local archive remained clean. Final `pnpm run check`, `pnpm test` (**9 tests**), and `pnpm run build` all passed.
