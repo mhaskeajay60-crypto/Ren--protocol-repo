@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseCoWriterResponse, parseComposerResponse, parseConsistencyResponse, parseCriticResponse, parseDialogueResponse, parseLoreResponse, parseOrganizerResponse, parseRewriteResponse } from "./routers";
+import { parseCoWriterResponse, parseComposerResponse, parseConsistencyResponse, parseCriticResponse, parseDialogueResponse, parseLoreResponse, parseOrganizerResponse, parseRewriteResponse, parseTemporaryExtractionResponse } from "./routers";
 
 describe("Brain Dump organizer response validation", () => {
   it("accepts a complete structured suggestion", () => {
@@ -88,5 +88,15 @@ describe("Brain Dump organizer response validation", () => {
     }));
     expect(result.choices).toHaveLength(3);
     expect(result.suggestion).toContain("clerk");
+  });
+
+  it("accepts a separate image or PDF text extraction result without filing it", () => {
+    const result = parseTemporaryExtractionResponse(JSON.stringify({
+      text: "The brass tongue of the gate bell was warm.",
+      note: "Readable text was extracted. Check names and line breaks against the original file before using it.",
+    }));
+    expect(result.text).toContain("gate bell");
+    expect(result.note).toContain("Check names");
+    expect(() => parseTemporaryExtractionResponse(JSON.stringify({ text: "Missing the review note" }))).toThrow();
   });
 });

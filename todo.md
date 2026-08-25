@@ -122,4 +122,12 @@
 - [x] Add storage-space and unsupported-file safeguards with clear privacy disclosures.
 - [x] Validate text, image, and larger-file capture limits; temporary-fill persistence and discard; local-only behavior; phone layout; tests; and build.
 - [x] Browser-test a supported image in the new 10 MB file locker, verify it stays local and can enter the Temporary Fill Desk, then clean all temporary image material.
-- [ ] Save and deliver the extended Dump Book checkpoint.
+- [x] Save and deliver the extended Dump Book checkpoint.
+- [x] Deliver the extended Dump Book checkpoint with its 10 MB local file locker and Temporary Fill Desk summary.
+- [x] Add an explicit Temporary Fill Desk consent preflight for AI text extraction from a selected uploaded image or PDF.
+- [x] Add a secure server-side extraction route with file-type, byte-size, and output-length safeguards.
+- [x] Add separate editable extracted text handling that never auto-files, organizes, or changes Story Book data.
+- [x] Validate image and PDF extraction consent, safe failures, separate-result handling, phone layout, tests, and build.
+- [x] Save and deliver the Temporary Fill Desk extraction checkpoint.
+- [x] Provide a newly labelled checkpoint link for each finished release and state that the fixed public domain updates only after Publish.
+- [x] Correct the empty Temporary Fill Desk message so it clearly says no source has been chosen.
