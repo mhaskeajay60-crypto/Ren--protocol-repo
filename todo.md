@@ -109,4 +109,8 @@
 - [x] Save and deliver the corrected bright-interface and feature-visibility checkpoint.
 - [x] Audit phone navigation, feature cards, writing controls, and key legacy author tools for tap comfort and screen-fit issues.
 - [x] Improve any mobile layout or interaction friction while retaining the bright desktop workspace.
-- [ ] Validate key mobile author workflows and save and deliver the mobile usability checkpoint.
+- [x] Validate key mobile author workflows and save and deliver the mobile usability checkpoint.
+- [x] Reproduce the reported live phone failure and backward-moving search input.
+- [x] Fix phone navigation and search-field input behavior without hiding author tools.
+- [x] Validate the repaired phone flows and search cursor direction on the live workspace.
+- [ ] Save and deliver the phone and search bugfix checkpoint.

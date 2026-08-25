@@ -105,3 +105,11 @@ Phone-width captures specifically rechecked every legacy workspace restored to v
 ## Mobile Usability Pass
 
 The phone workspace was tightened without changing desktop behavior. The six everyday desks remain immediately visible, while the eight secondary author tools now sit under a clear **More author tools** expander to avoid a very tall first screen. The top feature strip becomes a swipeable row instead of adding more stacked rows, and the top bar keeps a compact visible Back arrow on non-Home pages. Phone captures confirmed the new Home, Chapter Stream, and AI Studio layouts remain readable, the writing editor stays comfortable, and advanced co-writing controls are still reachable through **More writing tools**. `pnpm run check`, `pnpm test` (**17 tests**), and `pnpm run build` passed.
+
+## Phone and Search Bugfix
+
+The reported backward-moving Dump Book search was reproduced in the input handler: every keystroke rebuilt the entire page, replacing the active input and forcing the cursor to the end. The fix now updates only the saved-item count and results list while retaining the original field, focus, and cursor position. A three-keystroke validation returned `n`, `ne`, then `neo`, with cursor positions 1, 2, and 3 and focus retained after each step.
+
+The phone layout was checked again after the bugfix. Dump Book capture and search remain readable at 375 pixels, while Home and Chapter Stream keep the compact primary navigation, **More author tools** control, visible Back arrow, and horizontally swipeable feature strip. `pnpm run check`, `pnpm test` (**17 tests**), and `pnpm run build` passed.
+
+Before the compact navigation repair, the phone shell rendered all fourteen navigation destinations and the full six-card feature strip as stacked content, producing a long, crowded first screen. The current interactive validation opened **More author tools**, navigated Home → Dump Book → Back to Home, then opened Story history and returned with Back. The live workspace reported the expected route labels for Dump Book, Chronicle timeline, and Author dashboard at each step. The repaired primary tools stay visible while legacy tools remain reachable through the explicit expander.
