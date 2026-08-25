@@ -36,4 +36,4 @@
 - [x] Simplify Story Map and Connections copy directly, not only through shared styling.
 - [x] Validate the redesigned Story Map and Connections at desktop and phone sizes.
 - [x] Validate the simplified white experience at desktop and mobile sizes, with a clean local archive.
-- [ ] Save and deliver the friendly premium redesign checkpoint.
+- [x] Save the friendly premium redesign checkpoint.
