@@ -55,3 +55,7 @@ A safe local `?view=` link was added for existing workspace names; it changes on
 The dark archive presentation was replaced with a bright white studio system using lavender accents, soft rounded cards, plain-language labels, and a reduced five-choice primary navigation. Advanced tools now stay behind **More tools**, and advanced writing controls stay behind **More writing tools**. The Home view was rebuilt around one visible writing action and simple choices for planning, story details, and ideas.
 
 Desktop and phone-sized screenshots verified the redesigned Home, Write, Story Map, Connections, and Progress views. A mobile-height issue that left an oversized navigation gap was corrected; the workspace now begins immediately after the compact phone navigation. A plain-text action-card wrapping issue in Story Map and Progress was also corrected. The local archive remained clean. Final `pnpm run check`, `pnpm test` (**9 tests**), and `pnpm run build` all passed.
+
+## Direct Book PDF Repair
+
+The Home screen now shows a plainly named **Download book PDF** button beside **Start writing** and **New chapter**, so the final export is no longer hidden inside the save menu. It opens the Final Novel settings panel directly. A temporary saved Main Draft was included through the explicit fallback option and produced a three-page local PDF: title page, contents page, and a numbered chapter page containing the saved heading and prose. The temporary archive will be cleared after this validation.

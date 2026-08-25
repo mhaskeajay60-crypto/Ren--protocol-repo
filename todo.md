@@ -37,3 +37,6 @@
 - [x] Validate the redesigned Story Map and Connections at desktop and phone sizes.
 - [x] Validate the simplified white experience at desktop and mobile sizes, with a clean local archive.
 - [x] Save the friendly premium redesign checkpoint.
+- [x] Restore a clearly visible Final Novel PDF download option in the simplified save/share flow.
+- [x] Validate the PDF settings panel and generated local PDF with temporary material, then clear the archive.
+- [ ] Save and deliver the repaired PDF-download checkpoint.
