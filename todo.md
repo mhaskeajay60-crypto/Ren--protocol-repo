@@ -40,3 +40,11 @@
 - [x] Restore a clearly visible Final Novel PDF download option in the simplified save/share flow.
 - [x] Validate the PDF settings panel and generated local PDF with temporary material, then clear the archive.
 - [x] Save the repaired PDF-download checkpoint.
+- [x] Define a simple Dump Book inbox for notes, pasted text, links, small images, and text files stored locally.
+- [x] Add friendly capture controls and material cards with previews, source labels, and safe local deletion.
+- [x] Add optional review-first organizing suggestions and explicit filing into the existing story tools.
+- [x] Validate notes, links, images, TXT/Markdown files, local persistence, cleanup, tests, and build.
+- [x] Save and deliver the completed Dump Book checkpoint.
+- [x] Implement a backward-compatible local Dump Book data model for notes, pasted text, links, compact images, and TXT/Markdown files.
+- [x] Add the Dump Book workspace, source previews, local deletion, and friendly capture/import controls.
+- [x] Validate every Dump Book capture type in the browser and clear all temporary validation material.
