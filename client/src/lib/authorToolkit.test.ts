@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { todaySprintSummary, trimOptionsMarkup } from "./authorToolkit";
+import { parseMarkdownManuscript, todaySprintSummary, trimOptionsMarkup, wordWindowSummary } from "./authorToolkit";
 
 describe("author toolkit helpers", () => {
   it("renders the three human-readable PDF trim choices with the saved trim selected", () => {
@@ -22,5 +22,23 @@ describe("author toolkit helpers", () => {
         "2026-08-25",
       ),
     ).toEqual({ focusMinutes: 35, sessionCount: 2 });
+  });
+
+  it("parses H2 folios from an editable manuscript Markdown export", () => {
+    expect(parseMarkdownManuscript("# Neo Domain Online\n\n## Chapter 01: Signal\n\nFirst scene.\n\n---\n\n## Chapter 02: Echo\n\nSecond scene.")).toEqual({
+      title: "Neo Domain Online",
+      chapters: [
+        { title: "Chapter 01: Signal", body: "First scene." },
+        { title: "Chapter 02: Echo", body: "Second scene." },
+      ],
+    });
+  });
+
+  it("summarizes a chosen local writing window without inventing activity", () => {
+    expect(wordWindowSummary({ "2026-08-24": 320, "2026-08-25": 180 }, ["2026-08-23", "2026-08-24", "2026-08-25"])).toEqual({
+      totalWords: 500,
+      activeDays: 2,
+      maxWords: 320,
+    });
   });
 });

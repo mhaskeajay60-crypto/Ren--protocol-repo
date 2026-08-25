@@ -35,3 +35,17 @@ The Draft Comparison panel opens from the Chapter Stream, presents both saved ve
 The Chronicle exposes a dated in-world event form with event type, archive link, and consequence notes. A local focus sprint was started, showed a live countdown, and recorded a completed 25-minute session with its word gain in browser storage; the temporary session was then cleared. The Author Desk now summarizes today’s completed focus minutes and sprint count; a temporary 25-minute session displayed correctly.
 
 The expanded Final Novel PDF was validated with a temporary two-chapter paperback sample. The corrected trim selector displayed **Letter · US manuscript**, **A5 · compact reading**, and **6×9 · paperback**. The downloaded five-page PDF contained a cover, a dedication/epigraph/copyright page, generated contents with correct body page references, two chapter openers, and numbered body pages. Temporary validation material will be removed before delivery.
+
+## Expanded Workspace Validation
+
+Story Map validated with a temporary arc linked to Masterbook character and location records. The arc card rendered canonical reference chips, and the linked Folio details appeared in the Chapter Stream planning compass and enhanced chapter cards. Local revision annotations and per-folio checklist items were also created and toggled without altering the manuscript prose.
+
+Connections validated with temporary characters, a relationship record, a Masterbook location, a dated story event, a scene, a linked arc, and chapter mentions. Its combined reference card exposed navigable local chips for each actual record. All temporary story-planning, relationship, revision, and Masterbook validation data was then cleared.
+
+The new Progress desk was checked with temporary local word counts across six dates and two completed focus sessions. It correctly showed a fourteen-day calendar, weekly-goal status, six active writing days, and sixty-five focus minutes. Markdown manuscript and readable Story package downloads were inspected; both preserved the expected project/chapter structure and prose. Helper tests cover Markdown parsing and writing-window totals. The final clean archive rendered correctly at desktop and phone sizes. `pnpm run check`, `pnpm test` (**9 tests**), and `pnpm run build` all passed.
+
+### Final import and mobile checks
+
+The Markdown restore flow was rechecked end to end using a temporary two-folio file through the app’s actual import action and confirmation path. The archive correctly replaced the previous local record, restored the project title, produced two Folio cards, and preserved each imported prose passage. A fallback parser was added for the brief early-load case where the optional helper module has not yet initialized. The temporary imported archive was then cleared.
+
+A safe local `?view=` link was added for existing workspace names; it changes only the initial rendered view and does not overwrite the stored archive preference. Phone-sized screenshots verified the Story Map, Connections, Progress, and Chapter Stream—including the Revision Shelf—alongside the original dashboard. All tested layouts remained readable and usable.

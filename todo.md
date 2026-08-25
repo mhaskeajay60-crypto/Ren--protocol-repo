@@ -13,3 +13,18 @@
 - [x] Add the next-stage author toolkit: draft comparison, visual chronology, local scene ordering, expanded Final PDF preparation, and focus-sprint tracking.
 - [x] Validate the expanded toolkit with temporary local samples, a five-page PDF inspection, desktop and phone-sized layouts, and seven passing automated tests.
 - [x] Save and deliver the completed next-stage author toolkit checkpoint.
+- [x] Add a story-architecture desk for plot arcs, subplots, acts, stakes, and progress.
+- [x] Add richer chapter cards with summary, purpose, emotional turn, status, and linked planning records.
+- [x] Add author-controlled revision annotations and a chapter revision checklist without altering manuscript prose.
+- [x] Add a character relationship matrix and arc tracker linked to Masterbook records.
+- [x] Add a continuity reference map that surfaces planned chapter, scene, event, character, and location links together.
+- [x] Link Story Map arcs to relevant Masterbook records and expose those links in the arc cards.
+- [x] Upgrade Connections to show actual linked scene, story event, character, and location records per folio instead of only counts or plain text.
+- [x] Validate combined Connections links with temporary Masterbook, scene, event, chapter, and arc records before clearing all validation data.
+- [x] Add a local writing calendar, recent-session insights, and goal-progress utilities.
+- [x] Add practical Markdown import/export and a readable manuscript package download.
+- [x] Validate all new workflows, persistence, responsive layouts, tests, and production build.
+- [x] Validate Markdown import end to end with an exported sample, confirmation, restored folio, and clean-state cleanup.
+- [x] Validate Story Map, Connections, revision shelf, and Progress at a phone-sized layout before final delivery.
+- [x] Support a safe local `?view=` workspace link for opening and validating an existing author-tool view directly.
+- [ ] Save and deliver the expanded local-first workspace checkpoint.

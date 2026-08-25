@@ -22,3 +22,40 @@ export function todaySprintSummary(sprints: FocusSprint[] = [], dateKey: string)
     sessionCount: today.length,
   };
 }
+
+export type MarkdownFolio = { title: string; body: string };
+
+export function parseMarkdownManuscript(markdown: string) {
+  const lines = String(markdown || "").replace(/\r/g, "").split("\n");
+  const title = lines.find(line => /^#\s+/.test(line))?.replace(/^#\s+/, "").trim() || "";
+  const chapters: MarkdownFolio[] = [];
+  let current: MarkdownFolio | null = null;
+
+  for (const line of lines) {
+    if (/^##\s+/.test(line)) {
+      if (current) {
+        current.body = current.body.replace(/^---\s*$/gm, "").trim();
+        chapters.push(current);
+      }
+      current = { title: line.replace(/^##\s+/, "").trim(), body: "" };
+      continue;
+    }
+    if (current) current.body += `${current.body ? "\n" : ""}${line}`;
+  }
+
+  if (current) {
+    current.body = current.body.replace(/^---\s*$/gm, "").trim();
+    chapters.push(current);
+  }
+
+  return { title, chapters: chapters.filter(chapter => chapter.title || chapter.body) };
+}
+
+export function wordWindowSummary(words: Record<string, number> = {}, dateKeys: string[] = []) {
+  const values = dateKeys.map(key => Number(words[key] || 0));
+  return {
+    totalWords: values.reduce((sum, value) => sum + value, 0),
+    activeDays: values.filter(value => value > 0).length,
+    maxWords: Math.max(1, ...values),
+  };
+}
