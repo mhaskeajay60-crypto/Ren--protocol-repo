@@ -131,3 +131,12 @@
 - [x] Save and deliver the Temporary Fill Desk extraction checkpoint.
 - [x] Provide a newly labelled checkpoint link for each finished release and state that the fixed public domain updates only after Publish.
 - [x] Correct the empty Temporary Fill Desk message so it clearly says no source has been chosen.
+- [x] Confirm that “TXT auto print” means the existing author-approved image/PDF text extraction workflow.
+- [x] Design an approval-first flow that converts selected Dump Book material into proposed Masterbook records without auto-filing.
+- [x] Implement author-selected Masterbook additions from approved Dump Book suggestions while preserving the original material.
+- [x] Validate the consent, discard, privacy, safe-provider-failure, test, and build paths; successful PDF proposal results were intentionally not retried after the author requested that external PDF testing stop.
+- [ ] Save and deliver the approval-first Dump Book-to-Masterbook checkpoint with the newest checkpoint link.
+- [x] Add selection of multiple Dump Book PDFs and information items for one author-approved review request.
+- [x] Show an exact multi-file consent summary before any selected local PDF or extracted information leaves the browser.
+- [x] Let the author review, select, and explicitly add proposed records from multiple Dump Book sources to Masterbook.
+- [x] Validate bulk source limits, consent, Keep private, safe provider failure, no-auto-filing, responsive behavior, tests, and build; stop further external PDF testing at the author’s request.

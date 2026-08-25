@@ -1092,12 +1092,13 @@
           return `<section class="main-view"><div class="view-head"><div><div class="eyebrow">Brain Dump / Review-first organization</div><h1>Put the whole tangle <em>on the desk.</em></h1><p>Paste rough ideas, research, lore, character scraps, or scene thoughts. The organizer proposes records; nothing becomes canonical until you choose to file it.</p></div></div><div class="inbox-layout"><section class="inbox-paper"><div class="eyebrow">Unsorted material</div><h2>Brain Dump Inbox</h2><p>Write freely. Structure is not required here.</p><textarea id="brain-dump" placeholder="Paste anything here: character fragments, loose scenes, world rules, questions, research, dialogue, timelines…">${esc(box.draft || '')}</textarea><div class="inbox-footer"><span class="mention-helper">Only press <strong>Organize with AI</strong> when you want this text sent for analysis.</span><button class="paper-button" data-action="organize-dump">Organize with AI</button></div></section><aside style="display:grid;gap:12px"><section class="privacy-slip"><h3>Private by default</h3><p>The Brain Dump stays in your browser. When you press Organize, only the text in this Inbox is sent to the AI service to create suggestions. Suggestions return here for your review; they are not automatically saved to the Masterbook.</p></section><section class="suggestion-panel"><div class="suggestion-head"><div><div class="eyebrow">Organization review</div><h2>${suggestions.length ? `${suggestions.length} proposed filing${suggestions.length === 1 ? '' : 's'}` : 'No proposals yet'}</h2></div>${suggestions.length ? '<button class="button small" data-action="select-all-suggestions">Select all</button>' : ''}</div>${box.summary ? `<p class="suggestion-summary">${esc(box.summary)}</p>` : ''}<div class="suggestion-list">${suggestions.length ? suggestions.map((item,index) => { const typeLabel = displayType(item.type); const label = item.category && item.category !== typeLabel ? `${item.category} · ${typeLabel}` : (item.category || typeLabel); return `<label class="suggestion-card"><input type="checkbox" data-suggestion-index="${index}" ${item.selected !== false ? 'checked' : ''}><span><small>${esc(label)}${item.linked ? ` · ${esc(item.linked)}` : ''}</small><strong>${esc(item.title)}</strong><p>${esc(item.description)}</p>${item.tags?.length ? `<div class="tag-row">${item.tags.map(tag => `<span class="tag-chip">#${esc(tag)}</span>`).join('')}</div>` : ''}</span></label>`; }).join('') : '<div class="book-empty">Your reviewed proposals will appear here. You can keep or uncheck each one before filing.</div>'}</div>${suggestions.length ? '<div class="suggestion-footer"><button class="button" data-action="clear-inbox-suggestions">Discard proposals</button><button class="button gold" data-action="file-suggestions">File selected</button></div>' : ''}</section></aside></div></section>`;
         }
         function dumpBook() {
-          if (!data.dumpBook || typeof data.dumpBook !== 'object') data.dumpBook = { items: [], textDraft: '', titleDraft: '', linkDraft: '', tagDraft: '', searchQuery: '', filter: 'all', activeTag: '' };
+          if (!data.dumpBook || typeof data.dumpBook !== 'object') data.dumpBook = { items: [], textDraft: '', titleDraft: '', linkDraft: '', tagDraft: '', searchQuery: '', filter: 'all', activeTag: '', bulkSelectedIds: [] };
           if (!Array.isArray(data.dumpBook.items)) data.dumpBook.items = [];
           if (!['all','text','link','image','text_file','file'].includes(data.dumpBook.filter)) data.dumpBook.filter = 'all';
           if (typeof data.dumpBook.searchQuery !== 'string') data.dumpBook.searchQuery = '';
           if (typeof data.dumpBook.tagDraft !== 'string') data.dumpBook.tagDraft = '';
           if (typeof data.dumpBook.activeTag !== 'string') data.dumpBook.activeTag = '';
+          if (!Array.isArray(data.dumpBook.bulkSelectedIds)) data.dumpBook.bulkSelectedIds = [];
           return data.dumpBook;
         }
         function dumpKindLabel(kind) { return ({ note: 'Note', text: 'Pasted text', link: 'Link', image: 'Local image', text_file: 'Local text file', file: 'Local PDF' }[kind] || 'Saved item'); }
@@ -1245,6 +1246,77 @@
         function openDumpOrganizationPreview() {
           const text = dumpOrganizerText(); if (!text) return toast('Save some words, a link, or a titled image before asking for organization help.');
           modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Dump Book / Review-first organization</div><h2 id="modal-title">Choose what may be organized</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">Nothing has been sent. If you continue, this text will be copied to the Brain Dump organizer. Images stay in this browser; only their title is included. You still choose whether to press the final <strong>Organize with AI</strong> button, and you review every filing suggestion.</p><div class="field"><label for="dump-organizer-preview">Material prepared for review</label><textarea id="dump-organizer-preview" readonly>${esc(text)}</textarea></div></div><div class="modal-foot"><button class="button" data-action="close-modal">Keep private</button><button class="button gold" id="continue-dump-organizer">Continue to organizer</button></div></div>`, () => document.getElementById('continue-dump-organizer')?.addEventListener('click', () => { inbox().draft = text; data.activeView = 'inbox'; logEvent('Dump Book prepared for review', 'Organizer handoff', 'Author copied selected local material to the review-first organizer; no filing occurred.'); persist('Material copied to the organizer for your review.'); closeModal(); render(); toast('Review the text, then choose Organize with AI only if you want suggestions.'); }));
+        }
+        const BULK_REVIEW_MAX_SOURCES = 4;
+        const BULK_REVIEW_MAX_PDF_BYTES = 24 * 1024 * 1024;
+        const BULK_REVIEW_TEXT_PER_SOURCE = 7500;
+        let bulkMasterbookReview = null;
+        function isBulkReviewItem(item) { return ['text', 'text_file', 'link', 'file'].includes(item?.kind || ''); }
+        function bulkSelectedItems() { const box = dumpBook(); const ids = new Set(box.bulkSelectedIds || []); return (box.items || []).filter(item => ids.has(item.id) && isBulkReviewItem(item)); }
+        function setBulkSourceSelected(id, checked) {
+          const box = dumpBook(); const item = box.items.find(entry => entry.id === id); if (!item || !isBulkReviewItem(item)) return;
+          const selected = new Set(box.bulkSelectedIds || []);
+          if (checked) {
+            if (selected.size >= BULK_REVIEW_MAX_SOURCES) return toast(`Choose up to ${BULK_REVIEW_MAX_SOURCES} items for one review.`);
+            selected.add(id);
+          } else selected.delete(id);
+          box.bulkSelectedIds = Array.from(selected); persist('', true); render();
+        }
+        function sourceNameFor(id) { const item = dumpBook().items.find(entry => entry.id === id); return item?.title || item?.fileName || 'Saved item'; }
+        function openBulkMasterbookConsent() {
+          const selected = bulkSelectedItems();
+          if (!selected.length) return toast('Select at least one PDF, note, text file, or saved link first.');
+          const pdfBytes = selected.filter(item => item.kind === 'file').reduce((total, item) => total + Number(item.size || 0), 0);
+          if (pdfBytes > BULK_REVIEW_MAX_PDF_BYTES) return toast(`Choose smaller PDFs. Selected PDFs must total ${dumpBytes(BULK_REVIEW_MAX_PDF_BYTES)} or less.`);
+          const sourceRows = selected.map(item => `<div class="data-pair"><small>${esc(dumpKindLabel(item.kind))}</small><span><strong>${esc(item.title || item.fileName || 'Untitled item')}</strong><br>${esc(item.fileName || item.kind === 'link' ? item.url || item.fileName || '' : '')}${item.size ? ` · ${esc(dumpBytes(item.size))}` : ''}</span></div>`).join('');
+          modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Dump Book / Multi-source Masterbook review</div><h2 id="modal-title">Send these ${selected.length} selected item${selected.length === 1 ? '' : 's'} for proposal review?</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">Everything listed is private in this browser right now. Pressing the final button sends only these selected PDFs and information items to the secure reviewer to make <strong>provisional Masterbook proposals</strong>. It does not add, organize, edit, or delete anything by itself.</p><div class="data-list">${sourceRows}</div><p class="composer-disclosure">You can select up to ${BULK_REVIEW_MAX_SOURCES} items at once. PDFs are sent as their selected files; notes and text files send up to the first ${BULK_REVIEW_TEXT_PER_SOURCE.toLocaleString()} characters, while saved links send their title and URL only. The returned proposals remain separate until you choose exactly which ones to add to Masterbook.</p></div><div class="modal-foot"><button class="button" data-action="close-modal">Keep private</button><button class="button gold" id="request-bulk-masterbook-review">Create Masterbook proposals</button></div></div>`, () => document.getElementById('request-bulk-masterbook-review')?.addEventListener('click', requestBulkMasterbookReview));
+        }
+        async function bulkSourcePayloads(selected) {
+          const pdfBytes = selected.filter(item => item.kind === 'file').reduce((total, item) => total + Number(item.size || 0), 0);
+          if (pdfBytes > BULK_REVIEW_MAX_PDF_BYTES) throw new Error(`Selected PDFs must total ${dumpBytes(BULK_REVIEW_MAX_PDF_BYTES)} or less.`);
+          const sources = [];
+          for (const item of selected) {
+            const title = item.title || item.fileName || 'Untitled item';
+            if (item.kind === 'file') {
+              const record = await fileLockerRead(item.lockerId); if (!record?.blob) throw new Error(`${title} is no longer available in the local file locker.`);
+              sources.push({ id: item.id, title, kind: 'pdf', mime: record.mime || item.mime || 'application/pdf', size: record.size, dataUrl: await readBlobAsDataUrl(record.blob) });
+              continue;
+            }
+            let text = '';
+            if (item.kind === 'text_file') { const record = await fileLockerRead(item.lockerId); if (!record?.blob) throw new Error(`${title} is no longer available in the local file locker.`); text = await record.blob.text(); }
+            else if (item.kind === 'link') text = `Saved link title: ${title}\nURL: ${item.url || ''}`;
+            else text = dumpItemText(item);
+            text = String(text || '').trim(); if (!text) throw new Error(`${title} has no readable text to review.`);
+            sources.push({ id: item.id, title, kind: item.kind, mime: item.mime || 'text/plain', size: Number(item.size || new Blob([text]).size), text: text.slice(0, BULK_REVIEW_TEXT_PER_SOURCE) });
+          }
+          return sources;
+        }
+        async function requestBulkMasterbookReview() {
+          const selected = bulkSelectedItems(); const button = document.getElementById('request-bulk-masterbook-review'); const original = button?.textContent;
+          if (!selected.length) return toast('Choose at least one item before requesting a review.');
+          try {
+            if (button) { button.disabled = true; button.textContent = 'Preparing selected material…'; }
+            const sources = await bulkSourcePayloads(selected);
+            if (button) button.textContent = 'Creating proposals…';
+            const response = await fetch('/api/trpc/bulkReview.proposeMasterbook?batch=1', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ 0: { json: { sources } } }) });
+            const payload = await response.json(); if (!response.ok || payload?.[0]?.error) throw new Error(payload?.[0]?.error?.json?.message || 'The multi-source reviewer could not complete this request.');
+            const result = payload?.[0]?.result?.data?.json || payload?.result?.data?.json; if (!Array.isArray(result?.items)) throw new Error('The reviewer returned an unexpected proposal format.');
+            bulkMasterbookReview = { summary: result.summary || '', items: result.items.map(item => ({ ...item, selected: true })), sourceIds: selected.map(item => item.id) };
+            logEvent('Bulk Dump Book reviewed', 'Masterbook proposals prepared', `${result.items.length} proposals are ready for author review from ${selected.length} selected Dump Book item${selected.length === 1 ? '' : 's'}.`); closeModal(); showBulkMasterbookReview();
+          } catch (error) { toast(error?.message || 'The multi-source reviewer is unavailable.'); if (button) { button.disabled = false; button.textContent = original || 'Create Masterbook proposals'; } }
+        }
+        function showBulkMasterbookReview() {
+          const review = bulkMasterbookReview; if (!review) return;
+          const cards = review.items.length ? review.items.map((item, index) => `<label class="suggestion-card"><input type="checkbox" data-bulk-masterbook-index="${index}" ${item.selected !== false ? 'checked' : ''}><span><small>${esc(displayType(item.type))} · from ${esc((item.sourceIds || []).map(sourceNameFor).join(', '))}</small><strong>${esc(item.title)}</strong><p>${esc(item.description)}</p>${item.tags?.length ? `<div class="tag-row">${item.tags.map(tag => `<span class="tag-chip">#${esc(tag)}</span>`).join('')}</div>` : ''}</span></label>`).join('') : '<div class="book-empty">No clear Masterbook candidates were found. Your selected Dump Book material remains unchanged.</div>';
+          modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Multi-source review / Separate proposals</div><h2 id="modal-title">Choose what belongs in Masterbook</h2></div><button class="modal-close" data-action="discard-bulk-masterbook-review" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">${esc(review.summary || 'Review every proposal before filing it.')} Nothing has been added yet. Each checked proposal will become a new local Masterbook record only after the final add action.</p><div class="suggestion-list" style="max-height:440px">${cards}</div></div><div class="modal-foot"><button class="button danger" data-action="discard-bulk-masterbook-review">Discard proposals</button>${review.items.length ? '<button class="button gold" data-action="file-bulk-masterbook-proposals">Add selected to Masterbook</button>' : ''}</div></div>`);
+        }
+        function discardBulkMasterbookReview() { bulkMasterbookReview = null; closeModal(); toast('Bulk review proposals discarded. Original Dump Book items remain private and unchanged.'); }
+        function fileBulkMasterbookProposals() {
+          const review = bulkMasterbookReview; if (!review) return; const checks = Array.from(document.querySelectorAll('[data-bulk-masterbook-index]')); const selected = checks.filter(check => check.checked).map(check => review.items[Number(check.dataset.bulkMasterbookIndex)]).filter(Boolean);
+          if (!selected.length) return toast('Choose at least one Masterbook proposal to add.');
+          const categoryMap = { character: 'characters', world_rule: 'worldRules', location: 'locations', lore: 'lore', faction: 'factions', artifact: 'artifacts', plot_thread: 'plotThreads' };
+          selected.forEach(item => { const category = categoryMap[item.type]; if (!category) return; const record = recordFromSuggestion(category, item); record.sourceDumpBookIds = item.sourceIds || []; record.history = [{ at: now(), action: 'Filed from selected Dump Book review', summary: `Author approved this proposal from: ${(item.sourceIds || []).map(sourceNameFor).join(', ')}.` }]; data.masterbook[category].unshift(record); logEvent('Masterbook filed from Dump Book', item.title, `${categories[category].singular} added after explicit author review.`); });
+          dumpBook().bulkSelectedIds = []; bulkMasterbookReview = null; persist(`${selected.length} approved proposal${selected.length === 1 ? '' : 's'} added to Masterbook.`); closeModal(); navigateTo('masterbook'); toast('Selected proposals were added to your local Masterbook. Original Dump Book items are unchanged.');
         }
         function composer() { return data.composer || (data.composer = { brief: '', requirements: '', pov: '', tone: '', length: 'medium', generated: '', sectionTitle: '', craftNote: '' }); }
         function styleGuide() { return project().styleGuide || (project().styleGuide = { atmosphere: '', proseRules: '', dialogueRules: '' }); }
@@ -1410,7 +1482,10 @@
           document.getElementById('temporary-fill-text')?.addEventListener('input', event => { temporaryFillCache = event.target.value; clearTimeout(temporaryFillWriteTimer); temporaryFillWriteTimer = setTimeout(() => persistTemporaryFillText(), 350); });
           const tagDiscoveryHost = document.querySelector('.dump-discovery');
           if (tagDiscoveryHost && !document.getElementById('dump-tag-discovery')) { const box = dumpBook(); const tags = dumpKnownTags(box.items || []); if (tags.length) tagDiscoveryHost.insertAdjacentHTML('beforeend', `<div id="dump-tag-discovery" class="dump-tag-filter-row" role="group" aria-label="Filter saved things by custom tag"><span class="dump-tag-filter-label">Your tags</span><button class="dump-filter ${!box.activeTag ? 'active' : ''}" data-action="set-dump-tag" data-tag="" aria-pressed="${!box.activeTag}">All tags</button>${tags.map(tag => `<button class="dump-filter ${box.activeTag?.toLowerCase() === tag.toLowerCase() ? 'active' : ''}" data-action="set-dump-tag" data-tag="${esc(tag)}" aria-pressed="${box.activeTag?.toLowerCase() === tag.toLowerCase()}">#${esc(tag)}</button>`).join('')}</div>`); }
-          document.querySelectorAll('[data-dump-item-id]').forEach(card => { const item = dumpBook().items.find(entry => entry.id === card.dataset.dumpItemId); if (!item) return; const tags = dumpItemTags(item); const body = card.querySelector('.dump-item-body'); const actions = card.querySelector('.dump-item-actions'); if (body && tags.length) body.insertAdjacentHTML('beforeend', `<div class="dump-item-tags" aria-label="Tags">${tags.map(tag => `<button class="dump-item-tag" data-action="set-dump-tag" data-tag="${esc(tag)}">#${esc(tag)}</button>`).join('')}</div>`); if (actions) actions.insertAdjacentHTML('afterbegin', `${item.lockerId ? `<button class="button small" data-action="download-local-dump-file" data-id="${esc(item.id)}">Download</button>` : ''}<button class="button small" data-action="fill-temporary-desk" data-id="${esc(item.id)}">Fill temporary desk</button><button class="button small" data-action="edit-dump-tags" data-id="${esc(item.id)}">Tags</button>`); });
+          const dumpSectionHead = document.querySelector('.dump-items')?.closest('section')?.querySelector('.card-head');
+          if (dumpSectionHead && !document.getElementById('bulk-masterbook-review-button')) { const selectedCount = bulkSelectedItems().length; dumpSectionHead.insertAdjacentHTML('beforeend', `<button id="bulk-masterbook-review-button" class="button ${selectedCount ? 'gold' : ''}" data-action="open-bulk-masterbook-consent">Review selected ideas${selectedCount ? ` · ${selectedCount}` : ''}</button>`); }
+          document.querySelectorAll('[data-dump-item-id]').forEach(card => { const item = dumpBook().items.find(entry => entry.id === card.dataset.dumpItemId); if (!item) return; const tags = dumpItemTags(item); const body = card.querySelector('.dump-item-body'); const actions = card.querySelector('.dump-item-actions'); if (body && isBulkReviewItem(item)) body.insertAdjacentHTML('afterbegin', `<label class="check-line" style="margin:0 0 8px"><input type="checkbox" data-bulk-source-id="${esc(item.id)}" ${(dumpBook().bulkSelectedIds || []).includes(item.id) ? 'checked' : ''}><span>Include in Masterbook review</span></label>`); if (body && tags.length) body.insertAdjacentHTML('beforeend', `<div class="dump-item-tags" aria-label="Tags">${tags.map(tag => `<button class="dump-item-tag" data-action="set-dump-tag" data-tag="${esc(tag)}">#${esc(tag)}</button>`).join('')}</div>`); if (actions) actions.insertAdjacentHTML('afterbegin', `${item.lockerId ? `<button class="button small" data-action="download-local-dump-file" data-id="${esc(item.id)}">Download</button>` : ''}<button class="button small" data-action="fill-temporary-desk" data-id="${esc(item.id)}">Fill temporary desk</button><button class="button small" data-action="edit-dump-tags" data-id="${esc(item.id)}">Tags</button>`); });
+          document.querySelectorAll('[data-bulk-source-id]').forEach(control => control.addEventListener('change', event => setBulkSourceSelected(event.currentTarget.dataset.bulkSourceId, event.currentTarget.checked)));
           ['brief','requirements','pov','tone','length'].forEach(key => document.getElementById(`compose-${key}`)?.addEventListener('input', () => { composerInputValues(); persist('', true); }));
         }
         function updateMentionStrip(text) {
@@ -1883,6 +1958,9 @@
           else if (action === 'open-temporary-organizer') openTemporaryOrganizationPreview();
           else if (action === 'discard-temporary-fill') discardTemporaryFill();
           else if (action === 'open-dump-organizer') openDumpOrganizationPreview();
+          else if (action === 'open-bulk-masterbook-consent') openBulkMasterbookConsent();
+          else if (action === 'discard-bulk-masterbook-review') discardBulkMasterbookReview();
+          else if (action === 'file-bulk-masterbook-proposals') fileBulkMasterbookProposals();
           else if (action === 'set-dump-filter') { dumpBook().filter = target.dataset.dumpFilter || 'all'; persist('', true); render(); }
           else if (action === 'set-dump-tag') { dumpBook().activeTag = target.dataset.tag || ''; persist('', true); render(); }
           else if (action === 'studio-set-tag') { dumpBook().activeTag = target.dataset.tag || ''; persist('', true); render(); }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseCoWriterResponse, parseComposerResponse, parseConsistencyResponse, parseCriticResponse, parseDialogueResponse, parseLoreResponse, parseOrganizerResponse, parseRewriteResponse, parseTemporaryExtractionResponse } from "./routers";
+import { parseBulkMasterbookResponse, parseCoWriterResponse, parseComposerResponse, parseConsistencyResponse, parseCriticResponse, parseDialogueResponse, parseLoreResponse, parseOrganizerResponse, parseRewriteResponse, parseTemporaryExtractionResponse } from "./routers";
 
 describe("Brain Dump organizer response validation", () => {
   it("accepts a complete structured suggestion", () => {
@@ -98,5 +98,26 @@ describe("Brain Dump organizer response validation", () => {
     expect(result.text).toContain("gate bell");
     expect(result.note).toContain("Check names");
     expect(() => parseTemporaryExtractionResponse(JSON.stringify({ text: "Missing the review note" }))).toThrow();
+  });
+
+  it("accepts source-linked Masterbook candidates from a multi-item review without filing them", () => {
+    const result = parseBulkMasterbookResponse(JSON.stringify({
+      summary: "Two provisional records were found across the selected notes and PDF.",
+      items: [{
+        type: "location",
+        category: "Worldbuilding",
+        tags: ["gate", "city"],
+        title: "Ember Gate",
+        description: "A possible city threshold mentioned in both selected sources.",
+        role: "",
+        status: "Provisional",
+        stage: "",
+        pov: "",
+        linked: "Aren Vale",
+        sourceIds: ["dump-note-1", "dump-pdf-2"],
+      }],
+    }));
+    expect(result.items[0]?.sourceIds).toEqual(["dump-note-1", "dump-pdf-2"]);
+    expect(() => parseBulkMasterbookResponse(JSON.stringify({ summary: "Missing sources", items: [{ type: "lore" }] }))).toThrow();
   });
 });
