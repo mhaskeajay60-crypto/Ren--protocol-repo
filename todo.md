@@ -27,4 +27,4 @@
 - [x] Validate Markdown import end to end with an exported sample, confirmation, restored folio, and clean-state cleanup.
 - [x] Validate Story Map, Connections, revision shelf, and Progress at a phone-sized layout before final delivery.
 - [x] Support a safe local `?view=` workspace link for opening and validating an existing author-tool view directly.
-- [ ] Save and deliver the expanded local-first workspace checkpoint.
+- [x] Save the expanded local-first workspace checkpoint.
