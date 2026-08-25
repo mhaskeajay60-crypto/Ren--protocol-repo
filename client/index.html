@@ -693,6 +693,106 @@
       @media (max-width:760px) { .rail { position:static; min-height:auto; padding:14px 14px 11px; background:rgba(8,9,14,.95); } .nav { grid-template-columns:repeat(3,1fr); } .nav-button { min-height:40px; padding:0 6px; } .nav-copy strong { font-size:10px; white-space:normal; text-align:center; } .nav-copy small, .nav-icon { display:none; } .more-tools { grid-column:1 / -1; } .more-tools .nav { grid-template-columns:repeat(3,1fr); } .rail-bottom { display:none; } .workspace { padding:0 14px 28px; } .feature-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); margin-top:14px; } .feature-tab { min-height:54px; } .view-head h1 { font-size:34px; } .top-actions .button.gold { display:inline-flex; } }
       @media (min-width: 761px) { .inspector-toggle { display: inline-flex !important; } }
       @media (max-width: 760px) { .rail { position: static; min-height: auto; padding: 14px 14px 11px; background: rgba(8,9,14,.95); } .nav { grid-template-columns: repeat(3,1fr); } .nav-button { min-height: 40px; padding: 0 6px; } .nav-copy strong { font-size: 10px; white-space: normal; text-align: center; } .nav-icon { display: none; } .more-tools { grid-column: 1 / -1; } .more-tools .nav { grid-template-columns: repeat(3,1fr); } .rail-bottom { display: none; } .workspace { padding: 0 14px 28px; } .view-head h1 { font-size: 34px; } .top-actions .button.gold { display: inline-flex; } }
+      /* Bright premium restoration: keep the full author toolkit visible without returning to the dark archive look. */
+      :root { --ink:#f6f7fb; --ink-2:#eef0f7; --ink-3:#e6e9f2; --surface:#ffffff; --surface-solid:#ffffff; --paper:#344055; --paper-muted:#68758b; --gold:#7463df; --gold-bright:#5746bd; --gold-dim:#f0eeff; --line:#e0e4ec; --line-gold:#bdb5f2; --danger:#be5f70; --success:#4b9373; --serif:Georgia,"Iowan Old Style","Times New Roman",serif; --sans:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --mono:ui-monospace,"SFMono-Regular",Consolas,monospace; }
+      html, body { background:#f6f7fb; color:#344055; }
+      .app { background:#f6f7fb; }
+      .app::before { display:block; opacity:1; background:radial-gradient(circle at 8% 4%,rgba(124,108,232,.12),transparent 27%),radial-gradient(circle at 91% 10%,rgba(193,186,249,.18),transparent 25%),linear-gradient(150deg,#fbfbfe 0%,#f3f4f9 55%,#eef0f7 100%); }
+      .app::after { display:none; }
+      .shell { grid-template-columns:250px minmax(0,1fr); }
+      .rail { background:rgba(255,255,255,.92); border-right:1px solid #e0e4ec; box-shadow:12px 0 30px rgba(47,55,72,.05); }
+      .brand-mark { border-color:#d8d3ff; background:#f4f2ff; border-radius:12px; }
+      .brand-text strong { color:#344055; font-family:var(--sans); font-size:17px; }
+      .brand-text span, .protocol-label { color:#7463df; font-family:var(--sans); font-size:9px; letter-spacing:.08em; }
+      .protocol-label { margin:5px 0 0; }
+      .nav { gap:5px; }
+      .nav-button { min-height:45px; border-radius:12px; color:#59677d; }
+      .nav-button:hover { color:#4f42ad; background:#f5f3ff; transform:none; }
+      .nav-button.active { color:#4d3faa; border-color:#d6d0ff; background:#efedff; box-shadow:none; }
+      .nav-copy strong { font-family:var(--sans); font-size:12px; }
+      .nav-copy small { display:block; color:#8792a4; font-family:var(--sans); font-size:9px; letter-spacing:.03em; text-transform:none; }
+      .nav-icon { color:#7463df; }
+      .nav-section-label { margin:12px 6px 5px; color:#8994a8; font:800 10px/1 var(--sans); letter-spacing:.08em; text-transform:uppercase; }
+      .rail-bottom { margin-top:auto; }
+      .local-card { border-color:#e4e7ef; background:#fafbfe; border-radius:14px; }
+      .local-card .eyebrow { color:#6f60ce; }
+      .local-card p, .rail-footer { color:#758196; }
+      .workspace { padding:0 28px 46px; }
+      .topbar { border-color:#e4e7ee; }
+      .breadcrumb { color:#738096; }
+      .breadcrumb .kicker, .eyebrow { color:#7463df; font-family:var(--sans); letter-spacing:.08em; }
+      .breadcrumb strong { color:#344055; font-family:var(--sans); }
+      .status { color:#748197; font-family:var(--sans); }
+      .button { border-color:#dce1e9; border-radius:10px; background:#fff; color:#536076; box-shadow:0 4px 12px rgba(47,55,72,.04); }
+      .button:hover { border-color:#bbb2f0; background:#f8f7ff; color:#4d3faa; }
+      .button.gold { border-color:#6d5ce8; background:#6d5ce8; color:#fff; box-shadow:0 8px 18px rgba(109,92,232,.22); }
+      .button.gold:hover { border-color:#594ac7; background:#594ac7; color:#fff; }
+      .button.ghost { color:#6e7c91; }
+      .button.ghost:hover { color:#4d3faa; background:#f5f3ff; }
+      .feature-tabs { grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin:18px 0 4px; border:0; background:transparent; }
+      .feature-tab { min-height:64px; border:1px solid #e2e5ed; border-radius:13px; background:rgba(255,255,255,.9); color:#455268; box-shadow:0 5px 16px rgba(47,55,72,.045); }
+      .feature-tab:hover { border-color:#c9c1f4; background:#f7f6ff; color:#4d3faa; }
+      .feature-tab svg { color:#7463df; }
+      .feature-tab strong { font:750 12px/1.1 var(--sans); }
+      .feature-tab small { color:#7d899d; font-family:var(--sans); letter-spacing:.02em; text-transform:none; }
+      .view-head h1 { color:#344055; font-family:var(--sans); font-weight:800; letter-spacing:-.035em; }
+      .view-head h1 em { color:#6556c9; }
+      .view-head p, .profile-dek { color:#68758b; font-family:var(--sans); }
+      .dashboard-card, .planner-panel, .note-card, .book-section, .suggestion-panel, .composer-output { border-color:#e1e5ed; border-radius:16px; background:rgba(255,255,255,.94); box-shadow:0 10px 28px rgba(47,55,72,.07); }
+      .dashboard-card::before, .dashboard-main::after { display:none; }
+      .dashboard-card.primary-folio, .dashboard-main > .dashboard-card:first-child, .dashboard-main > .dashboard-card:first-child:not(.primary-folio) { border-color:#ded8ff; border-radius:18px; background:linear-gradient(135deg,#fff 0%,#f7f6ff 100%); color:#344055; box-shadow:0 12px 30px rgba(94,82,193,.11); }
+      .dashboard-card.primary-folio::after, .dashboard-main > .dashboard-card:first-child::after { display:none; }
+      .dashboard-card.primary-folio .card-head h2, .dashboard-card.primary-folio .profile-dek, .dashboard-main > .dashboard-card:first-child:not(.primary-folio) .card-head h2, .dashboard-main > .dashboard-card:first-child:not(.primary-folio) .eyebrow { color:inherit; }
+      .dashboard-card.primary-folio .profile-dek { color:#68758b; }
+      .dashboard-card.primary-folio .button { border-color:#dce1e9; background:#fff; color:#536076; }
+      .dashboard-card.primary-folio .button.gold { border-color:#6d5ce8; background:#6d5ce8; color:#fff; }
+      .card-head h2, .project-slip h2, .note-card h2, .section-toggle, .entry-card h3, .timeline-event h3, .scene-lane h3, .scene-card strong, .issue-row strong, .composer-output-head h2, .suggestion-head h2, .modal-head h2 { color:#344055; font-family:var(--sans); }
+      .metric { border-color:#e6e9ef; border-top-color:#cbc4f4; border-radius:12px; background:#fafaff; }
+      .metric small, .goal-label, .metric span { color:#78859a; }
+      .metric strong, .goal-label strong { color:#5143bd; font-family:var(--sans); font-weight:800; }
+      .progress-track { background:#eaecf3; border-radius:999px; }
+      .progress-track span { background:linear-gradient(90deg,#7463df,#a095ee); box-shadow:none; border-radius:999px; }
+      .quick-action { min-height:78px; border-color:#e2e5ed; border-radius:13px; background:#fff; color:#455268; box-shadow:none; }
+      .quick-action:hover { border-color:#c6bef1; background:#f8f7ff; }
+      .quick-action svg, .quick-action strong { color:#5143bd; }
+      .quick-action small { color:#7b879a; }
+      .project-slip { border-color:#e1e5ed; border-left:3px solid #7463df; border-radius:15px; background:#fff; box-shadow:0 8px 22px rgba(47,55,72,.06); }
+      .project-slip p, .activity-row span { color:#718097; }
+      .activity-row { border-color:#e7eaf0; }
+      .activity-row time { color:#7463df; font-family:var(--sans); }
+      .activity-row strong { color:#405067; font-family:var(--sans); }
+      .chapter-index, .book-section, .scene-lane, .scene-card, .entry-card, .issue-row, .suggestion-card, .palette-result { border-color:#e1e5ed; background:#fff; }
+      .chapter-row { color:#718097; border-radius:10px; }
+      .chapter-row:hover { color:#4d3faa; background:#f7f6ff; }
+      .chapter-row.active { border-left-color:#7463df; background:#efedff; color:#4d3faa; }
+      .manuscript { border-color:#e2e5ed; border-radius:18px; background:#fff; box-shadow:0 12px 34px rgba(47,55,72,.1); }
+      .manuscript-top, .mention-strip { background:#fbfbfe; border-color:#e7eaf0; }
+      .manuscript-body { background-image:none; }
+      .draft-tab { border-radius:9px; color:#778398; font-family:var(--sans); letter-spacing:0; }
+      .draft-tab.active { border-bottom:0; background:#efedff; color:#4d3faa; }
+      .chapter-title-input, .editor { color:#344055; font-family:var(--serif); }
+      .chapter-dek, .mention-helper { color:#7b879a; font-family:var(--sans); }
+      .paper-button { border-radius:10px; background:#6d5ce8; color:#fff; }
+      .writing-more summary { border-color:#dce1e9; border-radius:10px; background:#fff; color:#59677d; }
+      .advanced-writer-actions { border-color:#ded8ff; border-radius:14px; background:#fff; box-shadow:0 14px 34px rgba(47,55,72,.15); }
+      .advanced-writer-actions .paper-button { background:#f0eeff; color:#5143bd; }
+      .searchbox input, .field input, .field textarea, .field select { border-color:#dfe3eb; border-radius:10px; background:#fff; color:#344055; }
+      .inbox-paper, .composer-brief { border-color:#e1e5ed; border-radius:16px; background:#fff; box-shadow:0 10px 28px rgba(47,55,72,.07); }
+      .inbox-paper p, .composer-brief > p, .composer-disclosure { color:#6e7b90; }
+      .inbox-paper textarea, .composer-brief textarea, .composer-brief input, .composer-brief select, .composer-output textarea { border-color:#dfe3eb; border-radius:10px; background:#fff; color:#344055; }
+      .privacy-slip { border-color:#d8d3ff; border-left-color:#7463df; background:#f7f6ff; }
+      .dump-file-label, .dump-item, .dump-filter { border-color:#e0e4ec; border-radius:12px; background:#fff; color:#536076; }
+      .dump-file-label:hover, .dump-filter:hover { border-color:#bcb3f5; background:#f8f7ff; color:#5548bb; }
+      .dump-filter.active { border-color:#7463df; background:#eeecff; color:#4b3daf; }
+      .dump-preview { background:#f2f0ff; color:#594ab8; }
+      .dump-item-body small { color:#7463df; }
+      .dump-item-body h3 { color:#344055; font-family:var(--sans); }
+      .dump-item-body p { color:#68758b; }
+      .inspector { border-color:#e3e7ee; background:#fff; box-shadow:-18px 0 42px rgba(34,47,70,.14); }
+      .modal-backdrop { background:rgba(47,55,72,.24); backdrop-filter:blur(5px); }
+      .modal { border-color:#e3e7ee; border-radius:20px; background:#fff; box-shadow:0 24px 64px rgba(34,47,70,.2); }
+      .modal-close, .toast { border-color:#e1e5ec; border-radius:10px; background:#fff; color:#536076; }
+      @media (max-width:760px) { .rail { background:rgba(255,255,255,.97); } .nav-section-label { grid-column:1/-1; margin:10px 2px 2px; } .workspace { padding:0 14px 28px; } .feature-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; } }
     </style>
   </head>
@@ -828,14 +928,14 @@
           data.activeView = view; data.draft = currentChapter().versions[data.selectedVersion] || ''; persist('', true); render();
         }
         function goBack() { const trail = navigationTrail(); data.activeView = trail.pop() || 'dashboard'; data.draft = currentChapter().versions[data.selectedVersion] || ''; persist('', true); render(); }
-        function featureTabs() { return `<nav class="feature-tabs" aria-label="Feature shortcuts"><button class="feature-tab" data-action="set-view" data-view="chapter">${svg.write}<span><strong>Writing desk</strong><small>Draft & revise</small></span></button><button class="feature-tab" data-action="set-view" data-view="dumpbook">${svg.archive}<span><strong>Dump Book</strong><small>Capture everything</small></span></button><button class="feature-tab" data-action="set-view" data-view="architecture">${svg.target}<span><strong>Story planning</strong><small>Scenes & arcs</small></span></button><button class="feature-tab" data-action="set-view" data-view="studio">${svg.grid}<span><strong>AI Studio</strong><small>Review on request</small></span></button></nav>`; }
+        function featureTabs() { return `<nav class="feature-tabs" aria-label="Feature shortcuts"><button class="feature-tab" data-action="set-view" data-view="chapter">${svg.write}<span><strong>Writing desk</strong><small>Draft & revise</small></span></button><button class="feature-tab" data-action="set-view" data-view="dumpbook">${svg.archive}<span><strong>Dump Book</strong><small>Capture everything</small></span></button><button class="feature-tab" data-action="set-view" data-view="masterbook">${svg.book}<span><strong>Story book</strong><small>People & rules</small></span></button><button class="feature-tab" data-action="set-view" data-view="architecture">${svg.target}<span><strong>Story plan</strong><small>Scenes & arcs</small></span></button><button class="feature-tab" data-action="set-view" data-view="studio">${svg.grid}<span><strong>AI Studio</strong><small>Ideas & review</small></span></button><button class="feature-tab" data-action="set-view" data-view="critic">${svg.flag}<span><strong>Story Critic</strong><small>Direct notes</small></span></button></nav>`; }
         function appShell(main) {
           const activeChapter = currentChapter();
           return `<div class="shell">
             <aside class="rail" aria-label="Primary navigation">
               <div class="brand"><img class="brand-mark" src="/manus-storage/ren-protocol-sigil_fa90a1ba.png" alt="The Ren Protocol mark"><div class="brand-text"><strong>The Ren Protocol</strong><span>Private manuscript archive</span></div></div>
               <div class="protocol-label">Choose what you want to do</div>
-              <nav class="nav">${navButton('dashboard','grid','Home','Start here')}${navButton('chapter','write','Write','Your chapter')}${navButton('dumpbook','archive','Dump Book','Capture ideas')}${navButton('architecture','target','Plan story','Big picture')}${navButton('masterbook','book','Story book','People and places')}${navButton('progress','clock','My progress','Goals and focus')}<details class="more-tools"><summary>More tools</summary><div class="nav">${navButton('studio','grid','AI Studio','Ideas and review')}${navButton('critic','target','Story Critic','Direct chapter notes')}${navButton('planner','grid','Scene cards','Plan each moment')}${navButton('connections','thread','Connections','See story links')}${navButton('notes','note','Notes','Keep your ideas')}${navButton('timeline','clock','Story history','See what changed')}${navButton('inbox','archive','Sort my ideas','Brain Dump helper')}${navButton('composer','write','Writing helper','Guided drafting')}</div></details></nav>
+              <nav class="nav">${navButton('dashboard','grid','Home','Start here')}${navButton('chapter','write','Write','Your chapter')}${navButton('dumpbook','archive','Dump Book','Capture ideas')}${navButton('architecture','target','Plan story','Big picture')}${navButton('masterbook','book','Story book','People and places')}${navButton('progress','clock','My progress','Goals and focus')}<div class="nav-section-label">Create, review & organize</div>${navButton('studio','grid','AI Studio','Ideas and review')}${navButton('critic','target','Story Critic','Direct chapter notes')}${navButton('planner','grid','Scene cards','Plan each moment')}${navButton('connections','thread','Connections','See story links')}${navButton('notes','note','Notes','Keep your ideas')}${navButton('timeline','clock','Story history','See what changed')}${navButton('inbox','archive','Sort my ideas','Brain Dump helper')}${navButton('composer','write','Writing helper','Guided drafting')}</nav>
               <div class="rail-bottom"><div class="local-card"><div class="eyebrow">${esc(project().title)}</div><p>Everything you make stays safely in this browser.</p></div><div class="rail-footer">Private · local only</div></div>
             </aside>
             <main class="workspace">
@@ -862,7 +962,7 @@
           return `<section class="main-view friendly-home">
             <div class="view-head"><div><div class="eyebrow">Your author desk</div><h1>Choose the next <em>small move.</em></h1><p>Your manuscript, ideas, and planning records stay safely in this browser.</p></div></div>
             <section class="dashboard-card primary-folio"><div class="card-head"><div><div class="eyebrow">Current folio</div><h2>Write your next bit</h2></div><span style="color:var(--gold);font:10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase">${getWords(current.versions?.main || '').toLocaleString()} words in this chapter</span></div><p class="profile-dek" style="max-width:580px">Open <strong>${esc(current.title || 'your chapter')}</strong> and write anything you want. It can be messy. You can shape it later.</p><div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:19px"><button class="button gold" data-action="set-view" data-view="chapter">✍ Start writing</button><button class="button" data-action="new-chapter">+ New chapter</button><button class="button" data-action="open-final-pdf-export">${svg.download} Download book PDF</button></div></section>
-            <div class="dashboard-grid" style="margin-top:18px"><div class="dashboard-main"><section class="dashboard-card"><div class="eyebrow">Feature desk</div><h2 style="margin:7px 0 15px;font:600 26px/1.05 var(--serif)">Keep your story moving</h2><div class="quick-grid"><button class="quick-action" data-action="open-scene-form">${svg.grid}<span><strong>Plan a scene</strong><small>Write down what happens next</small></span></button><button class="quick-action" data-action="set-view" data-view="masterbook">${svg.book}<span><strong>Story book</strong><small>People, places, and rules</small></span></button><button class="quick-action" data-action="set-view" data-view="dumpbook">${svg.archive}<span><strong>Dump ideas</strong><small>Notes, links, images, and text files</small></span></button><button class="quick-action" data-action="set-view" data-view="architecture">${svg.target}<span><strong>Story plan</strong><small>See the big picture</small></span></button></div></section></div><aside class="dashboard-side"><section class="project-slip"><div class="eyebrow">Your story</div><h2>${esc(project().title || 'My novel')}</h2><p>${esc(project().premise || 'Add one sentence about your story whenever you are ready.')}</p><button class="button small" style="margin-top:14px" data-action="open-settings">Edit story details</button></section><section class="dashboard-card"><div class="eyebrow">Today’s ledger</div><div class="metric-row" style="grid-template-columns:1fr 1fr;margin-top:12px"><div class="metric"><small>Today</small><strong>${today}</strong><span>words written</span></div><div class="metric"><small>Story</small><strong>${percent}%</strong><span>of your goal</span></div></div><div class="goal-progress"><div class="goal-label"><span>Today’s gentle goal</span><strong>${today} / ${dailyGoal}</strong></div><div class="progress-track"><span style="width:${Math.min(100,Math.round((today / Math.max(1,dailyGoal))*100))}%"></span></div></div><p class="empty-inline" style="margin-top:13px">${openIssues ? `${openIssues} little review note${openIssues === 1 ? '' : 's'} waiting when you are ready.` : 'No urgent tasks. You are doing great.'}</p></section></aside></div>
+            <div class="dashboard-grid" style="margin-top:18px"><div class="dashboard-main"><section class="dashboard-card"><div class="eyebrow">Your tools</div><h2 style="margin:7px 0 7px;font:750 26px/1.05 var(--sans)">Everything you have added is still here.</h2><p class="profile-dek" style="margin:0 0 15px">Choose any desk directly. Nothing has been removed or hidden behind a secret screen.</p><div class="quick-grid"><button class="quick-action" data-action="set-view" data-view="chapter">${svg.write}<span><strong>Writing desk</strong><small>Draft, versions, rewrite and co-write</small></span></button><button class="quick-action" data-action="set-view" data-view="dumpbook">${svg.archive}<span><strong>Dump Book</strong><small>Notes, links, images, and files</small></span></button><button class="quick-action" data-action="set-view" data-view="masterbook">${svg.book}<span><strong>Story book</strong><small>People, places, rules, and lore</small></span></button><button class="quick-action" data-action="set-view" data-view="architecture">${svg.target}<span><strong>Story plan</strong><small>Arcs, stakes, and big story turns</small></span></button><button class="quick-action" data-action="open-scene-form">${svg.grid}<span><strong>Scene cards</strong><small>Plan what happens next</small></span></button><button class="quick-action" data-action="set-view" data-view="studio">${svg.grid}<span><strong>AI Studio</strong><small>Optional ideas and review helpers</small></span></button><button class="quick-action" data-action="set-view" data-view="critic">${svg.flag}<span><strong>Story Critic</strong><small>Direct chapter notes out of ten</small></span></button><button class="quick-action" data-action="set-view" data-view="notes">${svg.note}<span><strong>Notes desk</strong><small>Keep fragments and reminders</small></span></button><button class="quick-action" data-action="set-view" data-view="connections">${svg.thread}<span><strong>Connections</strong><small>See links across your story</small></span></button><button class="quick-action" data-action="set-view" data-view="progress">${svg.clock}<span><strong>My progress</strong><small>Words, goals, and focus time</small></span></button></div></section></div><aside class="dashboard-side"><section class="project-slip"><div class="eyebrow">Your story</div><h2>${esc(project().title || 'My novel')}</h2><p>${esc(project().premise || 'Add one sentence about your story whenever you are ready.')}</p><button class="button small" style="margin-top:14px" data-action="open-settings">Edit story details</button></section><section class="dashboard-card"><div class="eyebrow">Today’s ledger</div><div class="metric-row" style="grid-template-columns:1fr 1fr;margin-top:12px"><div class="metric"><small>Today</small><strong>${today}</strong><span>words written</span></div><div class="metric"><small>Story</small><strong>${percent}%</strong><span>of your goal</span></div></div><div class="goal-progress"><div class="goal-label"><span>Today’s gentle goal</span><strong>${today} / ${dailyGoal}</strong></div><div class="progress-track"><span style="width:${Math.min(100,Math.round((today / Math.max(1,dailyGoal))*100))}%"></span></div></div><p class="empty-inline" style="margin-top:13px">${openIssues ? `${openIssues} little review note${openIssues === 1 ? '' : 's'} waiting when you are ready.` : 'No urgent tasks. You are doing great.'}</p></section></aside></div>
           </section>`;
         }
         function renderDashboard() {

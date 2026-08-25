@@ -85,19 +85,25 @@
 - [x] Add review-first scene decision proposals, including inventory/stat or faction consequences only when the author supplies the relevant facts.
 - [x] Add focused paragraph rewrite controls for darker, slower, psychological, or environmental versions.
 - [x] Validate co-writing controls, author approval, local rule flags, persistence, tests, and build.
-- [ ] Save and deliver the author-controlled co-writing checkpoint.
+- [x] Save and deliver the author-controlled co-writing checkpoint.
 - [x] Audit missing or unclear Back actions and the discoverability of the Dump Book entry point.
 - [x] Explain the navigation findings and proposed plain-language fixes before changing the current layout.
 - [x] Implement and validate approved Back-button and Dump Book navigation improvements.
-- [ ] Save and deliver the navigation discoverability checkpoint.
+- [x] Save and deliver the navigation discoverability checkpoint.
 - [x] Create a focused internal web-app test checklist covering main flows, safe boundary cases, and desktop/phone layouts.
 - [x] Add a clearly named feature-oriented tab or section that makes the app’s tools easier to discover without crowding the writing space.
 - [x] Make Dump Book visible from the simple Home screen and primary navigation.
 - [x] Make Back return to the actual previous workspace and add clear escape routes from deeper tools.
 - [x] Refine the interface into a calmer, more distinctive premium author workspace while preserving readability and local-first privacy.
 - [x] Complete functional, boundary, and responsive browser checks; record results and clean temporary local test content.
-- [ ] Save and deliver the tested premium-polish checkpoint.
+- [x] Save and deliver the tested premium-polish checkpoint.
 - [x] Verify and, if needed, add focused darker, slower, psychological, and environmental rewrite modes.
 - [x] Browser-test a focused rewrite preflight and separate-result workflow with temporary text, then clear it.
 - [x] Submit an approved temporary focused rewrite, verify the separate result and no-auto-replace behavior, then discard it and clear the local test archive.
 - [x] Record the completed focused rewrite end-to-end validation.
+- [x] Compare the current dark archive interface against the last bright premium release and identify every feature that became hidden or harder to reach.
+- [x] Restore the bright, simple premium workspace without removing the current co-writing, navigation, testing, or privacy safeguards.
+- [x] Make legacy author tools visibly discoverable again through clear Home and feature navigation rather than hiding them behind styling or menus.
+- [x] Validate the restored bright interface and legacy feature access on desktop and phone layouts.
+- [x] Verify Story history, Writing helper, Connections, Notes, Sort my ideas, and Progress at phone size, then record the results.
+- [ ] Save and deliver the corrected bright-interface and feature-visibility checkpoint.
