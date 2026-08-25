@@ -793,6 +793,26 @@
       .modal { border-color:#e3e7ee; border-radius:20px; background:#fff; box-shadow:0 24px 64px rgba(34,47,70,.2); }
       .modal-close, .toast { border-color:#e1e5ec; border-radius:10px; background:#fff; color:#536076; }
       @media (max-width:760px) { .rail { background:rgba(255,255,255,.97); } .nav-section-label { grid-column:1/-1; margin:10px 2px 2px; } .workspace { padding:0 14px 28px; } .feature-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; } }
+      @media (min-width:761px) { .secondary-tools { display:contents; } .secondary-tools > summary { display:none; } .secondary-tools > .nav { display:grid; } }
+      @media (max-width:760px) {
+        .rail { padding:13px 14px 10px; }
+        .secondary-tools { grid-column:1/-1; margin-top:5px; border-top:1px solid #e7e9f0; padding-top:5px; }
+        .secondary-tools > summary { display:flex; align-items:center; justify-content:space-between; min-height:38px; padding:0 9px; border-radius:10px; color:#59677d; cursor:pointer; font:750 11px/1 var(--sans); list-style:none; }
+        .secondary-tools > summary::-webkit-details-marker { display:none; }
+        .secondary-tools > summary::after { content:'Show more author tools'; color:#7463df; font:700 10px/1 var(--sans); }
+        .secondary-tools[open] > summary { background:#f4f2ff; color:#4d3faa; }
+        .secondary-tools[open] > summary::after { content:'Hide extra tools'; }
+        .secondary-tools:not([open]) > .nav { display:none; }
+        .secondary-tools[open] > .nav { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; margin-top:5px; }
+        .secondary-tools .nav-button { min-height:42px; padding:0 5px; }
+        .secondary-tools .nav-copy strong { font-size:10px; white-space:normal; text-align:center; line-height:1.1; }
+        .secondary-tools .nav-copy small, .secondary-tools .nav-icon { display:none; }
+        .feature-tabs { display:flex; overflow-x:auto; overscroll-behavior-x:contain; gap:8px; padding:1px 1px 5px; scroll-snap-type:x proximity; scrollbar-width:none; }
+        .feature-tabs::-webkit-scrollbar { display:none; }
+        .feature-tab { flex:0 0 164px; min-height:58px; scroll-snap-align:start; }
+        .top-actions .button[data-action="go-back"] { display:inline-flex !important; min-width:34px; padding:0 8px; border-color:#dcd7ff; background:#f4f2ff; color:#5143bd; }
+        .top-actions .button[data-action="go-back"] span { display:none; }
+      }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; } }
     </style>
   </head>
@@ -935,7 +955,7 @@
             <aside class="rail" aria-label="Primary navigation">
               <div class="brand"><img class="brand-mark" src="/manus-storage/ren-protocol-sigil_fa90a1ba.png" alt="The Ren Protocol mark"><div class="brand-text"><strong>The Ren Protocol</strong><span>Private manuscript archive</span></div></div>
               <div class="protocol-label">Choose what you want to do</div>
-              <nav class="nav">${navButton('dashboard','grid','Home','Start here')}${navButton('chapter','write','Write','Your chapter')}${navButton('dumpbook','archive','Dump Book','Capture ideas')}${navButton('architecture','target','Plan story','Big picture')}${navButton('masterbook','book','Story book','People and places')}${navButton('progress','clock','My progress','Goals and focus')}<div class="nav-section-label">Create, review & organize</div>${navButton('studio','grid','AI Studio','Ideas and review')}${navButton('critic','target','Story Critic','Direct chapter notes')}${navButton('planner','grid','Scene cards','Plan each moment')}${navButton('connections','thread','Connections','See story links')}${navButton('notes','note','Notes','Keep your ideas')}${navButton('timeline','clock','Story history','See what changed')}${navButton('inbox','archive','Sort my ideas','Brain Dump helper')}${navButton('composer','write','Writing helper','Guided drafting')}</nav>
+              <nav class="nav">${navButton('dashboard','grid','Home','Start here')}${navButton('chapter','write','Write','Your chapter')}${navButton('dumpbook','archive','Dump Book','Capture ideas')}${navButton('architecture','target','Plan story','Big picture')}${navButton('masterbook','book','Story book','People and places')}${navButton('progress','clock','My progress','Goals and focus')}<details class="secondary-tools"><summary>More author tools</summary><div class="nav">${navButton('studio','grid','AI Studio','Ideas and review')}${navButton('critic','target','Story Critic','Direct chapter notes')}${navButton('planner','grid','Scene cards','Plan each moment')}${navButton('connections','thread','Connections','See story links')}${navButton('notes','note','Notes','Keep your ideas')}${navButton('timeline','clock','Story history','See what changed')}${navButton('inbox','archive','Sort my ideas','Brain Dump helper')}${navButton('composer','write','Writing helper','Guided drafting')}</div></details></nav>
               <div class="rail-bottom"><div class="local-card"><div class="eyebrow">${esc(project().title)}</div><p>Everything you make stays safely in this browser.</p></div><div class="rail-footer">Private · local only</div></div>
             </aside>
             <main class="workspace">

@@ -106,4 +106,7 @@
 - [x] Make legacy author tools visibly discoverable again through clear Home and feature navigation rather than hiding them behind styling or menus.
 - [x] Validate the restored bright interface and legacy feature access on desktop and phone layouts.
 - [x] Verify Story history, Writing helper, Connections, Notes, Sort my ideas, and Progress at phone size, then record the results.
-- [ ] Save and deliver the corrected bright-interface and feature-visibility checkpoint.
+- [x] Save and deliver the corrected bright-interface and feature-visibility checkpoint.
+- [x] Audit phone navigation, feature cards, writing controls, and key legacy author tools for tap comfort and screen-fit issues.
+- [x] Improve any mobile layout or interaction friction while retaining the bright desktop workspace.
+- [ ] Validate key mobile author workflows and save and deliver the mobile usability checkpoint.
