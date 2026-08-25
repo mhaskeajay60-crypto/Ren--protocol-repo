@@ -63,6 +63,66 @@ export function parseConsistencyResponse(content: string) {
   return consistencyResponseSchema.parse(JSON.parse(content));
 }
 
+const criticScoreSchema = z.object({
+  area: z.enum(["hook", "pacing", "character", "dialogue", "clarity", "worldbuilding", "emotional_impact", "prose"]),
+  score: z.number().min(0).max(10),
+  assessment: z.string().min(1).max(520),
+});
+
+const criticIssueSchema = z.object({
+  severity: z.enum(["major", "important", "minor"]),
+  issue: z.string().min(1).max(180),
+  evidence: z.string().min(1).max(420),
+  whyItMatters: z.string().min(1).max(520),
+  improvement: z.string().min(1).max(700),
+});
+
+export const criticResponseSchema = z.object({
+  overallScore: z.number().min(0).max(10),
+  verdict: z.string().min(1).max(1000),
+  scores: z.array(criticScoreSchema).length(8),
+  strengths: z.array(z.string().min(1).max(420)).min(1).max(6),
+  issues: z.array(criticIssueSchema).max(8),
+  nextSteps: z.array(z.string().min(1).max(360)).min(1).max(5),
+});
+
+export function parseCriticResponse(content: string) {
+  return criticResponseSchema.parse(JSON.parse(content));
+}
+
+const dialogueVariantSchema = z.object({
+  label: z.string().min(1).max(80),
+  text: z.string().min(20).max(3600),
+  craftNote: z.string().min(1).max(500),
+});
+
+export const dialogueResponseSchema = z.object({
+  summary: z.string().min(1).max(700),
+  variants: z.array(dialogueVariantSchema).length(3),
+});
+
+export function parseDialogueResponse(content: string) {
+  return dialogueResponseSchema.parse(JSON.parse(content));
+}
+
+const loreIdeaSchema = z.object({
+  type: z.enum(["faction", "location", "world_rule", "lore", "plot_thread", "secret"]),
+  title: z.string().min(1).max(160),
+  concept: z.string().min(1).max(900),
+  storyUse: z.string().min(1).max(600),
+  caution: z.string().min(1).max(500),
+  tags: z.array(z.string().min(1).max(40)).max(5),
+});
+
+export const loreResponseSchema = z.object({
+  summary: z.string().min(1).max(700),
+  ideas: z.array(loreIdeaSchema).min(1).max(5),
+});
+
+export function parseLoreResponse(content: string) {
+  return loreResponseSchema.parse(JSON.parse(content));
+}
+
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
@@ -269,6 +329,121 @@ export const appRouter = router({
         const content = response.choices[0]?.message?.content;
         if (!content || typeof content !== "string") throw new Error("The consistency reader returned no usable review. Please try again.");
         return parseConsistencyResponse(content);
+      }),
+
+    critic: publicProcedure
+      .input(z.object({
+        chapterTitle: z.string().max(180),
+        chapterText: z.string().min(120, "Add more chapter text before requesting a Critic Report.").max(16000),
+        focus: z.enum(["general", "opening", "pacing", "dialogue", "worldbuilding", "tone"]),
+        authorStandard: z.string().max(1600),
+        canonContext: z.string().max(8000),
+      }))
+      .mutation(async ({ input }) => {
+        const response = await invokeLLM({
+          model: "claude-sonnet-4-6",
+          messages: [
+            {
+              role: "system",
+              content: "You are The Ren Protocol's exacting developmental novel critic. Assess only the supplied chapter and supplied canon context. Be candid, specific, and editorially rigorous; do not use flattery as padding, but do not insult or demean the author. Critique the draft, not the person. Give the requested eight 0–10 scores, where 10 means exceptionally controlled and 5 means significant revision is needed. Every criticism must cite a real short piece of evidence or precise scene moment from the supplied chapter. Do not invent quotations, canon, reader reactions, publication outcomes, or comparisons to other books. Preserve intentional ambiguity unless the chapter makes comprehension impossible. Offer practical, intent-preserving improvement steps, never rewrite manuscript prose and never claim changes have been applied.",
+            },
+            {
+              role: "user",
+              content: `CHAPTER: ${input.chapterTitle || "Untitled"}\n\nCRITIC FOCUS: ${input.focus}\nAUTHOR'S STANDARD OR GOAL: ${input.authorStandard || "Give a general, uncompromising developmental critique."}\n\nCHAPTER TEXT:\n${input.chapterText}\n\nMASTERBOOK CONTEXT:\n${input.canonContext || "No canon context supplied. Assess only the chapter's internal clarity; do not invent continuity conflicts."}`,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "direct_chapter_critic_report",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  overallScore: { type: "number" },
+                  verdict: { type: "string" },
+                  scores: {
+                    type: "array",
+                    minItems: 8,
+                    maxItems: 8,
+                    items: {
+                      type: "object",
+                      properties: {
+                        area: { type: "string", enum: ["hook", "pacing", "character", "dialogue", "clarity", "worldbuilding", "emotional_impact", "prose"] },
+                        score: { type: "number" },
+                        assessment: { type: "string" },
+                      },
+                      required: ["area", "score", "assessment"],
+                      additionalProperties: false,
+                    },
+                  },
+                  strengths: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 6 },
+                  issues: {
+                    type: "array",
+                    maxItems: 8,
+                    items: {
+                      type: "object",
+                      properties: {
+                        severity: { type: "string", enum: ["major", "important", "minor"] },
+                        issue: { type: "string" },
+                        evidence: { type: "string" },
+                        whyItMatters: { type: "string" },
+                        improvement: { type: "string" },
+                      },
+                      required: ["severity", "issue", "evidence", "whyItMatters", "improvement"],
+                      additionalProperties: false,
+                    },
+                  },
+                  nextSteps: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 5 },
+                },
+                required: ["overallScore", "verdict", "scores", "strengths", "issues", "nextSteps"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+        const content = response.choices[0]?.message?.content;
+        if (!content || typeof content !== "string") throw new Error("Claude returned no usable Critic Report. Please try again.");
+        return parseCriticResponse(content);
+      }),
+
+    dialogue: publicProcedure
+      .input(z.object({
+        chapterTitle: z.string().max(180),
+        selectedText: z.string().min(20, "Select a short exchange before using Dialogue Lab.").max(8000),
+        characterGuidance: z.string().max(1600),
+        subtext: z.string().max(1200),
+        tone: z.string().max(240),
+        canonContext: z.string().max(7000),
+      }))
+      .mutation(async ({ input }) => {
+        const response = await invokeLLM({
+          model: "claude-sonnet-4-6",
+          messages: [
+            { role: "system", content: "You are The Ren Protocol's Dialogue Lab. Produce exactly three distinct, editable dialogue proposals from the supplied selected passage. Preserve names, tense, plot facts, and the core action. Use the requested character guidance, subtext, and tone. Each version must serve a different conversational rhythm or power balance. Do not narrate your reasoning inside the dialogue. Do not revise the manuscript automatically; these are separate author-review proposals." },
+            { role: "user", content: `CHAPTER: ${input.chapterTitle || "Untitled"}\n\nSELECTED PASSAGE:\n${input.selectedText}\n\nCHARACTER VOICE GUIDANCE:\n${input.characterGuidance || "Preserve the voice implied by the selected passage."}\n\nSUBTEXT:\n${input.subtext || "Retain the scene's implied tension."}\n\nTONE / ATMOSPHERE:\n${input.tone || "Preserve the current tone."}\n\nMASTERBOOK CONTEXT:\n${input.canonContext || "No additional canon supplied."}` },
+          ],
+          response_format: { type: "json_schema", json_schema: { name: "dialogue_lab_proposals", strict: true, schema: { type: "object", properties: { summary: { type: "string" }, variants: { type: "array", minItems: 3, maxItems: 3, items: { type: "object", properties: { label: { type: "string" }, text: { type: "string" }, craftNote: { type: "string" } }, required: ["label", "text", "craftNote"], additionalProperties: false } } }, required: ["summary", "variants"], additionalProperties: false } } },
+        });
+        const content = response.choices[0]?.message?.content;
+        if (!content || typeof content !== "string") throw new Error("Claude returned no usable dialogue proposals. Please try again.");
+        return parseDialogueResponse(content);
+      }),
+
+    lore: publicProcedure
+      .input(z.object({ brief: z.string().min(20, "Describe the lore seed before asking for ideas.").max(6000), focus: z.enum(["faction", "location", "world_rule", "lore", "plot_thread", "secret", "mixed"]), tone: z.string().max(240), canonContext: z.string().max(7000) }))
+      .mutation(async ({ input }) => {
+        const response = await invokeLLM({
+          model: "claude-sonnet-4-6",
+          messages: [
+            { role: "system", content: "You are The Ren Protocol's Lore Workshop. Turn only the author's supplied seed and canon into a small set of possible worldbuilding proposals. Never present generated material as canon. Avoid generic fantasy filler and do not borrow recognizable copyrighted settings. Each idea must state a story use and a caution or unanswered question. These proposals stay separate until the author explicitly files one." },
+            { role: "user", content: `LORE SEED:\n${input.brief}\n\nFOCUS: ${input.focus}\nTONE / ATMOSPHERE: ${input.tone || "Use the supplied seed."}\n\nEXISTING CANON:\n${input.canonContext || "No canon supplied; keep proposals clearly provisional."}` },
+          ],
+          response_format: { type: "json_schema", json_schema: { name: "lore_workshop_proposals", strict: true, schema: { type: "object", properties: { summary: { type: "string" }, ideas: { type: "array", minItems: 1, maxItems: 5, items: { type: "object", properties: { type: { type: "string", enum: ["faction", "location", "world_rule", "lore", "plot_thread", "secret"] }, title: { type: "string" }, concept: { type: "string" }, storyUse: { type: "string" }, caution: { type: "string" }, tags: { type: "array", items: { type: "string" }, maxItems: 5 } }, required: ["type", "title", "concept", "storyUse", "caution", "tags"], additionalProperties: false } } }, required: ["summary", "ideas"], additionalProperties: false } } },
+        });
+        const content = response.choices[0]?.message?.content;
+        if (!content || typeof content !== "string") throw new Error("Claude returned no usable lore proposals. Please try again.");
+        return parseLoreResponse(content);
       }),
   }),
 

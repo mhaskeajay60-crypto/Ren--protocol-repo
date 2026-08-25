@@ -56,3 +56,24 @@
 - [x] Add simple tag display, editing, and tag-based discovery controls without changing existing material content.
 - [x] Validate custom tags, tag discovery, persistence, responsive layout, tests, and build.
 - [x] Save and deliver the Dump Book tagging update checkpoint.
+- [x] Audit the requested novel-writing AI feature list against the current author-controlled local-first workspace.
+- [x] Integrate a unified search, tag, and direct-critic layout without hiding existing writing tools.
+- [x] Add only privacy-safe, explicit-author-action versions of any missing approved features.
+- [x] Validate the expanded author workspace, local persistence, responsive layout, tests, and build.
+- [x] Save and deliver the expanded novel-writing workspace checkpoint.
+- [x] Create an original local Feature Tour PDF that explains and demonstrates every major author tool with safe sample material.
+- [x] Include clear guide pages for interactive tools that a PDF cannot run, showing steps and example results instead.
+- [x] Regression-test current writing, Story Bible, Dump Book, search/tags, export, PDF, and responsive layouts after the new AI tools are added.
+- [x] Evaluate attached dark-fantasy, slow-burn lore, atmosphere, dialogue, visual-reference, and mobile-writing workflow ideas against existing capabilities.
+- [x] Add only the fitting author-controlled workflow tools, without copying third-party product behavior or sending content automatically.
+- [x] Verify an approved Claude model is available through the secure built-in AI connection for the opt-in Critic Report.
+- [x] Add a Claude-powered direct Critic Report with 10-point scores, concrete evidence, weaknesses, and practical improvement steps.
+- [x] Validate Claude model selection, opt-in data sharing, local reports, tests, and build.
+- [x] Design a unified local-first workspace that combines Dump Book search, custom tags, and direct chapter critique.
+- [x] Add a clear Critic Report layout with 10-point scores, evidence, weaknesses, and practical improvement steps.
+- [x] Keep critique opt-in, show exactly what chapter text may be sent, and save accepted reports only in the browser.
+- [x] Validate unified navigation, critic safeguards, responsive layout, tests, and build.
+- [x] Build an AI Studio hub that joins Dump Book discovery with Critic access while preserving the existing standalone views.
+- [x] Add remaining approved author-controlled helpers: Dialogue Lab, Lore Workshop, and an atmosphere/style guide layer.
+- [x] Re-run end-to-end Dump Book search/tag, final-novel PDF, export, Story Book, and chapter-writing regression checks after the hub and helpers are added.
+- [x] Save and deliver the integrated discovery-and-critic checkpoint.

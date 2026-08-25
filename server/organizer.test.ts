@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseComposerResponse, parseConsistencyResponse, parseOrganizerResponse, parseRewriteResponse } from "./routers";
+import { parseComposerResponse, parseConsistencyResponse, parseCriticResponse, parseDialogueResponse, parseLoreResponse, parseOrganizerResponse, parseRewriteResponse } from "./routers";
 
 describe("Brain Dump organizer response validation", () => {
   it("accepts a complete structured suggestion", () => {
@@ -43,5 +43,35 @@ describe("Brain Dump organizer response validation", () => {
     const consistency = parseConsistencyResponse(JSON.stringify({ summary: "The chapter holds a clear tense mood and introduces the letter effectively.", strengths: ["The archive setting anchors the scene."], flags: [{ severity: "watch", focus: "Letter timing", detail: "Clarify whether the letter is known to Mara before this chapter." }], openQuestions: ["What consequence follows the opening of the letter?"] }));
     expect(rewrite.rewrittenText).toContain("Mara");
     expect(consistency.flags[0]?.severity).toBe("watch");
+  });
+
+  it("accepts a direct Claude Critic report with evidence and practical improvement steps", () => {
+    const result = parseCriticResponse(JSON.stringify({
+      overallScore: 6.5,
+      verdict: "The premise is clear, but the scene delays its central pressure for too long.",
+      scores: [
+        ["hook", 6, "The opening image is atmospheric but does not establish an immediate question."],
+        ["pacing", 5, "The scene repeats observation before the decision arrives."],
+        ["character", 7, "Mara's caution is consistent in her choices."],
+        ["dialogue", 6, "The exchange has intent but carries limited subtext."],
+        ["clarity", 7, "The letter and immediate goal are understandable."],
+        ["worldbuilding", 6, "The archive detail is intriguing but not yet consequential."],
+        ["emotional_impact", 6, "The hesitation is felt but the cost remains abstract."],
+        ["prose", 7, "The sentence rhythm supports the quiet mood."],
+      ].map(([area, score, assessment]) => ({ area, score, assessment })),
+      strengths: ["The setting carries a coherent uneasy mood."],
+      issues: [{ severity: "important", issue: "Delayed pressure", evidence: "Mara observes the rain and shelves before acting on the letter.", whyItMatters: "The reader waits too long to understand what can change in the scene.", improvement: "Introduce the consequence of opening or refusing the letter within the first page, then let the atmosphere complicate that choice." }],
+      nextSteps: ["Clarify the immediate consequence before expanding the archive atmosphere."],
+    }));
+    expect(result.overallScore).toBe(6.5);
+    expect(result.issues[0]?.improvement).toContain("Introduce the consequence");
+    expect(result.scores).toHaveLength(8);
+  });
+
+  it("accepts separate dialogue and lore workshop proposals for author review", () => {
+    const dialogue = parseDialogueResponse(JSON.stringify({ summary: "Three slow-burn power dynamics for the same exchange.", variants: ["Guarded", "Sharper", "Quietly comic"].map(label => ({ label, text: "Mara folded the letter. ‘You knew I would come.’ The keeper did not look up.", craftNote: "Keeps the unequal information and slows the reveal." })) }));
+    const lore = parseLoreResponse(JSON.stringify({ summary: "A provisional archive faction seed.", ideas: [{ type: "faction", title: "The Inkwardens", concept: "Archivists who erase names to delay a prophecy.", storyUse: "They can pressure Mara's choice about the letter.", caution: "Decide whether erasure is literal, legal, or magical before filing.", tags: ["archive", "prophecy"] }] }));
+    expect(dialogue.variants).toHaveLength(3);
+    expect(lore.ideas[0]?.type).toBe("faction");
   });
 });
