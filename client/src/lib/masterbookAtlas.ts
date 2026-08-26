@@ -41,3 +41,28 @@ export function atlasRecordType(category: string, record: Record<string, unknown
   if (category === 'plotThreads') return 'Quest';
   return 'Record';
 }
+
+type RelationshipInput = { fromId?: unknown; toId?: unknown; kind?: unknown; stage?: unknown; dynamic?: unknown };
+type CharacterInput = { id?: unknown; name?: unknown };
+
+export function savedRelationshipWebLinks(relations: unknown, characters: unknown) {
+  const namesById = new Map(
+    (Array.isArray(characters) ? characters : [])
+      .map(character => [String((character as CharacterInput).id || ''), String((character as CharacterInput).name || '').trim()] as const)
+      .filter(([id, name]) => id && name),
+  );
+  const seen = new Set<string>();
+  return (Array.isArray(relations) ? relations : [])
+    .map(relation => {
+      const item = relation as RelationshipInput;
+      const fromId = String(item.fromId || '');
+      const toId = String(item.toId || '');
+      const from = namesById.get(fromId) || '';
+      const to = namesById.get(toId) || '';
+      const key = [fromId, toId].sort().join(':');
+      if (!from || !to || fromId === toId || seen.has(key)) return null;
+      seen.add(key);
+      return { fromId, toId, from, to, kind: String(item.kind || 'Connection').trim() || 'Connection', stage: String(item.stage || '').trim(), dynamic: String(item.dynamic || '').trim() };
+    })
+    .filter((relation): relation is { fromId: string; toId: string; from: string; to: string; kind: string; stage: string; dynamic: string } => Boolean(relation));
+}

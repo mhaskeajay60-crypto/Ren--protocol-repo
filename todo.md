@@ -233,3 +233,8 @@
 - [x] Preserve browser-local stat drafts and require an explicit separate group canon proposal before any stat profile becomes shared official lore.
 - [x] Decide how the requested Lore Keeper approval maps safely onto existing Ruler/Writer/Watcher protections before changing shared permissions.
 - [x] Test Atlas navigation, custom stat profiles, no-auto-sharing safeguards, protected approval paths, and desktop/phone layouts; save and back up the completed release.
+- [x] Audit existing local location and relationship records to preserve all saved details during the Atlas expansion.
+- [x] Create original visual icon assets for the Masterbook Atlas category destinations.
+- [x] Add visual Place dossiers that make location records feel like explorable map/biome folios while preserving their current fields.
+- [x] Add a browser-local relationship web that shows only deliberately saved links and does not create group canon or sharing.
+- [x] Test Place dossiers, relationship graph data boundaries, Atlas icons, and desktop/phone layouts; save and back up the completed release.
