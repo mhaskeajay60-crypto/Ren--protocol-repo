@@ -19,6 +19,51 @@ export type SearchableDumpBookItem = {
   tags?: string[];
 };
 
+export type StoryVaultConnectionSource = {
+  id: string;
+  kind: "chapter" | "character" | "location" | "scene" | "story plan";
+  title: string;
+  text?: string;
+};
+
+export type StoryVaultConnection = StoryVaultConnectionSource & {
+  matchedTerms: string[];
+  score: number;
+};
+
+const CONNECTION_STOP_WORDS = new Set([
+  "a", "about", "after", "again", "also", "an", "and", "are", "at", "before", "because", "between", "by", "chapter", "could", "every",
+  "first", "from", "have", "into", "later", "might", "more", "only", "over", "some", "story",
+  "that", "the", "their", "there", "these", "they", "this", "through", "to", "under", "when", "with", "would",
+]);
+
+function connectionTerms(value: string): string[] {
+  return Array.from(new Set(
+    String(value || "")
+      .toLowerCase()
+      .match(/[a-z0-9][a-z0-9'-]{2,}/g)
+      ?.filter(term => !CONNECTION_STOP_WORDS.has(term)) || [],
+  ));
+}
+
+export function findStoryVaultConnections(idea: string, sources: StoryVaultConnectionSource[]): StoryVaultConnection[] {
+  const ideaText = String(idea || "").toLowerCase();
+  const ideaTerms = new Set(connectionTerms(ideaText));
+  if (!ideaTerms.size) return [];
+
+  return sources
+    .map(source => {
+      const sourceTerms = connectionTerms(`${source.title} ${source.text || ""}`);
+      const matchedTerms = sourceTerms.filter(term => ideaTerms.has(term)).slice(0, 4);
+      const title = String(source.title || "").trim().toLowerCase();
+      const titleMatch = title.length >= 3 && ideaText.includes(title);
+      return { ...source, matchedTerms, score: matchedTerms.length * 2 + (titleMatch ? 3 : 0) };
+    })
+    .filter(connection => connection.score >= 2)
+    .sort((left, right) => right.score - left.score || left.title.localeCompare(right.title))
+    .slice(0, 4);
+}
+
 export function normalizeDumpBookTags(value: string | string[]): string[] {
   const unique = new Map<string, string>();
   const source = Array.isArray(value) ? value.join(",") : String(value || "");

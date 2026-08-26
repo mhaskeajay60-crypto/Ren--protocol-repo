@@ -826,9 +826,20 @@
 
     <script type="module">
       import { jsPDF } from 'jspdf';
+      import { extractText, getDocumentProxy } from 'unpdf';
       import { parseMarkdownManuscript, todaySprintSummary, trimOptionsMarkup, wordWindowSummary } from '/src/lib/authorToolkit.ts';
-      window.RenProtocolPdf = { jsPDF };
-      window.RenProtocolToolkit = { parseMarkdownManuscript, todaySprintSummary, trimOptionsMarkup, wordWindowSummary };
+      import { findStoryVaultConnections } from '/src/lib/dumpBook.ts';
+      async function extractLocalPdfText(file) {
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        const pdf = await getDocumentProxy(bytes, { maxImageSize: 16_777_216 });
+        const extracted = await extractText(pdf, { mergePages: false });
+        const pages = (Array.isArray(extracted.text) ? extracted.text : [String(extracted.text || '')]).map(text => String(text).replace(/\s+/g, ' ').trim());
+        await pdf.destroy?.();
+        const text = pages.filter(Boolean).join('\n\n').trim();
+        return { text, pageCount: Number(extracted.totalPages || pages.length), readablePageCount: pages.filter(Boolean).length };
+      }
+      window.RenProtocolPdf = { jsPDF, extractLocalPdfText };
+      window.RenProtocolToolkit = { parseMarkdownManuscript, todaySprintSummary, trimOptionsMarkup, wordWindowSummary, findStoryVaultConnections };
     </script>
     <script>
       /*
@@ -1009,10 +1020,27 @@
             ${renderInspector()}
           </div>`;
         }
+        function addChapterPdfImportControl() {
+          const tools = document.querySelector('.advanced-writer-actions');
+          if (!tools || tools.querySelector('[data-action="import-chapter-pdf"]')) return;
+          const button = document.createElement('button');
+          button.className = 'paper-button'; button.dataset.action = 'import-chapter-pdf'; button.textContent = 'I already wrote this PDF';
+          tools.prepend(button);
+        }
+        function repairImportedChapterListWordCounts() {
+          document.querySelectorAll('.chapter-row').forEach(row => {
+            const chapter = data.chapters.find(entry => entry.id === row.dataset.id);
+            if (chapter?.importMeta?.kind !== 'local_pdf' || (chapter.versions?.main || '').trim()) return;
+            const importedText = chapter.versions?.first || '';
+            const label = row.querySelector('small');
+            if (label && importedText) label.textContent = `Chapter ${chapter.number} · ${getWords(importedText).toLocaleString()} words`;
+          });
+        }
         function render() {
           const view = data.activeView;
           document.getElementById('app').innerHTML = view === 'masterbook' ? appShell(renderMasterbook()) : view === 'timeline' ? appShell(renderTimeline()) : view === 'architecture' ? appShell(renderArchitecture()) : view === 'connections' ? appShell(renderConnections()) : view === 'progress' ? appShell(renderProgress()) : view === 'planner' ? appShell(renderPlanner()) : view === 'notes' ? appShell(renderNotes()) : view === 'dumpbook' ? appShell(renderDumpBookInbox()) : view === 'temporaryfill' ? appShell(renderTemporaryFill()) : view === 'inbox' ? appShell(renderInbox()) : view === 'composer' ? appShell(renderComposer()) : view === 'critic' ? appShell(renderCriticDesk()) : view === 'studio' ? appShell(renderAiStudioSimple()) : view === 'dashboard' ? appShell(renderFriendlyDashboard()) : appShell(renderChapter());
           bindInputEvents();
+          if (view === 'chapter') { addChapterPdfImportControl(); repairImportedChapterListWordCounts(); }
           if (view === 'temporaryfill') hydrateTemporaryFill();
         }
         function renderFriendlyDashboard() {
@@ -1115,6 +1143,35 @@
         function dumpSafeUrl(value) { try { const url = new URL(String(value || '').trim()); return ['http:','https:'].includes(url.protocol) ? url.href : ''; } catch { return ''; } }
         function dumpPreview(item) { if (item.kind === 'image' && item.dataUrl) return `<img class="dump-image" src="${item.dataUrl}" alt="${esc(item.title || item.fileName || 'Saved image')}">`; const icon = item.kind === 'link' ? '↗' : item.kind === 'text_file' ? 'TXT' : item.kind === 'file' ? 'PDF' : item.kind === 'image' ? 'IMG' : item.kind === 'text' ? '¶' : '✦'; return `<div class="dump-preview">${icon}</div>`; }
         function dumpItemText(item) { return String(item.content || item.url || '').trim(); }
+        function localStoryConnectionSources() {
+          const chapterSources = data.chapters.map(chapter => ({ id: chapter.id, kind: 'chapter', title: chapter.title || `Chapter ${chapter.number}`, text: [chapter.summary, chapter.purpose, chapter.thread, chapter.emotionalTurn, String(chapter.versions?.main || '').slice(0, 1800)].filter(Boolean).join(' ') }));
+          const characterSources = (data.masterbook.characters || []).map(entry => ({ id: entry.id, kind: 'character', title: entry.name || 'Unnamed person', text: [entry.role, entry.description, entry.relationships, entry.status].filter(Boolean).join(' ') }));
+          const locationSources = (data.masterbook.locations || []).map(entry => ({ id: entry.id, kind: 'location', title: entry.name || 'Unnamed location', text: [entry.description, entry.connected, entry.notes, entry.danger].filter(Boolean).join(' ') }));
+          const sceneSources = (data.scenes || []).map(scene => ({ id: scene.id, kind: 'scene', title: scene.title || 'Untitled scene', text: [scene.summary, scene.purpose, scene.turn, scene.chapter, scene.location, scene.pov].filter(Boolean).join(' ') }));
+          const planSources = (data.arcs || []).map(arc => ({ id: arc.id, kind: 'story plan', title: arc.title || 'Untitled story plan', text: [arc.question, arc.description, arc.stakes, arc.stage].filter(Boolean).join(' ') }));
+          return [...chapterSources, ...characterSources, ...locationSources, ...sceneSources, ...planSources];
+        }
+        function localStoryConnectionLabel(kind) { return ({ chapter: 'Chapter', character: 'Person', location: 'Place', scene: 'Scene', 'story plan': 'Story plan' }[kind] || 'Story record'); }
+        function openStoryVaultConnections(itemId) {
+          const item = dumpBook().items.find(entry => entry.id === itemId); const idea = dumpItemText(item);
+          if (!item || idea.length < 3) return toast('Add a few words to this Story Vault item before asking where it may fit.');
+          const matcher = window.RenProtocolToolkit?.findStoryVaultConnections;
+          if (!matcher) return toast('Local suggestion helper is still loading. Try again in a moment.');
+          const connections = matcher(idea, localStoryConnectionSources());
+          const suggestions = connections.length ? connections.map(connection => `<article class="suggestion-card" style="margin:10px 0"><span><small>${esc(localStoryConnectionLabel(connection.kind))} · local match only</small><strong>${esc(connection.title)}</strong><p><strong>Why:</strong> Both mention ${connection.matchedTerms.map(term => `<span class="tag-chip">${esc(term)}</span>`).join(' ')}.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">${connection.kind === 'chapter' ? `<button class="button small" data-action="open-story-vault-connection" data-id="${esc(item.id)}" data-connection-id="${esc(connection.id)}" data-connection-kind="chapter">Open this chapter</button><button class="button small" data-action="copy-story-vault-idea-to-chapter" data-id="${esc(item.id)}" data-chapter-id="${esc(connection.id)}">Copy to chapter notes</button>` : `<button class="button small" data-action="open-story-vault-connection" data-id="${esc(item.id)}" data-connection-id="${esc(connection.id)}" data-connection-kind="${esc(connection.kind)}">${connection.kind === 'story plan' ? 'Open story plan' : 'Open Story guide'}</button>`}</div></span></article>`).join('') : '<div class="book-empty">No clear local connection yet. That is okay—keep this idea in Story Vault until more of your story is named.</div>';
+          modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Story Vault / Local idea connections</div><h2 id="modal-title">Possible places for this idea</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">These suggestions compare only your saved local words—no AI and no network request. They are not instructions and do not move, merge, or change your story.</p><div class="field" style="margin-top:12px"><label>Saved idea</label><textarea readonly style="min-height:100px">${esc(idea.slice(0, 1600))}</textarea></div><div style="margin-top:14px">${suggestions}</div></div><div class="modal-foot"><button class="button" data-action="close-modal">Keep in Story Vault</button><button class="button gold" data-action="close-modal">I will decide later</button></div></div>`);
+        }
+        function copyStoryVaultIdeaToChapter(itemId, chapterId) {
+          const item = dumpBook().items.find(entry => entry.id === itemId); const chapter = data.chapters.find(entry => entry.id === chapterId); const idea = dumpItemText(item);
+          if (!item || !chapter || !idea) return toast('That saved idea or chapter is no longer available.');
+          data.annotations.unshift({ id: uid(), chapterId: chapter.id, kind: 'Story Vault idea', title: 'Possible idea for later', note: idea.slice(0, 600), createdAt: now(), source: 'story_vault_connection' });
+          logEvent('Story Vault idea copied to chapter notes', chapter.title, 'Author copied a saved idea to chapter notes. The original Story Vault item remains unchanged.', chapter.id);
+          persist('Idea copied to chapter notes. The original stays in Story Vault.'); closeModal(); toast('Copied to chapter notes. Your original idea is still safe in Story Vault.');
+        }
+        function openStoryVaultConnection(connectionId, connectionKind) {
+          if (connectionKind === 'chapter') { const chapter = data.chapters.find(entry => entry.id === connectionId); if (!chapter) return toast('That chapter is no longer available.'); saveDraft(false); data.activeChapterId = chapter.id; data.selectedVersion = chapter.activeVersion || 'main'; data.draft = chapter.versions[data.selectedVersion] || ''; closeModal(); navigateTo('chapter'); return; }
+          closeModal(); navigateTo(connectionKind === 'story plan' ? 'architecture' : 'masterbook'); toast('This is a possible local connection. Your saved Story Vault item was not moved.');
+        }
         const dumpInboxStatuses = ['Raw','Working','Proposed','Filed','Archived'];
         function dumpInboxStatus(item) { return dumpInboxStatuses.includes(item?.status) ? item.status : 'Raw'; }
         function inboxSelectedDumpItems() { const selected = new Set(dumpBook().inboxSelectedIds || []); return (dumpBook().items || []).filter(item => selected.has(item.id)); }
@@ -1123,7 +1180,8 @@
           const source = item.fileName ? `${item.fileName}${item.size ? ` · ${dumpBytes(item.size)}` : ''}` : `Saved ${timeAgo(item.createdAt)}`;
           const external = item.kind === 'link' ? dumpSafeUrl(item.url) : '';
           const selected = (dumpBook().inboxSelectedIds || []).includes(item.id);
-          return `<article class="dump-item">${dumpPreview(item)}<div class="dump-item-body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:7px"><label class="check-line" style="margin:0"><input type="checkbox" data-inbox-select-id="${esc(item.id)}" ${selected ? 'checked' : ''}><span>Select</span></label><span class="tag-chip">${esc(dumpInboxStatus(item))}</span></div><small>${esc(dumpKindLabel(item.kind))}</small><h3>${esc(item.title || item.fileName || 'Untitled item')}</h3><p>${esc(description)}</p>${dumpItemTags(item).length ? `<div class="tag-row" style="margin-top:8px">${dumpItemTags(item).map(tag => `<button class="tag-chip" data-action="set-dump-tag" data-tag="${esc(tag)}">#${esc(tag)}</button>`).join('')}</div>` : ''}<span class="empty-inline">${esc(source)}</span></div><div class="dump-item-actions"><label class="field" style="margin:0;min-width:118px"><span class="sr-only">Inbox status</span><select data-inbox-status-id="${esc(item.id)}">${dumpInboxStatuses.map(status => `<option value="${status}" ${dumpInboxStatus(item) === status ? 'selected' : ''}>${status}</option>`).join('')}</select></label>${external ? `<a class="button small" href="${esc(external)}" target="_blank" rel="noopener noreferrer">Open link</a>` : ''}${item.lockerId ? `<button class="button small" data-action="download-local-dump-file" data-id="${item.id}">Download</button>` : ''}<button class="button small" data-action="fill-temporary-desk" data-id="${item.id}">Fill temporary desk</button><button class="button small" data-action="file-dump-note" data-id="${item.id}">Make story note</button><button class="button small" data-action="edit-dump-tags" data-id="${item.id}">Tags</button><button class="button small danger" data-action="delete-dump-item" data-id="${item.id}">Delete</button></div></article>`;
+          const canConnect = dumpItemText(item).length >= 3;
+          return `<article class="dump-item">${dumpPreview(item)}<div class="dump-item-body"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:7px"><label class="check-line" style="margin:0"><input type="checkbox" data-inbox-select-id="${esc(item.id)}" ${selected ? 'checked' : ''}><span>Select</span></label><span class="tag-chip">${esc(dumpInboxStatus(item))}</span></div><small>${esc(dumpKindLabel(item.kind))}</small><h3>${esc(item.title || item.fileName || 'Untitled item')}</h3><p>${esc(description)}</p>${dumpItemTags(item).length ? `<div class="tag-row" style="margin-top:8px">${dumpItemTags(item).map(tag => `<button class="tag-chip" data-action="set-dump-tag" data-tag="${esc(tag)}">#${esc(tag)}</button>`).join('')}</div>` : ''}<span class="empty-inline">${esc(source)}</span></div><div class="dump-item-actions"><label class="field" style="margin:0;min-width:118px"><span class="sr-only">Inbox status</span><select data-inbox-status-id="${esc(item.id)}">${dumpInboxStatuses.map(status => `<option value="${status}" ${dumpInboxStatus(item) === status ? 'selected' : ''}>${status}</option>`).join('')}</select></label>${external ? `<a class="button small" href="${esc(external)}" target="_blank" rel="noopener noreferrer">Open link</a>` : ''}${item.lockerId ? `<button class="button small" data-action="download-local-dump-file" data-id="${item.id}">Download</button>` : ''}${canConnect ? `<button class="button small" data-action="show-story-vault-connections" data-id="${item.id}">Where could this fit?</button>` : ''}<button class="button small" data-action="fill-temporary-desk" data-id="${item.id}">Fill temporary desk</button><button class="button small" data-action="file-dump-note" data-id="${item.id}">Make story note</button><button class="button small" data-action="edit-dump-tags" data-id="${item.id}">Tags</button><button class="button small danger" data-action="delete-dump-item" data-id="${item.id}">Delete</button></div></article>`;
         }
         function dumpMatchesDiscovery(item, query, filter) {
           if (filter !== 'all' && item.kind !== filter) return false;
@@ -1733,6 +1791,50 @@
           const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json'; input.onchange = () => { const file = input.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const parsed = JSON.parse(reader.result); if (!parsed.archive?.masterbook || !Array.isArray(parsed.archive?.chapters)) throw new Error(); data = { ...blankState(), ...parsed.archive }; data.draft = currentChapter().versions[data.selectedVersion || 'main'] || ''; persist('Archive imported locally.'); render(); } catch { toast('That file is not a valid Ren Protocol archive.'); } }; reader.readAsText(file); }; input.click();
         }
         function importMarkdown() { const input = document.createElement('input'); input.type = 'file'; input.accept = '.md,text/markdown,text/plain'; input.onchange = () => { const file = input.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const text = String(reader.result || '').trim(); const parsed = window.RenProtocolToolkit?.parseMarkdownManuscript?.(text) || parseMarkdownFallback(text); const chapters = parsed.chapters.map((source, index) => { const chapter = newChapter(index + 1); chapter.title = source.title || chapter.title; chapter.versions.main = source.body || ''; return chapter; }); if (!chapters.length) { const chapter = newChapter(1); chapter.title = parsed.title || file.name.replace(/\.md$/i,'') || 'Imported folio'; chapter.versions.main = text.replace(/^---[\s\S]*?---\s*/,'').replace(/^#\s+.+$/m,'').trim(); chapters.push(chapter); } if (!window.confirm(`Import ${chapters.length} Markdown folio${chapters.length === 1 ? '' : 's'} into this browser? This replaces the current local archive. Export JSON first if you want to keep the current archive.`)) return; const next = blankState(); next.project.title = parsed.title || file.name.replace(/\.md$/i,'') || next.project.title; next.chapters = chapters; next.activeChapterId = chapters[0].id; next.selectedVersion = 'main'; next.draft = chapters[0].versions.main || ''; data = next; logEvent('Markdown manuscript imported', next.project.title, `${chapters.length} folio${chapters.length === 1 ? '' : 's'} restored from Markdown.`); persist('Markdown manuscript imported locally.'); render(); } catch { toast('This Markdown file could not be imported. Use H2 headings for folios.'); } }; reader.readAsText(file); }; input.click(); }
+        const LOCAL_CHAPTER_IMPORT_TEXT_LIMIT = 220000;
+        function titleFromChapterPdf(fileName) {
+          const name = String(fileName || 'Imported chapter').replace(/\.pdf$/i, '').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
+          return name || 'Imported chapter';
+        }
+        function importChapterPdf() {
+          const input = document.createElement('input'); input.type = 'file'; input.id = 'chapter-pdf-import-input'; input.accept = 'application/pdf,.pdf'; input.style.cssText = 'position:fixed;inline-size:1px;block-size:1px;opacity:0;pointer-events:none'; document.body.appendChild(input);
+          input.onchange = async () => {
+            const file = input.files?.[0]; input.remove(); if (!file) return;
+            if (file.size > DUMP_BOOK_LOCKER_FILE_LIMIT) return toast(`Choose a PDF up to ${dumpBytes(DUMP_BOOK_LOCKER_FILE_LIMIT)} for local chapter import.`);
+            const extract = window.RenProtocolPdf?.extractLocalPdfText;
+            if (!extract) return toast('The private PDF reader is still loading. Try again in a moment.');
+            try {
+              toast('Reading this PDF privately in your browser…');
+              const extracted = await extract(file);
+              const fullText = String(extracted?.text || '').trim();
+              if (!fullText) return modal(`<div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><div><div class="eyebrow">PDF chapter import / Keep private</div><h2>No readable chapter text found</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">This PDF may be a scan or image-only file. It was not uploaded, added to your story, or changed. You can keep it private or save the original file separately in Story Vault.</p></div><div class="modal-foot"><button class="button gold" data-action="close-modal">Keep private</button></div></div>`);
+              const text = fullText.slice(0, LOCAL_CHAPTER_IMPORT_TEXT_LIMIT);
+              const truncated = fullText.length > text.length;
+              const suggestedTitle = titleFromChapterPdf(file.name);
+              modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">PDF chapter import / Local preview</div><h2 id="modal-title">Check before adding a new draft</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">This PDF was read only in this browser. It will create a <strong>separate First Draft</strong> if you approve it. No existing chapter will be replaced, and the original PDF is not uploaded or stored unless you separately save it in Story Vault.</p><div class="privacy-slip" style="margin-top:12px"><p><strong>Selected PDF:</strong> ${esc(file.name)}<br><strong>Readable pages:</strong> ${Number(extracted.readablePageCount || 0)} of ${Number(extracted.pageCount || 0)}<br><strong>Imported text:</strong> ${text.length.toLocaleString()} characters${truncated ? ' · preview is limited to keep this browser archive safe' : ''}</p></div><div class="field" style="margin-top:14px"><label for="imported-chapter-title">New chapter title</label><input id="imported-chapter-title" value="${esc(suggestedTitle)}" maxlength="120"></div><div class="field" style="margin-top:12px"><label for="imported-chapter-preview">Extracted chapter preview</label><textarea id="imported-chapter-preview" readonly style="min-height:260px">${esc(text)}</textarea></div>${truncated ? '<p class="mention-helper">This file had more text than the browser-local chapter limit. Keep the original PDF in Story Vault if you need the full file.</p>' : ''}</div><div class="modal-foot"><button class="button" data-action="close-modal">Keep private</button><button class="button gold" data-action="confirm-imported-pdf-chapter" data-file-name="${esc(file.name)}" data-page-count="${Number(extracted.pageCount || 0)}">Add as separate draft</button></div></div>`, () => {
+                const approve = document.querySelector('[data-action="confirm-imported-pdf-chapter"]');
+                approve?.addEventListener('click', () => {
+                  const title = (document.getElementById('imported-chapter-title')?.value || suggestedTitle).trim() || suggestedTitle;
+                  addImportedPdfChapter({ title, text, fileName: file.name, pageCount: Number(extracted.pageCount || 0), truncated });
+                });
+              });
+            } catch (error) {
+              modal(`<div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><div><div class="eyebrow">PDF chapter import / Keep private</div><h2>That PDF could not be read here</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">Nothing was added or sent. The file may be protected, damaged, or use a format this browser cannot read.</p></div><div class="modal-foot"><button class="button gold" data-action="close-modal">Keep private</button></div></div>`);
+            }
+          };
+          input.click();
+        }
+        function addImportedPdfChapter({ title, text, fileName, pageCount, truncated }) {
+          const nextNumber = Math.max(0, ...data.chapters.map(chapter => Number(chapter.number || 0))) + 1;
+          const chapter = newChapter(nextNumber);
+          chapter.title = title;
+          chapter.versions.first = text;
+          chapter.activeVersion = 'first';
+          chapter.importMeta = { kind: 'local_pdf', fileName, pageCount, truncated: Boolean(truncated), importedAt: now() };
+          data.chapters.push(chapter); data.activeChapterId = chapter.id; data.selectedVersion = 'first'; data.draft = text; data.activeView = 'chapter';
+          logEvent('PDF chapter imported locally', title, `A separate First Draft was created from ${fileName}. No existing chapter was replaced.`);
+          persist('PDF preview approved. A separate First Draft was created locally.'); closeModal(); render(); toast('Separate First Draft created. Your existing chapters are unchanged.');
+        }
         async function organizeBrainDump() {
           const input = document.getElementById('brain-dump');
           const text = (input?.value || inbox().draft || '').trim();
@@ -1993,6 +2095,7 @@
           else if (action === 'export-feature-tour-pdf') exportFeatureTourPdf();
           else if (action === 'open-final-pdf-export') openFinalPdfExport();
           else if (action === 'generate-final-pdf') exportFinalNovelPdf();
+          else if (action === 'import-chapter-pdf') importChapterPdf();
           else if (action === 'organize-dump') organizeBrainDump();
           else if (action === 'save-dump-text') saveDumpText();
           else if (action === 'split-dump-text') splitDumpText();
@@ -2007,6 +2110,9 @@
           else if (action === 'file-dump-note') fileDumpItemAsNote(id);
           else if (action === 'fill-temporary-desk') fillTemporaryFromDump(id);
           else if (action === 'download-local-dump-file') downloadLocalDumpFile(id);
+          else if (action === 'show-story-vault-connections') openStoryVaultConnections(id);
+          else if (action === 'copy-story-vault-idea-to-chapter') copyStoryVaultIdeaToChapter(id, target.dataset.chapterId || '');
+          else if (action === 'open-story-vault-connection') openStoryVaultConnection(target.dataset.connectionId || '', target.dataset.connectionKind || '');
           else if (action === 'copy-temporary-fill') { navigator.clipboard?.writeText(temporaryFillText()); toast('Temporary material copied to your clipboard.'); }
           else if (action === 'temporary-fill-to-note') temporaryFillAsNote();
           else if (action === 'open-temporary-extraction') openTemporaryExtraction();

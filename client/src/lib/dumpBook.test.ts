@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_LOCKER_FILE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, classifyDumpBookLockerFile, isDumpBookLockerSizeAllowed, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookInboxStatus, normalizeDumpBookTags, normalizeDumpBookUrl, splitDumpBookIdeas } from "./dumpBook";
+import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_LOCKER_FILE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, classifyDumpBookLockerFile, findStoryVaultConnections, isDumpBookLockerSizeAllowed, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookInboxStatus, normalizeDumpBookTags, normalizeDumpBookUrl, splitDumpBookIdeas } from "./dumpBook";
 
 describe("Dump Book helpers", () => {
   it("keeps only safe HTTP(S) links", () => {
@@ -56,5 +56,17 @@ describe("Dump Book helpers", () => {
     expect(splitDumpBookIdeas("- Give Aren a false memory\n• North Gate is closed\n3. Show the storm earlier"))
       .toEqual(["Give Aren a false memory", "North Gate is closed", "Show the storm earlier"]);
     expect(splitDumpBookIdeas(" ")).toEqual([]);
+  });
+
+  it("offers only explained local connections that share meaningful terms", () => {
+    const suggestions = findStoryVaultConnections("The North Gate closes during the storm before Aren arrives.", [
+      { id: "chapter-1", kind: "chapter", title: "Chapter 1: North Gate", text: "Aren walks toward the gate as a storm begins." },
+      { id: "location-1", kind: "location", title: "North Gate", text: "A sealed entrance outside the city." },
+      { id: "character-1", kind: "character", title: "Mira", text: "A careful archivist." },
+    ]);
+
+    expect(suggestions.map(item => item.id).sort()).toEqual(["chapter-1", "location-1"]);
+    expect(suggestions.find(item => item.id === "chapter-1")?.matchedTerms).toContain("storm");
+    expect(suggestions.find(item => item.id === "location-1")?.matchedTerms).toContain("north");
   });
 });

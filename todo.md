@@ -173,3 +173,12 @@
 - [x] Add a local-first Story Vault / Dump Book introduction with Open Vault and Skip for now actions.
 - [x] Validate the easy-use repair and Story Vault flow on phone and desktop without adding PDF, smart suggestions, group roles, or cloud storage.
 - [x] Save the completed easy-use and Story Vault release and push its source-only GitHub backup.
+- [x] Future priority 1: add approval-first PDF chapter import as a separate draft preview, with no automatic replacement.
+- [x] Future priority 2: add explained Story Vault idea connections that only suggest possible chapter, character, location, or scene fits.
+- [x] Audit current PDF text extraction, chapter drafts, Story Vault records, and consent routes for reuse in the approved import workflow.
+- [x] Add a local PDF chapter picker, extracted-text preview, warning state, and explicit Add as separate draft / Keep private choices.
+- [x] Keep imported PDF text separate from existing chapters until the author confirms the new draft; never overwrite a chapter automatically.
+- [x] Add local explained Story Vault connection suggestions using existing chapter titles, summaries, characters, locations, scenes, and planned arcs without AI or network calls.
+- [x] Add deliberate actions to open a suggested chapter, copy an idea to chapter notes, keep it in Story Vault, or dismiss the suggestion.
+- [x] Validate PDF preview/import, local idea suggestions, no-auto-merge behavior, phone layout, tests, and build.
+- [ ] Save the completed PDF import and idea-connection checkpoint and push its source-only GitHub backup.
