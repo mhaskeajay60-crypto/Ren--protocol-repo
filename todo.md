@@ -203,3 +203,7 @@
 - [x] Add shared canon search and category filters, Ruler revision controls, and ready-to-run desktop role-test guidance.
 - [x] Validate automated role boundaries, revision schema preservation, public/local separation, signed-out responsive boundary, tests, and build; defer live account testing until the author requests it.
 - [x] Save the completed canon discovery and history release and push its source-only GitHub backup.
+- [x] Audit the existing group and canon controls to preserve roles, server actions, and local-data separation during the guided redesign.
+- [x] Replace the join, proposal, Ruler approval, and Ruler revision forms with short guided decision-card flows.
+- [x] Validate automated permissions, privacy boundaries, signed-out responsive layout, tests, and build; defer live signed-in desktop testing until the author requests it.
+- [ ] Save the completed guided group-flow release and push its source-only GitHub backup.
