@@ -181,4 +181,4 @@
 - [x] Add local explained Story Vault connection suggestions using existing chapter titles, summaries, characters, locations, scenes, and planned arcs without AI or network calls.
 - [x] Add deliberate actions to open a suggested chapter, copy an idea to chapter notes, keep it in Story Vault, or dismiss the suggestion.
 - [x] Validate PDF preview/import, local idea suggestions, no-auto-merge behavior, phone layout, tests, and build.
-- [ ] Save the completed PDF import and idea-connection checkpoint and push its source-only GitHub backup.
+- [x] Save the completed PDF import and idea-connection checkpoint and push its source-only GitHub backup.
