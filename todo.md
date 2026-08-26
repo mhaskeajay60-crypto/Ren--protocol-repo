@@ -206,4 +206,4 @@
 - [x] Audit the existing group and canon controls to preserve roles, server actions, and local-data separation during the guided redesign.
 - [x] Replace the join, proposal, Ruler approval, and Ruler revision forms with short guided decision-card flows.
 - [x] Validate automated permissions, privacy boundaries, signed-out responsive layout, tests, and build; defer live signed-in desktop testing until the author requests it.
-- [ ] Save the completed guided group-flow release and push its source-only GitHub backup.
+- [x] Save the completed guided group-flow release and push its source-only GitHub backup.
