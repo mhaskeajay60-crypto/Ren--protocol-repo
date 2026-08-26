@@ -142,15 +142,15 @@
 - [x] Validate bulk source limits, consent, Keep private, safe provider failure, no-auto-filing, responsive behavior, tests, and build; stop further external PDF testing at the author’s request.
 - [x] Audit direct public access and remove the platform visibility login barrier for the demo version.
 - [x] Validate the no-login demo entry path and save the newest demo checkpoint.
-- [ ] Evaluate the supplied five-person shared-universe, cloud storage, Canon Archive, and structured conflict-checking proposal before implementation.
-- [ ] Evaluate the supplied Dump Book Inbox, bulk capture, multi-file, bulk-action, and progressive AI Studio proposal before implementation.
-- [ ] Present a privacy, migration, complexity, and delivery roadmap for author approval before changing the current local-first workspace.
+- [x] Evaluate the supplied five-person shared-universe, cloud storage, Canon Archive, and structured conflict-checking proposal before implementation; it remains deferred pending separate approval.
+- [x] Evaluate the supplied Dump Book Inbox, bulk capture, multi-file, bulk-action, and progressive AI Studio proposal before implementation; Phase 1 only was approved.
+- [x] Present a privacy, migration, complexity, and delivery roadmap for author approval before changing the current local-first workspace; the author approved only local-first Phase 1.
 - [x] Create and verify the first code-only GitHub backup in the user-selected repository without publishing local writing data or secrets.
-- [ ] Prepare a source-code-only ZIP and concise PDF guide for manual GitHub upload, excluding local writing data and private project configuration.
+- [x] Manual source-code ZIP/PDF handoff was declined after direct GitHub backup was verified; no local writing data or private configuration was exported.
 - [x] After each finished The Ren Protocol release, push the completed source code to the verified GitHub backup repository; do not upload unfinished work automatically.
 - [x] Verify the GitHub backup workflow with a harmless marker-file push and cleanup, without changing app behavior or local writing data.
-- [ ] Evaluate the supplied GitHub handoff, Dump Book Inbox, cloud storage, five-person collaboration, and shared-canon proposals before implementation.
-- [ ] Present a staged local-first-to-private-cloud migration plan and wait for author approval before changing the current demo workspace.
+- [x] Evaluate the supplied GitHub handoff, Dump Book Inbox, cloud storage, five-person collaboration, and shared-canon proposals before implementation; direct source backup is in use and cloud/team work is deferred.
+- [x] Present a staged local-first-to-private-cloud migration plan and wait for author approval before changing the current demo workspace; no cloud/team work was approved.
 - [x] Recommend and confirm a minimal connector set for useful backups and optional AI without weakening local-first privacy.
 - [x] Add Inbox statuses and backward-compatible Raw defaults for existing Dump Book items.
 - [x] Add a Capture and Organize Inbox layout with bulk paste-and-split, hidden secondary capture forms, and multi-file intake.
