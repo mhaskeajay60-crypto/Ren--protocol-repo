@@ -172,4 +172,4 @@
 - [x] Replace complicated beginner-facing labels with plain action language and short “why this matters” guidance.
 - [x] Add a local-first Story Vault / Dump Book introduction with Open Vault and Skip for now actions.
 - [x] Validate the easy-use repair and Story Vault flow on phone and desktop without adding PDF, smart suggestions, group roles, or cloud storage.
-- [ ] Save the completed easy-use and Story Vault release and push its source-only GitHub backup.
+- [x] Save the completed easy-use and Story Vault release and push its source-only GitHub backup.
