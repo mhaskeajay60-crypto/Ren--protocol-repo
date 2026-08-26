@@ -109,8 +109,27 @@ export const teamCanonRecords = mysqlTable("team_canon_records", {
   index("team_canon_records_proposer_index").on(table.proposedByUserId),
 ]);
 
+/** Immutable snapshots made immediately before a Ruler changes an approved canon record. */
+export const teamCanonRevisions = mysqlTable("team_canon_revisions", {
+  id: int("id").autoincrement().primaryKey(),
+  teamId: int("teamId").notNull(),
+  canonRecordId: int("canonRecordId").notNull(),
+  revisionNumber: int("revisionNumber").notNull(),
+  category: mysqlEnum("category", ["character", "world_rule", "location", "lore", "plot", "other"]).notNull(),
+  title: varchar("title", { length: 160 }).notNull(),
+  decision: text("decision").notNull(),
+  context: text("context"),
+  revisedByUserId: int("revisedByUserId").notNull(),
+  revisionNote: varchar("revisionNote", { length: 600 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex("team_canon_revisions_record_number_unique").on(table.canonRecordId, table.revisionNumber),
+  index("team_canon_revisions_team_record_index").on(table.teamId, table.canonRecordId),
+]);
+
 export type Team = typeof teams.$inferSelect;
 export type TeamMember = typeof teamMembers.$inferSelect;
 export type TeamInvitation = typeof teamInvitations.$inferSelect;
 export type TeamJoinRequest = typeof teamJoinRequests.$inferSelect;
 export type TeamCanonRecord = typeof teamCanonRecords.$inferSelect;
+export type TeamCanonRevision = typeof teamCanonRevisions.$inferSelect;

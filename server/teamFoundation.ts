@@ -13,6 +13,10 @@ export function canReadApprovedTeamCanon(role: string) {
   return role === "owner" || role === "writer" || role === "watcher";
 }
 
+export function canReviseApprovedTeamCanon(role: string) {
+  return role === "owner";
+}
+
 export function isTeamJoinRole(value: string): value is TeamJoinRole {
   return (TEAM_JOIN_ROLES as readonly string[]).includes(value);
 }

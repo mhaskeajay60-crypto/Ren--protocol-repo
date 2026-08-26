@@ -1,6 +1,6 @@
 import { and, count, eq, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, teamCanonRecords, teamInvitations, teamJoinRequests, teamMembers, teams, users } from "../drizzle/schema";
+import { InsertUser, teamCanonRecords, teamCanonRevisions, teamInvitations, teamJoinRequests, teamMembers, teams, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -316,6 +316,44 @@ export async function reviewTeamCanonProposal(input: { recordId: number; teamId:
   const status = input.decision === "approve" ? "approved" : "rejected";
   await db.update(teamCanonRecords).set({ status, reviewedByUserId: input.rulerUserId, reviewedAt: new Date() })
     .where(and(eq(teamCanonRecords.id, input.recordId), eq(teamCanonRecords.teamId, input.teamId), eq(teamCanonRecords.status, "pending")));
+}
+
+export async function listTeamCanonRevisions(recordId: number, teamId: number) {
+  const db = await requiredDb();
+  return db.select().from(teamCanonRevisions)
+    .where(and(eq(teamCanonRevisions.canonRecordId, recordId), eq(teamCanonRevisions.teamId, teamId)));
+}
+
+export async function reviseApprovedTeamCanon(input: { recordId: number; teamId: number; rulerUserId: number; category: "character" | "world_rule" | "location" | "lore" | "plot" | "other"; title: string; decision: string; context: string; revisionNote: string }) {
+  const db = await requiredDb();
+  return db.transaction(async (tx) => {
+    const current = await tx.select().from(teamCanonRecords)
+      .where(and(eq(teamCanonRecords.id, input.recordId), eq(teamCanonRecords.teamId, input.teamId), eq(teamCanonRecords.status, "approved"))).limit(1);
+    const record = current[0];
+    if (!record) throw new Error("Only an approved canon record can be revised.");
+    const history = await tx.select({ revisionNumber: teamCanonRevisions.revisionNumber }).from(teamCanonRevisions)
+      .where(and(eq(teamCanonRevisions.canonRecordId, input.recordId), eq(teamCanonRevisions.teamId, input.teamId)));
+    const revisionNumber = history.length + 1;
+    await tx.insert(teamCanonRevisions).values({
+      teamId: input.teamId,
+      canonRecordId: input.recordId,
+      revisionNumber,
+      category: record.category,
+      title: record.title,
+      decision: record.decision,
+      context: record.context,
+      revisedByUserId: input.rulerUserId,
+      revisionNote: input.revisionNote || null,
+    });
+    await tx.update(teamCanonRecords).set({
+      category: input.category,
+      title: input.title,
+      decision: input.decision,
+      context: input.context || null,
+      updatedAt: new Date(),
+    }).where(eq(teamCanonRecords.id, input.recordId));
+    return { revisionNumber };
+  });
 }
 
 export async function createTeamInvitation(input: {

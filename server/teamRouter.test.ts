@@ -27,4 +27,10 @@ describe("private team router", () => {
     await expect(caller.team.proposeCanon({ teamId: 1, category: "lore", title: "The unseen watcher", decision: "The tower contains an unseen watcher.", context: "It supports the next gate scene." })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     await expect(caller.team.reviewCanon({ teamId: 1, recordId: 1, decision: "approve" })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
+
+  it("rejects unauthenticated canon history and approved-canon revision attempts", async () => {
+    const caller = appRouter.createCaller(unauthenticatedContext());
+    await expect(caller.team.canonHistory({ teamId: 1, recordId: 1 })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.team.reviseCanon({ teamId: 1, recordId: 1, category: "lore", title: "Tower watcher", decision: "The tower has an unseen watcher.", context: "Keeps the gate mystery active.", revisionNote: "Clarified the original decision." })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+  });
 });

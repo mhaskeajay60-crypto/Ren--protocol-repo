@@ -6,7 +6,7 @@ import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
-import { canReadApprovedTeamCanon, canSubmitTeamCanon, createInvitationToken, createTeamSlug, hashInvitationToken, isInvitationActive, normalizeTeamEmail, TEAM_INVITATION_LIFETIME_MS, TEAM_JOIN_ROLES, TEAM_MEMBER_LIMIT } from "./teamFoundation";
+import { canReadApprovedTeamCanon, canReviseApprovedTeamCanon, canSubmitTeamCanon, createInvitationToken, createTeamSlug, hashInvitationToken, isInvitationActive, normalizeTeamEmail, TEAM_INVITATION_LIFETIME_MS, TEAM_JOIN_ROLES, TEAM_MEMBER_LIMIT } from "./teamFoundation";
 
 const organizerItemSchema = z.object({
   type: z.enum(["character", "world_rule", "location", "lore", "faction", "artifact", "plot_thread", "scene", "note", "revision_issue"]),
@@ -246,6 +246,30 @@ export const appRouter = router({
         await db.reviewTeamCanonProposal({ recordId: input.recordId, teamId: input.teamId, rulerUserId: ctx.user.id, decision: input.decision });
         return { success: true };
       }),
+
+    canonHistory: protectedProcedure.input(teamIdInput.extend({ recordId: z.number().int().positive() }))
+      .query(async ({ ctx, input }) => {
+        const membership = await requireTeamMember(input.teamId, ctx.user.id);
+        if (!canReviseApprovedTeamCanon(membership.role)) throw new TRPCError({ code: "FORBIDDEN", message: "Only the Ruler can view approved-canon revision history." });
+        const record = await db.getTeamCanonRecord(input.recordId, input.teamId);
+        if (!record || record.status !== "approved") throw new TRPCError({ code: "NOT_FOUND", message: "This approved canon record is unavailable." });
+        return db.listTeamCanonRevisions(input.recordId, input.teamId);
+      }),
+
+    reviseCanon: protectedProcedure.input(teamIdInput.extend({
+      recordId: z.number().int().positive(),
+      category: teamCanonCategorySchema,
+      title: z.string().trim().min(2).max(160),
+      decision: z.string().trim().min(10).max(5000),
+      context: z.string().trim().max(1200).default(""),
+      revisionNote: z.string().trim().max(600).default(""),
+    })).mutation(async ({ ctx, input }) => {
+      const membership = await requireTeamMember(input.teamId, ctx.user.id);
+      if (!canReviseApprovedTeamCanon(membership.role)) throw new TRPCError({ code: "FORBIDDEN", message: "Only the Ruler can revise approved canon." });
+      const record = await db.getTeamCanonRecord(input.recordId, input.teamId);
+      if (!record || record.status !== "approved") throw new TRPCError({ code: "NOT_FOUND", message: "Only an approved canon record can be revised." });
+      return db.reviseApprovedTeamCanon({ ...input, rulerUserId: ctx.user.id });
+    }),
 
     requestJoin: protectedProcedure.input(teamIdInput.extend({ requestedRole: teamJoinRoleSchema.default("writer"), message: z.string().trim().max(600).default("") }))
       .mutation(async ({ ctx, input }) => {

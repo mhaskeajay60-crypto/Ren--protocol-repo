@@ -198,3 +198,8 @@
 - [x] Build the private canon interface for Writer submission, Ruler approval, and read-only approved canon access for Watchers.
 - [x] Validate automated role boundaries, schema, public/local separation, signed-out phone boundary, tests, and build; defer live desktop account testing until the author requests it.
 - [x] Save the completed Part II shared-canon release and push its source-only GitHub backup.
+- [x] Audit the shared canon schema, Ruler permissions, and private group interface for safe search and history reuse.
+- [x] Add Ruler-only approved-canon update rules with immutable prior-version history.
+- [x] Add shared canon search and category filters, Ruler revision controls, and ready-to-run desktop role-test guidance.
+- [x] Validate automated role boundaries, revision schema preservation, public/local separation, signed-out responsive boundary, tests, and build; defer live account testing until the author requests it.
+- [ ] Save the completed canon discovery and history release and push its source-only GitHub backup.
