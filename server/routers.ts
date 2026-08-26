@@ -2,8 +2,11 @@ import { COOKIE_NAME } from "@shared/const";
 import { invokeLLM } from "./_core/llm";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
+import * as db from "./db";
+import { createInvitationToken, createTeamSlug, hashInvitationToken, isInvitationActive, normalizeTeamEmail, TEAM_INVITATION_LIFETIME_MS, TEAM_MEMBER_LIMIT } from "./teamFoundation";
 
 const organizerItemSchema = z.object({
   type: z.enum(["character", "world_rule", "location", "lore", "faction", "artifact", "plot_thread", "scene", "note", "revision_issue"]),
@@ -163,6 +166,21 @@ export function parseBulkMasterbookResponse(content: string) {
   return bulkMasterbookResponseSchema.parse(JSON.parse(content));
 }
 
+async function requireTeamMember(teamId: number, userId: number) {
+  const membership = await db.getTeamMembership(teamId, userId);
+  if (!membership) throw new TRPCError({ code: "FORBIDDEN", message: "You do not have access to this private team workspace." });
+  return membership;
+}
+
+async function requireTeamOwner(teamId: number, userId: number) {
+  const membership = await requireTeamMember(teamId, userId);
+  if (membership.role !== "owner") throw new TRPCError({ code: "FORBIDDEN", message: "Only the team owner can manage invitations." });
+  return membership;
+}
+
+const teamIdInput = z.object({ teamId: z.number().int().positive() });
+const teamVisibilitySchema = z.enum(["private", "team", "restricted"]);
+
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
@@ -175,6 +193,84 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+  }),
+
+  team: router({
+    mine: protectedProcedure.query(async ({ ctx }) => db.listTeamsForUser(ctx.user.id)),
+
+    create: protectedProcedure.input(z.object({
+      name: z.string().trim().min(2).max(160),
+      description: z.string().trim().max(1200).default(""),
+    })).mutation(async ({ ctx, input }) => {
+      const teamId = await db.createTeamWithOwner({
+        name: input.name,
+        slug: createTeamSlug(input.name),
+        description: input.description,
+        ownerUserId: ctx.user.id,
+      });
+      return { teamId };
+    }),
+
+    overview: protectedProcedure.input(teamIdInput).query(async ({ ctx, input }) => {
+      const membership = await requireTeamMember(input.teamId, ctx.user.id);
+      const team = await db.getTeamById(input.teamId);
+      if (!team) throw new TRPCError({ code: "NOT_FOUND", message: "This team workspace no longer exists." });
+      const members = await db.listTeamMembers(input.teamId);
+      const invitations = membership.role === "owner" ? await db.listTeamInvitations(input.teamId) : [];
+      return { team, membership, members, invitations };
+    }),
+
+    createInvitation: protectedProcedure.input(teamIdInput.extend({ inviteeEmail: z.string().trim().email().max(320) }))
+      .mutation(async ({ ctx, input }) => {
+        await requireTeamOwner(input.teamId, ctx.user.id);
+        const inviteeEmail = normalizeTeamEmail(input.inviteeEmail);
+        const existingMembers = await db.listTeamMembers(input.teamId);
+        if (existingMembers.some(member => normalizeTeamEmail(member.email || "") === inviteeEmail)) {
+          throw new TRPCError({ code: "CONFLICT", message: "That person is already a member of this team." });
+        }
+        const existingInvitations = await db.listTeamInvitations(input.teamId);
+        if (existingInvitations.some(invitation => normalizeTeamEmail(invitation.inviteeEmail) === inviteeEmail && isInvitationActive(invitation.status, invitation.expiresAt))) {
+          throw new TRPCError({ code: "CONFLICT", message: "A pending invitation already exists for that email address." });
+        }
+        if (await db.getTeamSeatUsage(input.teamId) >= TEAM_MEMBER_LIMIT) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: `This private foundation is limited to ${TEAM_MEMBER_LIMIT} members including pending invitations.` });
+        }
+        const token = createInvitationToken();
+        const expiresAt = new Date(Date.now() + TEAM_INVITATION_LIFETIME_MS);
+        const invitationId = await db.createTeamInvitation({
+          teamId: input.teamId,
+          inviteeEmail,
+          tokenHash: hashInvitationToken(token),
+          invitedByUserId: ctx.user.id,
+          expiresAt,
+        });
+        return { invitationId, token, expiresAt };
+      }),
+
+    acceptInvitation: protectedProcedure.input(z.object({ token: z.string().regex(/^[a-f0-9]{64}$/), defaultVisibility: teamVisibilitySchema.default("private") }))
+      .mutation(async ({ ctx, input }) => {
+        const email = normalizeTeamEmail(ctx.user.email || "");
+        if (!email) throw new TRPCError({ code: "BAD_REQUEST", message: "Your signed-in account needs an email address to accept a team invitation." });
+        const invitation = await db.getTeamInvitationByTokenHash(hashInvitationToken(input.token));
+        if (!invitation || !isInvitationActive(invitation.status, invitation.expiresAt)) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "This invitation is unavailable, expired, or has been revoked." });
+        }
+        if (normalizeTeamEmail(invitation.inviteeEmail) !== email) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Sign in with the email address that received this invitation." });
+        }
+        if (await db.getTeamSeatUsage(invitation.teamId) > TEAM_MEMBER_LIMIT) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "This team has reached its member limit." });
+        }
+        await db.acceptTeamInvitation({ invitationId: invitation.id, teamId: invitation.teamId, userId: ctx.user.id, defaultVisibility: input.defaultVisibility });
+        return { teamId: invitation.teamId };
+      }),
+
+    revokeInvitation: protectedProcedure.input(teamIdInput.extend({ invitationId: z.number().int().positive() }))
+      .mutation(async ({ ctx, input }) => {
+        await requireTeamOwner(input.teamId, ctx.user.id);
+        await db.revokeTeamInvitation(input.invitationId, input.teamId);
+        return { success: true };
+      }),
   }),
 
   organizer: router({

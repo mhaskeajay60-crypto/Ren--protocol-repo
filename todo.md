@@ -158,3 +158,11 @@
 - [x] Simplify AI Studio into Organize ideas, Help current chapter, and Check story entry points while retaining review-first consent.
 - [x] Validate Phase 1 Inbox local privacy, persistence, bulk actions, desktop/phone layout, tests, and build.
 - [x] Save, push the completed code backup to GitHub, and deliver the newest Phase 1 Inbox checkpoint.
+- [x] Audit the existing public local demo, OAuth, database, and route boundaries for a separate private team mode.
+- [x] Add a team workspace schema with owner/writer roles, private/team/restricted visibility, and revocable invitation records.
+- [x] Implement protected server procedures for team creation, membership, invitation creation, and invitation acceptance.
+- [x] Add a separate private team entry screen that requires sign-in without changing the public local-first demo.
+- [x] Add a responsive team workspace foundation with an owner member view and a safe invitation workflow.
+- [x] Validate unauthorized access, role permissions, invitation flow, public-demo separation, regression tests, and mobile layout; the live authenticated flow remains pending Google device approval and is covered by automated safeguards.
+- [ ] Save the completed Phase 2 checkpoint and push the finished source-only release to GitHub.
+- [x] Repair and validate the private-team sign-in reset path after the reported stuck login state.

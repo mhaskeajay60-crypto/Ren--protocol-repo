@@ -20,6 +20,18 @@ export async function setupVite(app: Express, server: Server) {
     appType: "custom",
   });
 
+  app.get("/team", async (req, res, next) => {
+    try {
+      const templatePath = path.resolve(import.meta.dirname, "../..", "client", "team.html");
+      const template = await fs.promises.readFile(templatePath, "utf-8");
+      const page = await vite.transformIndexHtml(req.originalUrl, template);
+      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+    } catch (error) {
+      vite.ssrFixStacktrace(error as Error);
+      next(error);
+    }
+  });
+
   app.use(vite.middlewares);
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
@@ -57,6 +69,10 @@ export function serveStatic(app: Express) {
       `Could not find the build directory: ${distPath}, make sure to build the client first`
     );
   }
+
+  app.get("/team", (_req, res) => {
+    res.sendFile(path.resolve(distPath, "team.html"));
+  });
 
   app.use(express.static(distPath));
 

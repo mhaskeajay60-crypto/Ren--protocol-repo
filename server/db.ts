@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { and, count, eq, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, teamInvitations, teamMembers, teams, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,123 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+async function requiredDb() {
+  const db = await getDb();
+  if (!db) throw new Error("The private team workspace database is unavailable.");
+  return db;
+}
+
+export async function listTeamsForUser(userId: number) {
+  const db = await requiredDb();
+  return db.select({ team: teams, membership: teamMembers })
+    .from(teamMembers)
+    .innerJoin(teams, eq(teamMembers.teamId, teams.id))
+    .where(eq(teamMembers.userId, userId));
+}
+
+export async function getTeamMembership(teamId: number, userId: number) {
+  const db = await requiredDb();
+  const result = await db.select().from(teamMembers)
+    .where(and(eq(teamMembers.teamId, teamId), eq(teamMembers.userId, userId)))
+    .limit(1);
+  return result[0];
+}
+
+export async function getTeamById(teamId: number) {
+  const db = await requiredDb();
+  const result = await db.select().from(teams).where(eq(teams.id, teamId)).limit(1);
+  return result[0];
+}
+
+export async function createTeamWithOwner(input: { name: string; slug: string; description: string; ownerUserId: number }) {
+  const db = await requiredDb();
+  return db.transaction(async (tx) => {
+    const [created] = await tx.insert(teams).values({
+      name: input.name,
+      slug: input.slug,
+      description: input.description || null,
+      createdByUserId: input.ownerUserId,
+    });
+    const teamId = Number(created.insertId);
+    await tx.insert(teamMembers).values({
+      teamId,
+      userId: input.ownerUserId,
+      role: "owner",
+      defaultVisibility: "private",
+    });
+    return teamId;
+  });
+}
+
+export async function listTeamMembers(teamId: number) {
+  const db = await requiredDb();
+  return db.select({
+    id: teamMembers.id,
+    userId: teamMembers.userId,
+    role: teamMembers.role,
+    defaultVisibility: teamMembers.defaultVisibility,
+    joinedAt: teamMembers.joinedAt,
+    name: users.name,
+    email: users.email,
+  }).from(teamMembers).innerJoin(users, eq(teamMembers.userId, users.id)).where(eq(teamMembers.teamId, teamId));
+}
+
+export async function listTeamInvitations(teamId: number) {
+  const db = await requiredDb();
+  return db.select().from(teamInvitations).where(eq(teamInvitations.teamId, teamId));
+}
+
+export async function getTeamInvitationByTokenHash(tokenHash: string) {
+  const db = await requiredDb();
+  const result = await db.select().from(teamInvitations).where(eq(teamInvitations.tokenHash, tokenHash)).limit(1);
+  return result[0];
+}
+
+export async function getTeamSeatUsage(teamId: number) {
+  const db = await requiredDb();
+  const now = new Date();
+  const members = await db.select({ total: count() }).from(teamMembers).where(eq(teamMembers.teamId, teamId));
+  const pending = await db.select({ total: count() }).from(teamInvitations)
+    .where(and(eq(teamInvitations.teamId, teamId), eq(teamInvitations.status, "pending"), gt(teamInvitations.expiresAt, now)));
+  return Number(members[0]?.total || 0) + Number(pending[0]?.total || 0);
+}
+
+export async function createTeamInvitation(input: {
+  teamId: number;
+  inviteeEmail: string;
+  tokenHash: string;
+  invitedByUserId: number;
+  expiresAt: Date;
+}) {
+  const db = await requiredDb();
+  const [created] = await db.insert(teamInvitations).values({
+    teamId: input.teamId,
+    inviteeEmail: input.inviteeEmail,
+    role: "writer",
+    defaultVisibility: "private",
+    tokenHash: input.tokenHash,
+    invitedByUserId: input.invitedByUserId,
+    status: "pending",
+    expiresAt: input.expiresAt,
+  });
+  return Number(created.insertId);
+}
+
+export async function acceptTeamInvitation(input: { invitationId: number; teamId: number; userId: number; defaultVisibility: "private" | "team" | "restricted" }) {
+  const db = await requiredDb();
+  return db.transaction(async (tx) => {
+    await tx.insert(teamMembers).values({
+      teamId: input.teamId,
+      userId: input.userId,
+      role: "writer",
+      defaultVisibility: input.defaultVisibility,
+    }).onDuplicateKeyUpdate({ set: { defaultVisibility: input.defaultVisibility, updatedAt: new Date() } });
+    await tx.update(teamInvitations).set({ status: "accepted", acceptedAt: new Date() }).where(eq(teamInvitations.id, input.invitationId));
+  });
+}
+
+export async function revokeTeamInvitation(invitationId: number, teamId: number) {
+  const db = await requiredDb();
+  await db.update(teamInvitations).set({ status: "revoked" })
+    .where(and(eq(teamInvitations.id, invitationId), eq(teamInvitations.teamId, teamId)));
+}
