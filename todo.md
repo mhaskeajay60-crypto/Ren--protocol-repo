@@ -148,4 +148,4 @@
 - [x] Create and verify the first code-only GitHub backup in the user-selected repository without publishing local writing data or secrets.
 - [ ] Prepare a source-code-only ZIP and concise PDF guide for manual GitHub upload, excluding local writing data and private project configuration.
 - [ ] After each finished The Ren Protocol release, push the completed source code to the verified GitHub backup repository; do not upload unfinished work automatically.
-- [ ] Verify the GitHub backup workflow with a harmless marker-file push and cleanup, without changing app behavior or local writing data.
+- [x] Verify the GitHub backup workflow with a harmless marker-file push and cleanup, without changing app behavior or local writing data.
