@@ -187,3 +187,11 @@ The separate `/team` route was rechecked while signed out after the Part I chang
 The public `?view=chapter` route was then reopened without sign-in. It retained the browser-local Chapter 01 workspace and showed only a navigation link to the separate private group; no group record, membership, or join-request information appeared in the public author view.
 
 After the current service restart, the private-group route rendered the same protected sign-in boundary again, with no stale PDF dependency error in the current page. The 375-pixel capture kept the sign-in, reset, and return-to-demo actions readable and tappable.
+
+## Part II Shared Cloud Canon
+
+Part II adds only the private `team_canon_records` store. A group member must deliberately type a category, title, proposed decision, and optional reason into the signed-in Canon Proposal form; the public browser-local chapter workspace and Story Vault have no path that auto-selects, copies, or syncs content into this table. Every submission begins as **Pending**. Only a Ruler may approve or reject it. Approved records are the only canon records visible to all accepted members, including Watchers; Watchers remain read-only and cannot submit or review a proposal.
+
+The additive live schema was verified with its category, proposal, review, and pending/approved/rejected fields. The protected `/team` route was also reopened while signed out after the Part II service restart and showed only the sign-in boundary, reset action, and return-to-local-demo action. Automated role helpers and protected-route tests cover Writer/Ruler/Watcher permissions and rejection of unauthenticated canon access. Live signed-in proposal and approval testing remains intentionally deferred until the author requests desktop testing.
+
+The signed-out mobile boundary retains readable sign-in, reset, and return-to-demo controls. `pnpm exec tsc --noEmit`, `pnpm test` (**33 tests**), `pnpm run build`, and `git diff --check` passed after the Part II code changes.

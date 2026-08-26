@@ -21,4 +21,10 @@ describe("private team router", () => {
     await expect(caller.team.requestJoin({ teamId: 1, requestedRole: "watcher", message: "Please let me read approved canon." })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     await expect(caller.team.reviewJoinRequest({ teamId: 1, requestId: 1, decision: "approve" })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
+
+  it("rejects unauthenticated canon proposals and Ruler canon review attempts", async () => {
+    const caller = appRouter.createCaller(unauthenticatedContext());
+    await expect(caller.team.proposeCanon({ teamId: 1, category: "lore", title: "The unseen watcher", decision: "The tower contains an unseen watcher.", context: "It supports the next gate scene." })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.team.reviewCanon({ teamId: 1, recordId: 1, decision: "approve" })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+  });
 });

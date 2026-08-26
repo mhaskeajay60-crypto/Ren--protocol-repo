@@ -6,7 +6,7 @@ import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
-import { createInvitationToken, createTeamSlug, hashInvitationToken, isInvitationActive, normalizeTeamEmail, TEAM_INVITATION_LIFETIME_MS, TEAM_JOIN_ROLES, TEAM_MEMBER_LIMIT } from "./teamFoundation";
+import { canReadApprovedTeamCanon, canSubmitTeamCanon, createInvitationToken, createTeamSlug, hashInvitationToken, isInvitationActive, normalizeTeamEmail, TEAM_INVITATION_LIFETIME_MS, TEAM_JOIN_ROLES, TEAM_MEMBER_LIMIT } from "./teamFoundation";
 
 const organizerItemSchema = z.object({
   type: z.enum(["character", "world_rule", "location", "lore", "faction", "artifact", "plot_thread", "scene", "note", "revision_issue"]),
@@ -181,6 +181,7 @@ async function requireTeamOwner(teamId: number, userId: number) {
 const teamIdInput = z.object({ teamId: z.number().int().positive() });
 const teamVisibilitySchema = z.enum(["private", "team", "restricted"]);
 const teamJoinRoleSchema = z.enum(TEAM_JOIN_ROLES);
+const teamCanonCategorySchema = z.enum(["character", "world_rule", "location", "lore", "plot", "other"]);
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -220,8 +221,31 @@ export const appRouter = router({
       const members = await db.listTeamMembers(input.teamId);
       const invitations = membership.role === "owner" ? await db.listTeamInvitations(input.teamId) : [];
       const joinRequests = membership.role === "owner" ? await db.listTeamJoinRequests(input.teamId) : [];
-      return { team, membership, members, invitations, joinRequests };
+      const approvedCanon = canReadApprovedTeamCanon(membership.role) ? await db.listApprovedTeamCanon(input.teamId) : [];
+      const canonProposals = membership.role === "owner" ? await db.listTeamCanonForRuler(input.teamId) : membership.role === "writer" ? await db.listTeamCanonForProposer(input.teamId, ctx.user.id) : [];
+      return { team, membership, members, invitations, joinRequests, approvedCanon, canonProposals };
     }),
+
+    proposeCanon: protectedProcedure.input(teamIdInput.extend({
+      category: teamCanonCategorySchema,
+      title: z.string().trim().min(2).max(160),
+      decision: z.string().trim().min(10).max(5000),
+      context: z.string().trim().max(1200).default(""),
+    })).mutation(async ({ ctx, input }) => {
+      const membership = await requireTeamMember(input.teamId, ctx.user.id);
+      if (!canSubmitTeamCanon(membership.role)) throw new TRPCError({ code: "FORBIDDEN", message: "Watchers can read approved canon but cannot submit or change it." });
+      const recordId = await db.createTeamCanonProposal({ ...input, proposedByUserId: ctx.user.id });
+      return { recordId, status: "pending" as const };
+    }),
+
+    reviewCanon: protectedProcedure.input(teamIdInput.extend({ recordId: z.number().int().positive(), decision: z.enum(["approve", "reject"]) }))
+      .mutation(async ({ ctx, input }) => {
+        await requireTeamOwner(input.teamId, ctx.user.id);
+        const record = await db.getTeamCanonRecord(input.recordId, input.teamId);
+        if (!record || record.status !== "pending") throw new TRPCError({ code: "NOT_FOUND", message: "This canon proposal is no longer pending." });
+        await db.reviewTeamCanonProposal({ recordId: input.recordId, teamId: input.teamId, rulerUserId: ctx.user.id, decision: input.decision });
+        return { success: true };
+      }),
 
     requestJoin: protectedProcedure.input(teamIdInput.extend({ requestedRole: teamJoinRoleSchema.default("writer"), message: z.string().trim().max(600).default("") }))
       .mutation(async ({ ctx, input }) => {

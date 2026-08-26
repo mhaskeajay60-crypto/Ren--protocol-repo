@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createTeamSlug, hashInvitationToken, isInvitationActive, isTeamJoinRole, normalizeTeamEmail } from "./teamFoundation";
+import { canReadApprovedTeamCanon, canSubmitTeamCanon, createTeamSlug, hashInvitationToken, isInvitationActive, isTeamJoinRole, normalizeTeamEmail } from "./teamFoundation";
 
 describe("team foundation privacy helpers", () => {
   it("normalizes invitation email comparisons", () => {
@@ -15,6 +15,13 @@ describe("team foundation privacy helpers", () => {
     expect(isTeamJoinRole("writer")).toBe(true);
     expect(isTeamJoinRole("watcher")).toBe(true);
     expect(isTeamJoinRole("ruler")).toBe(false);
+  });
+
+  it("keeps Watchers read-only while allowing all members to read approved canon", () => {
+    expect(canSubmitTeamCanon("owner")).toBe(true);
+    expect(canSubmitTeamCanon("writer")).toBe(true);
+    expect(canSubmitTeamCanon("watcher")).toBe(false);
+    expect(canReadApprovedTeamCanon("watcher")).toBe(true);
   });
 
   it("hashes invitation tokens without retaining the raw token", () => {

@@ -1,6 +1,6 @@
 import { and, count, eq, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, teamInvitations, teamJoinRequests, teamMembers, teams, users } from "../drizzle/schema";
+import { InsertUser, teamCanonRecords, teamInvitations, teamJoinRequests, teamMembers, teams, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -248,6 +248,74 @@ export async function rejectTeamJoinRequest(input: { requestId: number; teamId: 
   const db = await requiredDb();
   await db.update(teamJoinRequests).set({ status: "rejected", reviewedByUserId: input.rulerUserId, reviewedAt: new Date() })
     .where(and(eq(teamJoinRequests.id, input.requestId), eq(teamJoinRequests.teamId, input.teamId), eq(teamJoinRequests.status, "pending")));
+}
+
+export async function listApprovedTeamCanon(teamId: number) {
+  const db = await requiredDb();
+  return db.select({
+    id: teamCanonRecords.id,
+    category: teamCanonRecords.category,
+    title: teamCanonRecords.title,
+    decision: teamCanonRecords.decision,
+    context: teamCanonRecords.context,
+    status: teamCanonRecords.status,
+    createdAt: teamCanonRecords.createdAt,
+    reviewedAt: teamCanonRecords.reviewedAt,
+    proposerName: users.name,
+  }).from(teamCanonRecords).innerJoin(users, eq(teamCanonRecords.proposedByUserId, users.id))
+    .where(and(eq(teamCanonRecords.teamId, teamId), eq(teamCanonRecords.status, "approved")));
+}
+
+export async function listTeamCanonForRuler(teamId: number) {
+  const db = await requiredDb();
+  return db.select({
+    id: teamCanonRecords.id,
+    category: teamCanonRecords.category,
+    title: teamCanonRecords.title,
+    decision: teamCanonRecords.decision,
+    context: teamCanonRecords.context,
+    status: teamCanonRecords.status,
+    proposedByUserId: teamCanonRecords.proposedByUserId,
+    reviewedAt: teamCanonRecords.reviewedAt,
+    createdAt: teamCanonRecords.createdAt,
+    proposerName: users.name,
+    proposerEmail: users.email,
+  }).from(teamCanonRecords).innerJoin(users, eq(teamCanonRecords.proposedByUserId, users.id))
+    .where(eq(teamCanonRecords.teamId, teamId));
+}
+
+export async function listTeamCanonForProposer(teamId: number, userId: number) {
+  const db = await requiredDb();
+  return db.select().from(teamCanonRecords)
+    .where(and(eq(teamCanonRecords.teamId, teamId), eq(teamCanonRecords.proposedByUserId, userId)));
+}
+
+export async function getTeamCanonRecord(recordId: number, teamId: number) {
+  const db = await requiredDb();
+  const result = await db.select().from(teamCanonRecords)
+    .where(and(eq(teamCanonRecords.id, recordId), eq(teamCanonRecords.teamId, teamId))).limit(1);
+  return result[0];
+}
+
+export async function createTeamCanonProposal(input: { teamId: number; category: "character" | "world_rule" | "location" | "lore" | "plot" | "other"; title: string; decision: string; context: string; proposedByUserId: number }) {
+  const db = await requiredDb();
+  const [created] = await db.insert(teamCanonRecords).values({
+    teamId: input.teamId,
+    category: input.category,
+    title: input.title,
+    decision: input.decision,
+    context: input.context || null,
+    status: "pending",
+    proposedByUserId: input.proposedByUserId,
+  });
+  return Number(created.insertId);
+}
+
+export async function reviewTeamCanonProposal(input: { recordId: number; teamId: number; rulerUserId: number; decision: "approve" | "reject" }) {
+  const db = await requiredDb();
+  const status = input.decision === "approve" ? "approved" : "rejected";
+  await db.update(teamCanonRecords).set({ status, reviewedByUserId: input.rulerUserId, reviewedAt: new Date() })
+    .where(and(eq(teamCanonRecords.id, input.recordId), eq(teamCanonRecords.teamId, input.teamId), eq(teamCanonRecords.status, "pending")));
 }
 
 export async function createTeamInvitation(input: {

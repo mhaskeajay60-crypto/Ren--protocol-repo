@@ -90,7 +90,27 @@ export const teamJoinRequests = mysqlTable("team_join_requests", {
   index("team_join_requests_requester_index").on(table.requesterUserId),
 ]);
 
+/** Deliberately submitted group decisions. Browser-local chapters and Story Vault material are never copied here automatically. */
+export const teamCanonRecords = mysqlTable("team_canon_records", {
+  id: int("id").autoincrement().primaryKey(),
+  teamId: int("teamId").notNull(),
+  category: mysqlEnum("category", ["character", "world_rule", "location", "lore", "plot", "other"]).notNull(),
+  title: varchar("title", { length: 160 }).notNull(),
+  decision: text("decision").notNull(),
+  context: text("context"),
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  proposedByUserId: int("proposedByUserId").notNull(),
+  reviewedByUserId: int("reviewedByUserId"),
+  reviewedAt: timestamp("reviewedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  index("team_canon_records_team_status_index").on(table.teamId, table.status),
+  index("team_canon_records_proposer_index").on(table.proposedByUserId),
+]);
+
 export type Team = typeof teams.$inferSelect;
 export type TeamMember = typeof teamMembers.$inferSelect;
 export type TeamInvitation = typeof teamInvitations.$inferSelect;
 export type TeamJoinRequest = typeof teamJoinRequests.$inferSelect;
+export type TeamCanonRecord = typeof teamCanonRecords.$inferSelect;

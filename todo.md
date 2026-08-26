@@ -193,3 +193,8 @@
 - [x] Validate automated role boundaries, schema, public/local separation, responsive layout, tests, and build; defer live signed-in approval/rejection at the user's request.
 - [x] Record the user-deferred desktop live Ruler/Writer/Watcher test while completing automated and signed-out validation now.
 - [x] Save the completed Part I group-role release and push its source-only GitHub backup.
+- [x] Audit the private group foundation and define safe canon-proposal boundaries with no automatic local-data sharing.
+- [x] Add protected shared-canon proposals with pending, approved, and rejected states plus Ruler-only review.
+- [x] Build the private canon interface for Writer submission, Ruler approval, and read-only approved canon access for Watchers.
+- [x] Validate automated role boundaries, schema, public/local separation, signed-out phone boundary, tests, and build; defer live desktop account testing until the author requests it.
+- [ ] Save the completed Part II shared-canon release and push its source-only GitHub backup.

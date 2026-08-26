@@ -15,6 +15,13 @@
       "when": 1787755807534,
       "tag": "0001_far_whizzer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1787757717481,
+      "tag": "0002_freezing_toad_men",
+      "breakpoints": true
     }
   ]
 }
