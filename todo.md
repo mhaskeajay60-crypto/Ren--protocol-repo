@@ -142,3 +142,7 @@
 - [x] Validate bulk source limits, consent, Keep private, safe provider failure, no-auto-filing, responsive behavior, tests, and build; stop further external PDF testing at the author’s request.
 - [x] Audit direct public access and remove the platform visibility login barrier for the demo version.
 - [x] Validate the no-login demo entry path and save the newest demo checkpoint.
+- [ ] Evaluate the supplied five-person shared-universe, cloud storage, Canon Archive, and structured conflict-checking proposal before implementation.
+- [ ] Evaluate the supplied Dump Book Inbox, bulk capture, multi-file, bulk-action, and progressive AI Studio proposal before implementation.
+- [ ] Present a privacy, migration, complexity, and delivery roadmap for author approval before changing the current local-first workspace.
+- [ ] Create and verify the first code-only GitHub backup in the user-selected repository without publishing local writing data or secrets.
