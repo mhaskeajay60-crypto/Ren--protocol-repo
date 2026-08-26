@@ -238,3 +238,14 @@
 - [x] Add visual Place dossiers that make location records feel like explorable map/biome folios while preserving their current fields.
 - [x] Add a browser-local relationship web that shows only deliberately saved links and does not create group canon or sharing.
 - [x] Test Place dossiers, relationship graph data boundaries, Atlas icons, and desktop/phone layouts; save and back up the completed release.
+- [x] Audit the reported mobile failures: cut-off side-by-side boards, empty vertical space, repetitive cards, long forms, excessive helper copy, and weak visual hierarchy.
+- [x] Propose a complete mobile-first author interface system that redesigns Progress, Planning, Story Vault, Masterbook, and all creation windows as coherent workflows.
+- [x] Await author approval before replacing current layouts, controls, or saved-data entry paths.
+- [x] Preserve all browser-local writing, Vault, Masterbook, custom-stat, export, and protected group-canon behavior during the Pocket Story Console rebuild.
+- [x] Replace the shared phone navigation and pale repeated-card system with a coherent dark game-codex shell, focused color accents, and large mobile touch targets.
+- [x] Redesign Desk and Progress as a concise Writer Pulse with one useful next action, a compact goal summary, and optional detailed history.
+- [x] Redesign Planning as one selectable story lane at a time on phone, with compact empty states and no cut-off desktop columns.
+- [x] Redesign Story Vault as a fast Text/File/Link capture tray with collection controls moved out of the capture flow.
+- [x] Redesign Masterbook Atlas as a compact game-codex shelf with less repeated explanation and category-specific full-screen dossier views.
+- [x] Replace character, arc, scene, place, and other creator windows with short progressive builders and visual previews.
+- [x] Test preserved features, local-only privacy, desktop/phone layouts, automated coverage, and build; save and back up the completed release.
