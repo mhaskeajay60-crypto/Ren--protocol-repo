@@ -140,3 +140,5 @@
 - [x] Show an exact multi-file consent summary before any selected local PDF or extracted information leaves the browser.
 - [x] Let the author review, select, and explicitly add proposed records from multiple Dump Book sources to Masterbook.
 - [x] Validate bulk source limits, consent, Keep private, safe provider failure, no-auto-filing, responsive behavior, tests, and build; stop further external PDF testing at the author’s request.
+- [x] Audit direct public access and remove the platform visibility login barrier for the demo version.
+- [x] Validate the no-login demo entry path and save the newest demo checkpoint.
