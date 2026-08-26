@@ -166,3 +166,10 @@
 - [x] Validate unauthorized access, role permissions, invitation flow, public-demo separation, regression tests, and mobile layout; the live authenticated flow remains pending Google device approval and is covered by automated safeguards.
 - [x] Save the completed Phase 2 checkpoint and push the finished source-only release to GitHub.
 - [x] Repair and validate the private-team sign-in reset path after the reported stuck login state.
+- [x] Defer the PDF chapter conversion and smart story-suggestion design at the author’s request; no feature or design artifact was added.
+- [x] Audit the phone Back button, repeated feature doors, difficult labels, and form-heavy first-use screens.
+- [x] Repair the mobile in-app Back path and simplify repeated navigation into clear everyday actions.
+- [x] Replace complicated beginner-facing labels with plain action language and short “why this matters” guidance.
+- [x] Add a local-first Story Vault / Dump Book introduction with Open Vault and Skip for now actions.
+- [x] Validate the easy-use repair and Story Vault flow on phone and desktop without adding PDF, smart suggestions, group roles, or cloud storage.
+- [ ] Save the completed easy-use and Story Vault release and push its source-only GitHub backup.
