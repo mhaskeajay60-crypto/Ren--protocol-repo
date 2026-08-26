@@ -6,7 +6,7 @@ export const DUMP_BOOK_INBOX_STATUSES = ["Raw", "Working", "Proposed", "Filed", 
 export type DumpBookFileKind = "image" | "text" | null;
 export type DumpBookLockerFileKind = "image" | "text" | "pdf" | null;
 export type DumpBookMaterialKind = "text" | "link" | "image" | "text_file" | "note";
-export type DumpBookFilter = "all" | DumpBookMaterialKind;
+export type DumpBookFilter = "all" | "archived" | DumpBookMaterialKind;
 export type DumpBookInboxStatus = typeof DUMP_BOOK_INBOX_STATUSES[number];
 
 export type SearchableDumpBookItem = {
@@ -17,6 +17,7 @@ export type SearchableDumpBookItem = {
   url?: string;
   mime?: string;
   tags?: string[];
+  status?: DumpBookInboxStatus;
 };
 
 export type StoryVaultConnectionSource = {
@@ -137,8 +138,16 @@ export function isDumpBookLockerSizeAllowed(kind: DumpBookLockerFileKind, size: 
   return Boolean(kind) && Number.isFinite(size) && size >= 0 && size <= DUMP_BOOK_LOCKER_FILE_LIMIT;
 }
 
+export function isDumpBookArchived(item: Pick<SearchableDumpBookItem, "status">): boolean {
+  return normalizeDumpBookInboxStatus(item.status) === "Archived";
+}
+
 export function matchesDumpBookDiscovery(item: SearchableDumpBookItem, query: string, filter: DumpBookFilter): boolean {
-  if (filter !== "all" && item.kind !== filter) return false;
+  const archived = isDumpBookArchived(item);
+  if (filter === "archived") {
+    if (!archived) return false;
+  } else if (archived) return false;
+  if (filter !== "all" && filter !== "archived" && item.kind !== filter) return false;
   const term = String(query || "").trim().toLowerCase();
   if (!term) return true;
   return [item.title, item.fileName, item.content, item.url, item.mime, item.kind, ...normalizeDumpBookTags(item.tags || [])]

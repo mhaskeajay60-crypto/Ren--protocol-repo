@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_LOCKER_FILE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, classifyDumpBookLockerFile, filterDismissedStoryVaultConnections, findStoryVaultConnections, isDumpBookLockerSizeAllowed, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookInboxStatus, normalizeDumpBookTags, normalizeDumpBookUrl, splitDumpBookIdeas, storyVaultConnectionDismissalKey } from "./dumpBook";
+import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_LOCKER_FILE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, classifyDumpBookLockerFile, filterDismissedStoryVaultConnections, findStoryVaultConnections, isDumpBookArchived, isDumpBookLockerSizeAllowed, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookInboxStatus, normalizeDumpBookTags, normalizeDumpBookUrl, splitDumpBookIdeas, storyVaultConnectionDismissalKey } from "./dumpBook";
 
 describe("Dump Book helpers", () => {
   it("keeps only safe HTTP(S) links", () => {
@@ -50,6 +50,18 @@ describe("Dump Book helpers", () => {
     expect(normalizeDumpBookInboxStatus(undefined)).toBe("Raw");
     expect(normalizeDumpBookInboxStatus("Working")).toBe("Working");
     expect(normalizeDumpBookInboxStatus("Unknown")).toBe("Raw");
+  });
+
+  it("keeps archived originals out of the daily inbox while making them recoverable in Archive", () => {
+    const active = { kind: "text" as const, title: "Fresh storm idea", status: "Raw" as const };
+    const archived = { kind: "text" as const, title: "Earlier storm idea", status: "Archived" as const };
+
+    expect(isDumpBookArchived(active)).toBe(false);
+    expect(isDumpBookArchived(archived)).toBe(true);
+    expect(matchesDumpBookDiscovery(active, "", "all")).toBe(true);
+    expect(matchesDumpBookDiscovery(archived, "", "all")).toBe(false);
+    expect(matchesDumpBookDiscovery(active, "", "archived")).toBe(false);
+    expect(matchesDumpBookDiscovery(archived, "storm", "archived")).toBe(true);
   });
 
   it("splits pasted lines and bullets into bounded local idea cards", () => {

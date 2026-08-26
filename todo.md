@@ -207,3 +207,11 @@
 - [x] Replace the join, proposal, Ruler approval, and Ruler revision forms with short guided decision-card flows.
 - [x] Validate automated permissions, privacy boundaries, signed-out responsive layout, tests, and build; defer live signed-in desktop testing until the author requests it.
 - [x] Save the completed guided group-flow release and push its source-only GitHub backup.
+- [x] Audit the reported small/boring visual hierarchy, Vault-first emphasis, Masterbook discoverability, and current organization flow.
+- [x] Compare safe at-this-device bulk organization and background-progress approaches before proposing implementation.
+- [x] Present a more expressive Masterbook-first visual direction and an approval-first Archive all proposal before changing the app.
+- [x] Add a resumable, browser-local Vault organization queue with truthful progress, clear pause/resume wording, and no automatic AI sending or Masterbook filing.
+- [x] Add an explicit, reversible Archive processed items action with an Archived filter and restore controls.
+- [x] Make Masterbook the primary Home destination and rebalance Vault as a secondary intake tray.
+- [x] Refresh the public author workspace with a larger, more expressive visual system while preserving clear mobile navigation and accessibility.
+- [x] Test the approved local organization, archiving, Masterbook hierarchy, and desktop/phone layouts; save and back up the completed release.
