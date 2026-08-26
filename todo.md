@@ -197,4 +197,4 @@
 - [x] Add protected shared-canon proposals with pending, approved, and rejected states plus Ruler-only review.
 - [x] Build the private canon interface for Writer submission, Ruler approval, and read-only approved canon access for Watchers.
 - [x] Validate automated role boundaries, schema, public/local separation, signed-out phone boundary, tests, and build; defer live desktop account testing until the author requests it.
-- [ ] Save the completed Part II shared-canon release and push its source-only GitHub backup.
+- [x] Save the completed Part II shared-canon release and push its source-only GitHub backup.
