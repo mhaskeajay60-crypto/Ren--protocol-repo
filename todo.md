@@ -182,3 +182,8 @@
 - [x] Add deliberate actions to open a suggested chapter, copy an idea to chapter notes, keep it in Story Vault, or dismiss the suggestion.
 - [x] Validate PDF preview/import, local idea suggestions, no-auto-merge behavior, phone layout, tests, and build.
 - [x] Save the completed PDF import and idea-connection checkpoint and push its source-only GitHub backup.
+- [x] Review current local PDF import metadata and Story Vault connection state for safe reuse.
+- [x] Add a local imported-PDF history with explicit remove-this-import controls that never affect other chapters.
+- [x] Add a local “Not a fit” dismissal that hides only the selected Story Vault suggestion until the author changes it.
+- [x] Validate import history/removal, suggestion dismissal/reset, clean browser state, phone layout, tests, and build.
+- [ ] Save the completed local history and dismissal release and push its source-only GitHub backup.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_LOCKER_FILE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, classifyDumpBookLockerFile, findStoryVaultConnections, isDumpBookLockerSizeAllowed, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookInboxStatus, normalizeDumpBookTags, normalizeDumpBookUrl, splitDumpBookIdeas } from "./dumpBook";
+import { DUMP_BOOK_IMAGE_LIMIT, DUMP_BOOK_LOCKER_FILE_LIMIT, DUMP_BOOK_TEXT_LIMIT, classifyDumpBookFile, classifyDumpBookLockerFile, filterDismissedStoryVaultConnections, findStoryVaultConnections, isDumpBookLockerSizeAllowed, isDumpBookSizeAllowed, matchesDumpBookDiscovery, normalizeDumpBookInboxStatus, normalizeDumpBookTags, normalizeDumpBookUrl, splitDumpBookIdeas, storyVaultConnectionDismissalKey } from "./dumpBook";
 
 describe("Dump Book helpers", () => {
   it("keeps only safe HTTP(S) links", () => {
@@ -68,5 +68,16 @@ describe("Dump Book helpers", () => {
     expect(suggestions.map(item => item.id).sort()).toEqual(["chapter-1", "location-1"]);
     expect(suggestions.find(item => item.id === "chapter-1")?.matchedTerms).toContain("storm");
     expect(suggestions.find(item => item.id === "location-1")?.matchedTerms).toContain("north");
+  });
+
+  it("hides only the author-dismissed local connection for one saved idea", () => {
+    const suggestions = findStoryVaultConnections("Aren reaches the North Gate during the storm.", [
+      { id: "chapter-1", kind: "chapter", title: "North Gate", text: "Aren waits through a storm." },
+      { id: "location-1", kind: "location", title: "North Gate", text: "The city entrance." },
+    ]);
+    const dismissal = storyVaultConnectionDismissalKey("idea-1", "chapter-1");
+
+    expect(filterDismissedStoryVaultConnections(suggestions, "idea-1", [dismissal]).map(item => item.id)).toEqual(["location-1"]);
+    expect(filterDismissedStoryVaultConnections(suggestions, "idea-2", [dismissal]).map(item => item.id).sort()).toEqual(["chapter-1", "location-1"]);
   });
 });

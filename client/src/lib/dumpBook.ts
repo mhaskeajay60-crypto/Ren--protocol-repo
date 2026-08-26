@@ -64,6 +64,15 @@ export function findStoryVaultConnections(idea: string, sources: StoryVaultConne
     .slice(0, 4);
 }
 
+export function storyVaultConnectionDismissalKey(itemId: string, connectionId: string): string {
+  return `${String(itemId || "").trim()}::${String(connectionId || "").trim()}`;
+}
+
+export function filterDismissedStoryVaultConnections(connections: StoryVaultConnection[], itemId: string, dismissalKeys: string[] = []): StoryVaultConnection[] {
+  const dismissed = new Set((dismissalKeys || []).map(key => String(key)));
+  return connections.filter(connection => !dismissed.has(storyVaultConnectionDismissalKey(itemId, connection.id)));
+}
+
 export function normalizeDumpBookTags(value: string | string[]): string[] {
   const unique = new Map<string, string>();
   const source = Array.isArray(value) ? value.join(",") : String(value || "");

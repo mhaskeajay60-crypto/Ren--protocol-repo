@@ -828,7 +828,7 @@
       import { jsPDF } from 'jspdf';
       import { extractText, getDocumentProxy } from 'unpdf';
       import { parseMarkdownManuscript, todaySprintSummary, trimOptionsMarkup, wordWindowSummary } from '/src/lib/authorToolkit.ts';
-      import { findStoryVaultConnections } from '/src/lib/dumpBook.ts';
+      import { filterDismissedStoryVaultConnections, findStoryVaultConnections, storyVaultConnectionDismissalKey } from '/src/lib/dumpBook.ts';
       async function extractLocalPdfText(file) {
         const bytes = new Uint8Array(await file.arrayBuffer());
         const pdf = await getDocumentProxy(bytes, { maxImageSize: 16_777_216 });
@@ -839,7 +839,7 @@
         return { text, pageCount: Number(extracted.totalPages || pages.length), readablePageCount: pages.filter(Boolean).length };
       }
       window.RenProtocolPdf = { jsPDF, extractLocalPdfText };
-      window.RenProtocolToolkit = { parseMarkdownManuscript, todaySprintSummary, trimOptionsMarkup, wordWindowSummary, findStoryVaultConnections };
+      window.RenProtocolToolkit = { parseMarkdownManuscript, todaySprintSummary, trimOptionsMarkup, wordWindowSummary, findStoryVaultConnections, filterDismissedStoryVaultConnections, storyVaultConnectionDismissalKey };
     </script>
     <script>
       /*
@@ -1022,10 +1022,10 @@
         }
         function addChapterPdfImportControl() {
           const tools = document.querySelector('.advanced-writer-actions');
-          if (!tools || tools.querySelector('[data-action="import-chapter-pdf"]')) return;
-          const button = document.createElement('button');
-          button.className = 'paper-button'; button.dataset.action = 'import-chapter-pdf'; button.textContent = 'I already wrote this PDF';
-          tools.prepend(button);
+          if (!tools) return;
+          let importButton = tools.querySelector('[data-action="import-chapter-pdf"]');
+          if (!importButton) { importButton = document.createElement('button'); importButton.className = 'paper-button'; importButton.dataset.action = 'import-chapter-pdf'; importButton.textContent = 'I already wrote this PDF'; tools.prepend(importButton); }
+          if (!tools.querySelector('[data-action="open-imported-pdf-history"]')) { const historyButton = document.createElement('button'); historyButton.className = 'paper-button'; historyButton.dataset.action = 'open-imported-pdf-history'; historyButton.textContent = 'My PDF imports'; tools.insertBefore(historyButton, importButton.nextSibling); }
         }
         function repairImportedChapterListWordCounts() {
           document.querySelectorAll('.chapter-row').forEach(row => {
@@ -1131,6 +1131,7 @@
           if (!Array.isArray(data.dumpBook.bulkSelectedIds)) data.dumpBook.bulkSelectedIds = [];
           if (!['capture','organize'].includes(data.dumpBook.inboxMode)) data.dumpBook.inboxMode = 'capture';
           if (!Array.isArray(data.dumpBook.inboxSelectedIds)) data.dumpBook.inboxSelectedIds = [];
+          if (!Array.isArray(data.dumpBook.connectionDismissalKeys)) data.dumpBook.connectionDismissalKeys = [];
           data.dumpBook.items.forEach(item => { if (!['Raw','Working','Proposed','Filed','Archived'].includes(item.status)) item.status = 'Raw'; });
           return data.dumpBook;
         }
@@ -1157,9 +1158,24 @@
           if (!item || idea.length < 3) return toast('Add a few words to this Story Vault item before asking where it may fit.');
           const matcher = window.RenProtocolToolkit?.findStoryVaultConnections;
           if (!matcher) return toast('Local suggestion helper is still loading. Try again in a moment.');
-          const connections = matcher(idea, localStoryConnectionSources());
-          const suggestions = connections.length ? connections.map(connection => `<article class="suggestion-card" style="margin:10px 0"><span><small>${esc(localStoryConnectionLabel(connection.kind))} · local match only</small><strong>${esc(connection.title)}</strong><p><strong>Why:</strong> Both mention ${connection.matchedTerms.map(term => `<span class="tag-chip">${esc(term)}</span>`).join(' ')}.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">${connection.kind === 'chapter' ? `<button class="button small" data-action="open-story-vault-connection" data-id="${esc(item.id)}" data-connection-id="${esc(connection.id)}" data-connection-kind="chapter">Open this chapter</button><button class="button small" data-action="copy-story-vault-idea-to-chapter" data-id="${esc(item.id)}" data-chapter-id="${esc(connection.id)}">Copy to chapter notes</button>` : `<button class="button small" data-action="open-story-vault-connection" data-id="${esc(item.id)}" data-connection-id="${esc(connection.id)}" data-connection-kind="${esc(connection.kind)}">${connection.kind === 'story plan' ? 'Open story plan' : 'Open Story guide'}</button>`}</div></span></article>`).join('') : '<div class="book-empty">No clear local connection yet. That is okay—keep this idea in Story Vault until more of your story is named.</div>';
-          modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Story Vault / Local idea connections</div><h2 id="modal-title">Possible places for this idea</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">These suggestions compare only your saved local words—no AI and no network request. They are not instructions and do not move, merge, or change your story.</p><div class="field" style="margin-top:12px"><label>Saved idea</label><textarea readonly style="min-height:100px">${esc(idea.slice(0, 1600))}</textarea></div><div style="margin-top:14px">${suggestions}</div></div><div class="modal-foot"><button class="button" data-action="close-modal">Keep in Story Vault</button><button class="button gold" data-action="close-modal">I will decide later</button></div></div>`);
+          const allConnections = matcher(idea, localStoryConnectionSources());
+          const filterDismissed = window.RenProtocolToolkit?.filterDismissedStoryVaultConnections;
+          const connections = filterDismissed ? filterDismissed(allConnections, item.id, dumpBook().connectionDismissalKeys) : allConnections;
+          const hiddenCount = Math.max(0, allConnections.length - connections.length);
+          const suggestions = connections.length ? connections.map(connection => `<article class="suggestion-card" style="margin:10px 0"><span><small>${esc(localStoryConnectionLabel(connection.kind))} · local match only</small><strong>${esc(connection.title)}</strong><p><strong>Why:</strong> Both mention ${connection.matchedTerms.map(term => `<span class="tag-chip">${esc(term)}</span>`).join(' ')}.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">${connection.kind === 'chapter' ? `<button class="button small" data-action="open-story-vault-connection" data-id="${esc(item.id)}" data-connection-id="${esc(connection.id)}" data-connection-kind="chapter">Open this chapter</button><button class="button small" data-action="copy-story-vault-idea-to-chapter" data-id="${esc(item.id)}" data-chapter-id="${esc(connection.id)}">Copy to chapter notes</button>` : `<button class="button small" data-action="open-story-vault-connection" data-id="${esc(item.id)}" data-connection-id="${esc(connection.id)}" data-connection-kind="${esc(connection.kind)}">${connection.kind === 'story plan' ? 'Open story plan' : 'Open Story guide'}</button>`}<button class="button small ghost" data-action="dismiss-story-vault-connection" data-id="${esc(item.id)}" data-connection-id="${esc(connection.id)}">Not a fit</button></div></span></article>`).join('') : `<div class="book-empty">${hiddenCount ? 'No visible local connection right now. You can show the suggestions you hid below.' : 'No clear local connection yet. That is okay—keep this idea in Story Vault until more of your story is named.'}</div>`;
+          modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Story Vault / Local idea connections</div><h2 id="modal-title">Possible places for this idea</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">These suggestions compare only your saved local words—no AI and no network request. They are not instructions and do not move, merge, or change your story.</p><div class="field" style="margin-top:12px"><label>Saved idea</label><textarea readonly style="min-height:100px">${esc(idea.slice(0, 1600))}</textarea></div><div style="margin-top:14px">${suggestions}</div></div><div class="modal-foot">${hiddenCount ? `<button class="button" data-action="restore-story-vault-connections" data-id="${esc(item.id)}">Show ${hiddenCount} hidden suggestion${hiddenCount === 1 ? '' : 's'}</button>` : ''}<button class="button" data-action="close-modal">Keep in Story Vault</button><button class="button gold" data-action="close-modal">I will decide later</button></div></div>`);
+        }
+        function dismissStoryVaultConnection(itemId, connectionId) {
+          const keyFor = window.RenProtocolToolkit?.storyVaultConnectionDismissalKey || ((item, connection) => `${item}::${connection}`);
+          const key = keyFor(itemId, connectionId); const box = dumpBook();
+          if (!itemId || !connectionId || box.connectionDismissalKeys.includes(key)) return;
+          box.connectionDismissalKeys = [...box.connectionDismissalKeys, key].slice(-200);
+          persist('This suggestion is hidden only in this browser. Your idea and story stay unchanged.', true); openStoryVaultConnections(itemId); toast('Suggestion hidden. You can show it again whenever you want.');
+        }
+        function restoreStoryVaultConnections(itemId) {
+          const keyPrefix = `${itemId}::`; const box = dumpBook();
+          box.connectionDismissalKeys = box.connectionDismissalKeys.filter(key => !String(key).startsWith(keyPrefix));
+          persist('Hidden suggestions restored for this saved idea.', true); openStoryVaultConnections(itemId); toast('Hidden suggestions are visible again.');
         }
         function copyStoryVaultIdeaToChapter(itemId, chapterId) {
           const item = dumpBook().items.find(entry => entry.id === itemId); const chapter = data.chapters.find(entry => entry.id === chapterId); const idea = dumpItemText(item);
@@ -1835,6 +1851,26 @@
           logEvent('PDF chapter imported locally', title, `A separate First Draft was created from ${fileName}. No existing chapter was replaced.`);
           persist('PDF preview approved. A separate First Draft was created locally.'); closeModal(); render(); toast('Separate First Draft created. Your existing chapters are unchanged.');
         }
+        function importedPdfChapters() { return data.chapters.filter(chapter => chapter.importMeta?.kind === 'local_pdf'); }
+        function openImportedPdfHistory() {
+          const imports = importedPdfChapters();
+          const rows = imports.length ? imports.map(chapter => { const meta = chapter.importMeta || {}; const words = getWords(chapter.versions?.first || ''); return `<article class="issue-row" style="margin:10px 0"><small>Local PDF import · First try</small><strong>${esc(chapter.title || 'Untitled imported chapter')}</strong><p>${esc(meta.fileName || 'Original PDF name unavailable')} · ${Number(meta.pageCount || 0)} page${Number(meta.pageCount || 0) === 1 ? '' : 's'} · ${words.toLocaleString()} words${meta.truncated ? ' · text limited for browser safety' : ''}</p><button class="button small danger" data-action="remove-imported-pdf-chapter" data-chapter-id="${esc(chapter.id)}">Remove this import</button></article>`; }).join('') : '<div class="book-empty">No PDF chapters have been added yet. When you approve a local PDF preview, its separate First Try will appear here.</div>';
+          modal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-head"><div><div class="eyebrow">Writing / Local PDF imports</div><h2 id="modal-title">My PDF imports</h2></div><button class="modal-close" data-action="close-modal" aria-label="Close">×</button></div><div class="modal-body"><p class="profile-dek">This list only shows chapters you explicitly created from a local PDF preview. Removing one removes that imported chapter only. It never changes your other chapters, and it cannot delete the original PDF because this importer does not keep it.</p><div style="margin-top:14px">${rows}</div></div><div class="modal-foot"><button class="button gold" data-action="close-modal">Done</button></div></div>`);
+        }
+        function removeImportedPdfChapter(chapterId) {
+          const chapter = data.chapters.find(entry => entry.id === chapterId);
+          if (!chapter?.importMeta || chapter.importMeta.kind !== 'local_pdf') return toast('That imported PDF chapter is no longer available.');
+          if (!window.confirm(`Remove the imported chapter “${chapter.title || 'Untitled'}”? This removes only this imported chapter and does not change any other chapter.`)) return;
+          const removedWasActive = data.activeChapterId === chapter.id;
+          data.chapters = data.chapters.filter(entry => entry.id !== chapter.id);
+          data.timeline = (data.timeline || []).filter(event => !(event.chapterId === chapter.id && event.kind === 'PDF chapter imported locally'));
+          data.annotations = (data.annotations || []).filter(note => note.chapterId !== chapter.id);
+          data.issues = (data.issues || []).filter(issue => issue.chapterId !== chapter.id);
+          if (data.revisionChecklists && typeof data.revisionChecklists === 'object') delete data.revisionChecklists[chapter.id];
+          if (removedWasActive || !data.chapters.some(entry => entry.id === data.activeChapterId)) { const active = data.chapters[0] || newChapter(); if (!data.chapters.length) data.chapters.push(active); data.activeChapterId = active.id; data.selectedVersion = active.activeVersion || 'main'; data.draft = active.versions?.[data.selectedVersion] || ''; }
+          logEvent('Imported PDF chapter removed locally', chapter.title || 'Untitled import', 'Author removed one separate PDF import. Other chapters were left unchanged.');
+          persist('Imported PDF chapter removed. Your other chapters are unchanged.'); closeModal(); render(); toast('Imported PDF chapter removed.');
+        }
         async function organizeBrainDump() {
           const input = document.getElementById('brain-dump');
           const text = (input?.value || inbox().draft || '').trim();
@@ -2096,6 +2132,8 @@
           else if (action === 'open-final-pdf-export') openFinalPdfExport();
           else if (action === 'generate-final-pdf') exportFinalNovelPdf();
           else if (action === 'import-chapter-pdf') importChapterPdf();
+          else if (action === 'open-imported-pdf-history') openImportedPdfHistory();
+          else if (action === 'remove-imported-pdf-chapter') removeImportedPdfChapter(target.dataset.chapterId || '');
           else if (action === 'organize-dump') organizeBrainDump();
           else if (action === 'save-dump-text') saveDumpText();
           else if (action === 'split-dump-text') splitDumpText();
@@ -2113,6 +2151,8 @@
           else if (action === 'show-story-vault-connections') openStoryVaultConnections(id);
           else if (action === 'copy-story-vault-idea-to-chapter') copyStoryVaultIdeaToChapter(id, target.dataset.chapterId || '');
           else if (action === 'open-story-vault-connection') openStoryVaultConnection(target.dataset.connectionId || '', target.dataset.connectionKind || '');
+          else if (action === 'dismiss-story-vault-connection') dismissStoryVaultConnection(id, target.dataset.connectionId || '');
+          else if (action === 'restore-story-vault-connections') restoreStoryVaultConnections(id);
           else if (action === 'copy-temporary-fill') { navigator.clipboard?.writeText(temporaryFillText()); toast('Temporary material copied to your clipboard.'); }
           else if (action === 'temporary-fill-to-note') temporaryFillAsNote();
           else if (action === 'open-temporary-extraction') openTemporaryExtraction();
