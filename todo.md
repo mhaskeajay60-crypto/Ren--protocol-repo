@@ -145,4 +145,5 @@
 - [ ] Evaluate the supplied five-person shared-universe, cloud storage, Canon Archive, and structured conflict-checking proposal before implementation.
 - [ ] Evaluate the supplied Dump Book Inbox, bulk capture, multi-file, bulk-action, and progressive AI Studio proposal before implementation.
 - [ ] Present a privacy, migration, complexity, and delivery roadmap for author approval before changing the current local-first workspace.
-- [ ] Create and verify the first code-only GitHub backup in the user-selected repository without publishing local writing data or secrets.
+- [x] Create and verify the first code-only GitHub backup in the user-selected repository without publishing local writing data or secrets.
+- [ ] Prepare a source-code-only ZIP and concise PDF guide for manual GitHub upload, excluding local writing data and private project configuration.
