@@ -44,7 +44,7 @@ export const teamMembers = mysqlTable("team_members", {
   id: int("id").autoincrement().primaryKey(),
   teamId: int("teamId").notNull(),
   userId: int("userId").notNull(),
-  role: mysqlEnum("role", ["owner", "writer"]).notNull(),
+  role: mysqlEnum("role", ["owner", "writer", "watcher"]).notNull(),
   defaultVisibility: mysqlEnum("defaultVisibility", ["private", "team", "restricted"]).default("private").notNull(),
   joinedAt: timestamp("joinedAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -73,6 +73,24 @@ export const teamInvitations = mysqlTable("team_invitations", {
   index("team_invitations_email_index").on(table.inviteeEmail),
 ]);
 
+/** A signed-in person can request membership; only the team Ruler may approve or reject it. */
+export const teamJoinRequests = mysqlTable("team_join_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  teamId: int("teamId").notNull(),
+  requesterUserId: int("requesterUserId").notNull(),
+  requestedRole: mysqlEnum("requestedRole", ["writer", "watcher"]).notNull(),
+  message: text("message"),
+  status: mysqlEnum("status", ["pending", "approved", "rejected", "withdrawn"]).default("pending").notNull(),
+  reviewedByUserId: int("reviewedByUserId"),
+  reviewedAt: timestamp("reviewedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  index("team_join_requests_team_status_index").on(table.teamId, table.status),
+  index("team_join_requests_requester_index").on(table.requesterUserId),
+]);
+
 export type Team = typeof teams.$inferSelect;
 export type TeamMember = typeof teamMembers.$inferSelect;
 export type TeamInvitation = typeof teamInvitations.$inferSelect;
+export type TeamJoinRequest = typeof teamJoinRequests.$inferSelect;

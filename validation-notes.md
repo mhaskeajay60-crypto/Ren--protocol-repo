@@ -179,3 +179,11 @@ The Writing desk now includes **My PDF imports** beside **I already wrote this P
 Story Vault connection results now offer **Not a fit** per suggestion. This hides only that suggested local source for that one saved idea; it does not move, delete, alter, or send the idea or any story record. If any suggestions are hidden, the same modal offers **Show hidden suggestions**, which restores them for that saved idea. The dismissal list is stored in the browser archive only and uses no AI or network request.
 
 Browser validation used only harmless temporary data. A generated one-page PDF fixture created a separate 29-word First Try, appeared in **My PDF imports**, and was removed through the exact history control; the clean starter chapter remained active and the fixture activity was removed. A temporary Story Vault note matched a temporary local **North Gate** place. **Not a fit** hid that one match while leaving the note visible in Story Vault; **Show 1 hidden suggestion** restored it. The pre-validation browser archive was restored afterward, leaving one empty starter chapter and zero Story Vault items. Desktop and 375-pixel phone captures confirmed the Writing and Story Vault layouts and the visible Back path. `pnpm run check`, `pnpm test` (**29 tests**), `pnpm run build`, and `git diff --check` passed.
+
+## Part I Private Group Roles and Join Approval
+
+The separate `/team` route was rechecked while signed out after the Part I changes. It showed only the private-group sign-in boundary and Return to local demo control; no group name, member, request, or browser-local author record was exposed. Live signed-in member-request approval remains pending browser-account access, while protected route access and role helpers are covered by the current automated suite.
+
+The public `?view=chapter` route was then reopened without sign-in. It retained the browser-local Chapter 01 workspace and showed only a navigation link to the separate private group; no group record, membership, or join-request information appeared in the public author view.
+
+After the current service restart, the private-group route rendered the same protected sign-in boundary again, with no stale PDF dependency error in the current page. The 375-pixel capture kept the sign-in, reset, and return-to-demo actions readable and tappable.

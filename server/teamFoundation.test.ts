@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createTeamSlug, hashInvitationToken, isInvitationActive, normalizeTeamEmail } from "./teamFoundation";
+import { createTeamSlug, hashInvitationToken, isInvitationActive, isTeamJoinRole, normalizeTeamEmail } from "./teamFoundation";
 
 describe("team foundation privacy helpers", () => {
   it("normalizes invitation email comparisons", () => {
@@ -9,6 +9,12 @@ describe("team foundation privacy helpers", () => {
   it("creates readable, distinct team slugs without trusting raw punctuation", () => {
     const slug = createTeamSlug("Neo Domain: Writers!");
     expect(slug).toMatch(/^neo-domain-writers-[a-f0-9]{8}$/);
+  });
+
+  it("allows only Writer and Watcher as member-request roles", () => {
+    expect(isTeamJoinRole("writer")).toBe(true);
+    expect(isTeamJoinRole("watcher")).toBe(true);
+    expect(isTeamJoinRole("ruler")).toBe(false);
   });
 
   it("hashes invitation tokens without retaining the raw token", () => {

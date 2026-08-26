@@ -8,6 +8,13 @@
       "when": 1787744565556,
       "tag": "0000_short_satana",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1787755807534,
+      "tag": "0001_far_whizzer",
+      "breakpoints": true
     }
   ]
 }

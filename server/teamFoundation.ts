@@ -2,6 +2,12 @@ import { createHash, randomBytes } from "node:crypto";
 
 export const TEAM_MEMBER_LIMIT = 5;
 export const TEAM_INVITATION_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
+export const TEAM_JOIN_ROLES = ["writer", "watcher"] as const;
+export type TeamJoinRole = typeof TEAM_JOIN_ROLES[number];
+
+export function isTeamJoinRole(value: string): value is TeamJoinRole {
+  return (TEAM_JOIN_ROLES as readonly string[]).includes(value);
+}
 
 export function normalizeTeamEmail(value: string) {
   return value.trim().toLowerCase();

@@ -1,6 +1,6 @@
 import { and, count, eq, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, teamInvitations, teamMembers, teams, users } from "../drizzle/schema";
+import { InsertUser, teamInvitations, teamJoinRequests, teamMembers, teams, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -155,6 +155,46 @@ export async function listTeamInvitations(teamId: number) {
   return db.select().from(teamInvitations).where(eq(teamInvitations.teamId, teamId));
 }
 
+export async function listTeamJoinRequests(teamId: number) {
+  const db = await requiredDb();
+  return db.select({
+    id: teamJoinRequests.id,
+    teamId: teamJoinRequests.teamId,
+    requesterUserId: teamJoinRequests.requesterUserId,
+    requestedRole: teamJoinRequests.requestedRole,
+    message: teamJoinRequests.message,
+    status: teamJoinRequests.status,
+    createdAt: teamJoinRequests.createdAt,
+    reviewedAt: teamJoinRequests.reviewedAt,
+    name: users.name,
+    email: users.email,
+  }).from(teamJoinRequests).innerJoin(users, eq(teamJoinRequests.requesterUserId, users.id))
+    .where(eq(teamJoinRequests.teamId, teamId));
+}
+
+export async function listTeamJoinRequestsForUser(userId: number) {
+  const db = await requiredDb();
+  return db.select({ request: teamJoinRequests, team: teams })
+    .from(teamJoinRequests).innerJoin(teams, eq(teamJoinRequests.teamId, teams.id))
+    .where(eq(teamJoinRequests.requesterUserId, userId));
+}
+
+export async function getPendingTeamJoinRequest(teamId: number, requesterUserId: number) {
+  const db = await requiredDb();
+  const result = await db.select().from(teamJoinRequests)
+    .where(and(eq(teamJoinRequests.teamId, teamId), eq(teamJoinRequests.requesterUserId, requesterUserId), eq(teamJoinRequests.status, "pending")))
+    .limit(1);
+  return result[0];
+}
+
+export async function getTeamJoinRequestById(requestId: number, teamId: number) {
+  const db = await requiredDb();
+  const result = await db.select().from(teamJoinRequests)
+    .where(and(eq(teamJoinRequests.id, requestId), eq(teamJoinRequests.teamId, teamId)))
+    .limit(1);
+  return result[0];
+}
+
 export async function getTeamInvitationByTokenHash(tokenHash: string) {
   const db = await requiredDb();
   const result = await db.select().from(teamInvitations).where(eq(teamInvitations.tokenHash, tokenHash)).limit(1);
@@ -167,7 +207,47 @@ export async function getTeamSeatUsage(teamId: number) {
   const members = await db.select({ total: count() }).from(teamMembers).where(eq(teamMembers.teamId, teamId));
   const pending = await db.select({ total: count() }).from(teamInvitations)
     .where(and(eq(teamInvitations.teamId, teamId), eq(teamInvitations.status, "pending"), gt(teamInvitations.expiresAt, now)));
-  return Number(members[0]?.total || 0) + Number(pending[0]?.total || 0);
+  const requested = await db.select({ total: count() }).from(teamJoinRequests)
+    .where(and(eq(teamJoinRequests.teamId, teamId), eq(teamJoinRequests.status, "pending")));
+  return Number(members[0]?.total || 0) + Number(pending[0]?.total || 0) + Number(requested[0]?.total || 0);
+}
+
+export async function createTeamJoinRequest(input: { teamId: number; requesterUserId: number; requestedRole: "writer" | "watcher"; message: string }) {
+  const db = await requiredDb();
+  const [created] = await db.insert(teamJoinRequests).values({
+    teamId: input.teamId,
+    requesterUserId: input.requesterUserId,
+    requestedRole: input.requestedRole,
+    message: input.message || null,
+    status: "pending",
+  });
+  return Number(created.insertId);
+}
+
+export async function approveTeamJoinRequest(input: { requestId: number; teamId: number; rulerUserId: number }) {
+  const db = await requiredDb();
+  return db.transaction(async (tx) => {
+    const request = await tx.select().from(teamJoinRequests)
+      .where(and(eq(teamJoinRequests.id, input.requestId), eq(teamJoinRequests.teamId, input.teamId), eq(teamJoinRequests.status, "pending")))
+      .limit(1);
+    const pendingRequest = request[0];
+    if (!pendingRequest) throw new Error("This join request is no longer pending.");
+    await tx.insert(teamMembers).values({
+      teamId: input.teamId,
+      userId: pendingRequest.requesterUserId,
+      role: pendingRequest.requestedRole,
+      defaultVisibility: "private",
+    }).onDuplicateKeyUpdate({ set: { updatedAt: new Date() } });
+    await tx.update(teamJoinRequests).set({ status: "approved", reviewedByUserId: input.rulerUserId, reviewedAt: new Date() })
+      .where(eq(teamJoinRequests.id, input.requestId));
+    return pendingRequest;
+  });
+}
+
+export async function rejectTeamJoinRequest(input: { requestId: number; teamId: number; rulerUserId: number }) {
+  const db = await requiredDb();
+  await db.update(teamJoinRequests).set({ status: "rejected", reviewedByUserId: input.rulerUserId, reviewedAt: new Date() })
+    .where(and(eq(teamJoinRequests.id, input.requestId), eq(teamJoinRequests.teamId, input.teamId), eq(teamJoinRequests.status, "pending")));
 }
 
 export async function createTeamInvitation(input: {

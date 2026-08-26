@@ -6,7 +6,7 @@ import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
-import { createInvitationToken, createTeamSlug, hashInvitationToken, isInvitationActive, normalizeTeamEmail, TEAM_INVITATION_LIFETIME_MS, TEAM_MEMBER_LIMIT } from "./teamFoundation";
+import { createInvitationToken, createTeamSlug, hashInvitationToken, isInvitationActive, normalizeTeamEmail, TEAM_INVITATION_LIFETIME_MS, TEAM_JOIN_ROLES, TEAM_MEMBER_LIMIT } from "./teamFoundation";
 
 const organizerItemSchema = z.object({
   type: z.enum(["character", "world_rule", "location", "lore", "faction", "artifact", "plot_thread", "scene", "note", "revision_issue"]),
@@ -174,12 +174,13 @@ async function requireTeamMember(teamId: number, userId: number) {
 
 async function requireTeamOwner(teamId: number, userId: number) {
   const membership = await requireTeamMember(teamId, userId);
-  if (membership.role !== "owner") throw new TRPCError({ code: "FORBIDDEN", message: "Only the team owner can manage invitations." });
+  if (membership.role !== "owner") throw new TRPCError({ code: "FORBIDDEN", message: "Only the team Ruler can manage membership requests and invitations." });
   return membership;
 }
 
 const teamIdInput = z.object({ teamId: z.number().int().positive() });
 const teamVisibilitySchema = z.enum(["private", "team", "restricted"]);
+const teamJoinRoleSchema = z.enum(TEAM_JOIN_ROLES);
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -197,6 +198,7 @@ export const appRouter = router({
 
   team: router({
     mine: protectedProcedure.query(async ({ ctx }) => db.listTeamsForUser(ctx.user.id)),
+    myJoinRequests: protectedProcedure.query(async ({ ctx }) => db.listTeamJoinRequestsForUser(ctx.user.id)),
 
     create: protectedProcedure.input(z.object({
       name: z.string().trim().min(2).max(160),
@@ -217,8 +219,35 @@ export const appRouter = router({
       if (!team) throw new TRPCError({ code: "NOT_FOUND", message: "This team workspace no longer exists." });
       const members = await db.listTeamMembers(input.teamId);
       const invitations = membership.role === "owner" ? await db.listTeamInvitations(input.teamId) : [];
-      return { team, membership, members, invitations };
+      const joinRequests = membership.role === "owner" ? await db.listTeamJoinRequests(input.teamId) : [];
+      return { team, membership, members, invitations, joinRequests };
     }),
+
+    requestJoin: protectedProcedure.input(teamIdInput.extend({ requestedRole: teamJoinRoleSchema.default("writer"), message: z.string().trim().max(600).default("") }))
+      .mutation(async ({ ctx, input }) => {
+        const team = await db.getTeamById(input.teamId);
+        if (!team) throw new TRPCError({ code: "NOT_FOUND", message: "This private group does not exist." });
+        if (await db.getTeamMembership(input.teamId, ctx.user.id)) throw new TRPCError({ code: "CONFLICT", message: "You are already a member of this private group." });
+        if (await db.getPendingTeamJoinRequest(input.teamId, ctx.user.id)) throw new TRPCError({ code: "CONFLICT", message: "You already have a pending request for this group." });
+        if (await db.getTeamSeatUsage(input.teamId) >= TEAM_MEMBER_LIMIT) throw new TRPCError({ code: "BAD_REQUEST", message: `This group has reached its ${TEAM_MEMBER_LIMIT}-seat request limit.` });
+        const requestId = await db.createTeamJoinRequest({ teamId: input.teamId, requesterUserId: ctx.user.id, requestedRole: input.requestedRole, message: input.message });
+        return { requestId };
+      }),
+
+    reviewJoinRequest: protectedProcedure.input(teamIdInput.extend({ requestId: z.number().int().positive(), decision: z.enum(["approve", "reject"]) }))
+      .mutation(async ({ ctx, input }) => {
+        await requireTeamOwner(input.teamId, ctx.user.id);
+        const request = await db.getTeamJoinRequestById(input.requestId, input.teamId);
+        if (!request || request.status !== "pending") throw new TRPCError({ code: "NOT_FOUND", message: "This join request is no longer pending." });
+        if (await db.getTeamMembership(input.teamId, request.requesterUserId)) throw new TRPCError({ code: "CONFLICT", message: "This person is already a member. Reject the old request to clear it." });
+        if (input.decision === "approve") {
+          if (await db.getTeamSeatUsage(input.teamId) > TEAM_MEMBER_LIMIT) throw new TRPCError({ code: "BAD_REQUEST", message: "This group has reached its member limit." });
+          await db.approveTeamJoinRequest({ requestId: input.requestId, teamId: input.teamId, rulerUserId: ctx.user.id });
+        } else {
+          await db.rejectTeamJoinRequest({ requestId: input.requestId, teamId: input.teamId, rulerUserId: ctx.user.id });
+        }
+        return { success: true };
+      }),
 
     createInvitation: protectedProcedure.input(teamIdInput.extend({ inviteeEmail: z.string().trim().email().max(320) }))
       .mutation(async ({ ctx, input }) => {

@@ -187,3 +187,9 @@
 - [x] Add a local “Not a fit” dismissal that hides only the selected Story Vault suggestion until the author changes it.
 - [x] Validate import history/removal, suggestion dismissal/reset, clean browser state, phone layout, tests, and build.
 - [x] Save the completed local history and dismissal release and push its source-only GitHub backup.
+- [x] Audit the existing private team foundation, roles, invitations, and public-demo separation for Part I reuse.
+- [x] Add protected Ruler, Writer, and Watcher memberships plus member-initiated join requests with Ruler approve/reject controls.
+- [x] Build the private group interface for requesting to join and managing pending join requests without exposing group data in the public demo.
+- [x] Validate automated role boundaries, schema, public/local separation, responsive layout, tests, and build; defer live signed-in approval/rejection at the user's request.
+- [x] Record the user-deferred desktop live Ruler/Writer/Watcher test while completing automated and signed-out validation now.
+- [ ] Save the completed Part I group-role release and push its source-only GitHub backup.
