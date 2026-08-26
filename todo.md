@@ -222,3 +222,14 @@
 - [x] Add a guided Create Character Profile window with optional identity, story role, status, talents, strengths, powers, relationships, and notes fields.
 - [x] Present saved character profiles as visual dossiers while keeping ordinary existing records readable and editable.
 - [x] Test profile creation, edits, existing-record compatibility, and desktop/phone layouts; save and back up the completed release.
+- [x] Audit the remaining repeated form and office-card patterns across every Masterbook category on phone and desktop.
+- [x] Propose a complete Masterbook Atlas redesign with a distinct visual information model for Characters, Rules, Places, Lore, Factions, Artifacts, and Plot Threads.
+- [x] Await author approval before replacing the current Masterbook layouts or editing controls.
+- [x] Audit the current local Masterbook records and separate private group canon safeguards before adding Atlas data or approval controls.
+- [x] Research game-codex and worldbuilding patterns that make large record collections visual, discoverable, and phone-friendly.
+- [x] Replace the generic Masterbook shelf with distinct Atlas destinations for Characters, Systems, Places, Lore, Factions, Artifacts, and Quest Threads.
+- [x] Add short guided creation windows that start with a name, type, and one key fact, with optional advanced details kept out of the first step.
+- [x] Add author-defined character stat sets so each local profile can use any labels and values, including HP/MP/SP or STR/AGI/DEF/Magic Defense/Mana.
+- [x] Preserve browser-local stat drafts and require an explicit separate group canon proposal before any stat profile becomes shared official lore.
+- [x] Decide how the requested Lore Keeper approval maps safely onto existing Ruler/Writer/Watcher protections before changing shared permissions.
+- [x] Test Atlas navigation, custom stat profiles, no-auto-sharing safeguards, protected approval paths, and desktop/phone layouts; save and back up the completed release.

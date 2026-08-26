@@ -9,6 +9,7 @@ export const characterProfileFieldKeys = [
   'profileTalents',
   'profilePowers',
   'profileStrengths',
+  'profileStats',
   'stats',
   'profileMotivation',
   'relationships',
@@ -21,7 +22,17 @@ export function mergeCharacterProfileRecord(
 ): CharacterProfileRecord {
   const next = { ...existing };
   characterProfileFieldKeys.forEach(key => {
-    if (Object.prototype.hasOwnProperty.call(draft, key)) next[key] = String(draft[key] || '').trim();
+    if (!Object.prototype.hasOwnProperty.call(draft, key)) return;
+    if (key === 'profileStats') {
+      next[key] = Array.isArray(draft[key])
+        ? draft[key]
+          .map(item => ({ label: String((item as { label?: unknown })?.label || '').trim(), value: String((item as { value?: unknown })?.value || '').trim() }))
+          .filter(item => item.label)
+          .slice(0, 12)
+        : [];
+      return;
+    }
+    next[key] = String(draft[key] || '').trim();
   });
   return next;
 }

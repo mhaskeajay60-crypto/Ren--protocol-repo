@@ -18,13 +18,14 @@ describe('character profile helpers', () => {
 
   it('adds dossier fields without discarding existing Masterbook fields or history', () => {
     const existing = { id: 'ren', name: 'Ren', history: [{ action: 'Record created' }], legacyKey: 'keep this', role: 'Old role' };
-    expect(mergeCharacterProfileRecord(existing, { role: 'Protagonist', profileTalents: 'Strategy' })).toEqual({
+    expect(mergeCharacterProfileRecord(existing, { role: 'Protagonist', profileTalents: 'Strategy', profileStats: [{ label: 'HP', value: '120' }] })).toEqual({
       id: 'ren',
       name: 'Ren',
       history: [{ action: 'Record created' }],
       legacyKey: 'keep this',
       role: 'Protagonist',
       profileTalents: 'Strategy',
+      profileStats: [{ label: 'HP', value: '120' }],
     });
   });
 });
