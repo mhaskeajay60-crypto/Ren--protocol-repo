@@ -192,4 +192,4 @@
 - [x] Build the private group interface for requesting to join and managing pending join requests without exposing group data in the public demo.
 - [x] Validate automated role boundaries, schema, public/local separation, responsive layout, tests, and build; defer live signed-in approval/rejection at the user's request.
 - [x] Record the user-deferred desktop live Ruler/Writer/Watcher test while completing automated and signed-out validation now.
-- [ ] Save the completed Part I group-role release and push its source-only GitHub backup.
+- [x] Save the completed Part I group-role release and push its source-only GitHub backup.
