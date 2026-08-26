@@ -1,11 +1,13 @@
 export const DUMP_BOOK_IMAGE_LIMIT = 1_000_000;
 export const DUMP_BOOK_TEXT_LIMIT = 300_000;
 export const DUMP_BOOK_LOCKER_FILE_LIMIT = 10 * 1024 * 1024;
+export const DUMP_BOOK_INBOX_STATUSES = ["Raw", "Working", "Proposed", "Filed", "Archived"] as const;
 
 export type DumpBookFileKind = "image" | "text" | null;
 export type DumpBookLockerFileKind = "image" | "text" | "pdf" | null;
 export type DumpBookMaterialKind = "text" | "link" | "image" | "text_file" | "note";
 export type DumpBookFilter = "all" | DumpBookMaterialKind;
+export type DumpBookInboxStatus = typeof DUMP_BOOK_INBOX_STATUSES[number];
 
 export type SearchableDumpBookItem = {
   kind: DumpBookMaterialKind;
@@ -29,6 +31,23 @@ export function normalizeDumpBookTags(value: string | string[]): string[] {
       if (!unique.has(safe.toLowerCase())) unique.set(safe.toLowerCase(), safe);
     });
   return Array.from(unique.values());
+}
+
+export function normalizeDumpBookInboxStatus(value: unknown): DumpBookInboxStatus {
+  return DUMP_BOOK_INBOX_STATUSES.includes(value as DumpBookInboxStatus)
+    ? value as DumpBookInboxStatus
+    : "Raw";
+}
+
+export function splitDumpBookIdeas(value: string): string[] {
+  const clean = String(value || "").replace(/\r\n?/g, "\n").trim();
+  if (!clean) return [];
+
+  return clean
+    .split(/\n+/)
+    .map(line => line.trim().replace(/^(?:[-*•]|\d+[.)])\s*/, "").trim())
+    .filter(Boolean)
+    .slice(0, 40);
 }
 
 export function normalizeDumpBookUrl(value: string): string {
