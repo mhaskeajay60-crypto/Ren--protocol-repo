@@ -215,3 +215,10 @@
 - [x] Make Masterbook the primary Home destination and rebalance Vault as a secondary intake tray.
 - [x] Refresh the public author workspace with a larger, more expressive visual system while preserving clear mobile navigation and accessibility.
 - [x] Test the approved local organization, archiving, Masterbook hierarchy, and desktop/phone layouts; save and back up the completed release.
+- [x] Audit the reported repetitive, office-card-like mobile Masterbook record list and its cramped inline actions.
+- [x] Present an author-controlled mobile Masterbook redesign that makes characters and lore feel distinct without changing any records.
+- [x] Create a non-canon visual sample of Ren Kurozawa's Character Dossier in the requested fantasy field-guide style.
+- [x] Audit existing Character Masterbook fields and preserve every current record while extending optional profile details.
+- [x] Add a guided Create Character Profile window with optional identity, story role, status, talents, strengths, powers, relationships, and notes fields.
+- [x] Present saved character profiles as visual dossiers while keeping ordinary existing records readable and editable.
+- [x] Test profile creation, edits, existing-record compatibility, and desktop/phone layouts; save and back up the completed release.
