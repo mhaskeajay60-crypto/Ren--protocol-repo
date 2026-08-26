@@ -147,7 +147,7 @@
 - [ ] Present a privacy, migration, complexity, and delivery roadmap for author approval before changing the current local-first workspace.
 - [x] Create and verify the first code-only GitHub backup in the user-selected repository without publishing local writing data or secrets.
 - [ ] Prepare a source-code-only ZIP and concise PDF guide for manual GitHub upload, excluding local writing data and private project configuration.
-- [ ] After each finished The Ren Protocol release, push the completed source code to the verified GitHub backup repository; do not upload unfinished work automatically.
+- [x] After each finished The Ren Protocol release, push the completed source code to the verified GitHub backup repository; do not upload unfinished work automatically.
 - [x] Verify the GitHub backup workflow with a harmless marker-file push and cleanup, without changing app behavior or local writing data.
 - [ ] Evaluate the supplied GitHub handoff, Dump Book Inbox, cloud storage, five-person collaboration, and shared-canon proposals before implementation.
 - [ ] Present a staged local-first-to-private-cloud migration plan and wait for author approval before changing the current demo workspace.
@@ -157,4 +157,4 @@
 - [x] Add multi-select local actions for tags, archive, and Temporary Fill Desk without auto-filing into Story Book.
 - [x] Simplify AI Studio into Organize ideas, Help current chapter, and Check story entry points while retaining review-first consent.
 - [x] Validate Phase 1 Inbox local privacy, persistence, bulk actions, desktop/phone layout, tests, and build.
-- [ ] Save, push the completed code backup to GitHub, and deliver the newest Phase 1 Inbox checkpoint.
+- [x] Save, push the completed code backup to GitHub, and deliver the newest Phase 1 Inbox checkpoint.
