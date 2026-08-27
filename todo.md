@@ -260,6 +260,9 @@
 - [x] Outline a beginner-friendly The Ren Protocol product-tour video using safe example content and plain-English narration.
 - [x] Prepare visual scenes that demonstrate Desk, Write, World, Plan, Vault, Progress, privacy choices, and Player Backup without exposing author data.
 - [ ] Generate and verify a feature-tour video suitable for sharing, then deliver it with simple viewing guidance.
+- [x] Repair the reported Review Ledger back/exit route so the author can reliably return to the prior local workspace.
+- [x] Make Relationship Web visual views, bond presets, and secret knowledge directly discoverable from Masterbook and the Feature Map.
+- [x] Validate the repaired Review Ledger and Relationship Web paths on desktop and native phone layouts; then checkpoint and source-back up the release.
 - [x] Add simple Character Codex grid cards with a sigil, name, role, and status as the compact entry to existing dossiers.
 - [x] Add author-selected relationship preset choices and visual bond styles for family, love, friendship, rivalry, enemy, killer/target, master/student, ally, and unknown bonds.
 - [x] Add a private per-bond secret-knowledge field for details such as hidden identity, including who knows it and reader reveal timing.

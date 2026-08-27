@@ -1,5 +1,13 @@
 # Validation Notes
 
+## Review Ledger Exit and Relationship Web Discovery Repair
+
+The Review Ledger now has two safe exits. First, the in-app **Back** action closes an open Review Ledger before navigating away from the current workspace. Second, the ledger header has an explicit **Close review** control. This prevents the desktop inspector from remaining open over a different page after the author leaves review. Neither action changes chapter prose, flags, intentions, or author data.
+
+The Masterbook Atlas hero now has a direct **Relationship Web** button and a short plain-language line that names the new choices: Family, Love, Enemy, Killer/Target, secret knowledge, and Web / Family Tree / Circle views. The Feature Map’s World section now repeats those exact features through direct Relationship Web actions rather than only one generic link. Desktop and 375-pixel phone captures verified the Masterbook entry is visible, readable, and above the phone dock. The writing view continues to show direct PDF import/history and private Masterbook-review actions.
+
+The final automated gate passed after these navigation and discovery repairs: `pnpm run check`, `pnpm test` (**53 tests**), `pnpm run build`, and `git diff --check`. The known runtime-resolved static-asset and large PDF/team bundle warnings remain non-blocking.
+
 ## Character Cards, Relationship Views, and Chapter Update Review
 
 The Character Codex now displays its existing Character Dossiers as a compact card grid: each author-created card shows a personal sigil, name, role/status preview, existing optional tags, and a direct Dossier action. It does not create portraits, infer character details, or replace existing dossiers. The compact two-column phone card treatment was checked with the empty Masterbook Atlas path; saved characters continue to use the existing dossier record model.
