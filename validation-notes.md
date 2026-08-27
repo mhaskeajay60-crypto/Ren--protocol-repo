@@ -261,3 +261,11 @@ The final author product loads as the Pocket Story Console. At 375 pixels, the D
 The isolated public author workspace stays browser-local. It does not sign in, synchronize local chapters, send Vault content, promote local records to canon, or create group records. The separate `/team` route loads independently and begins with its protected private-workspace boundary; the existing live signed-in Ruler/Writer/Watcher test remains deliberately deferred until the author chooses to test it on desktop.
 
 Final automated checks passed: `pnpm run check`, `pnpm test` (**45 tests**), `pnpm run build`, and `git diff --check`. The build has only the known non-blocking PDF/team chunk-size warnings and runtime-resolved static-asset notices. No author material, secret, fixture, or local browser archive was added to the repository.
+
+## Player Backup Export
+
+The Export panel and Pocket Story Console More menu now include **Player Backup** and **Open Player Backup**. Player Backup asks the author to choose one saved Character Profile, then downloads one browser-local JSON file containing that character’s saved profile/stat values and a story-progress snapshot: project title, chapter count, total main-draft words, active chapter and its word count, and complete/total scene counts. It excludes chapter prose, Story Vault material, files, local record identifiers/history, secrets, and private group canon records.
+
+Opening a Player Backup does not change data. It first validates the file shape and opens a preview naming the character, stat count, and progress snapshot. The only restore action adds the profile as a clearly labelled separate local character copy; it does not overwrite any existing character, manuscript, scene, or progress record. **Keep current data** closes the preview without changing the archive. Player Backup never sends, shares, or uploads anything.
+
+Focused unit tests cover exclusion of local record identity/history, correct stat/progress capture, valid-file acceptance, and rejection of malformed or unnamed backup files. The complete release gate passed: `pnpm run check`, `pnpm test` (**47 tests**), `pnpm run build`, and `git diff --check`. The production build retains only the known non-blocking chunk-size and runtime-resolved static-asset warnings.

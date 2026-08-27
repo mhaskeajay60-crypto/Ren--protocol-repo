@@ -253,3 +253,7 @@
 - [x] Run final automated checks, production build, whitespace audit, protected team boundary check, and phone/desktop product checks.
 - [x] Document final product validation and any known non-blocking limitations without adding or removing author features.
 - [x] Save and deliver the final product checkpoint with publishing guidance and a source-backup status.
+- [x] Audit existing character profile stats, local progress records, and export/import flows for focused Player Backup reuse.
+- [x] Design a browser-local Player Backup file that includes only author-selected character stats and progress, with a clear restore preview and no automatic overwrite.
+- [x] Add Player Backup download, file preview, explicit restore, and Keep current data controls without sending information anywhere.
+- [x] Test Player Backup selection, export contents, safe import preview, no-auto-overwrite behavior, privacy boundaries, and phone/desktop layouts; save and back up the release.
