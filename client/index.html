@@ -1017,6 +1017,39 @@
       html[data-workspace-view="phone"] .shell.workspace-phone .quick-action small { color:#bfc8e4; }
       html[data-workspace-view="phone"] .shell.workspace-phone .book-empty,html[data-workspace-view="phone"] .shell.workspace-phone .empty-inline { border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#c8d0e7; }
       @media (max-width:760px) { .pocket-tool-drawer.modal { width:calc(100vw - 24px); max-height:calc(100dvh - 24px); border-radius:25px 25px 18px 18px; } .pocket-tool-drawer .modal-body { padding:14px; } .pocket-tool-card { min-height:76px; padding:10px; } .pocket-tool-extra-grid { grid-template-columns:1fr; } .shell.workspace-desktop .pocket-dock { display:none !important; } .shell.workspace-desktop .workspace { padding-bottom:32px; } .shell.workspace-desktop .top-actions .desktop-feature-map { display:inline-flex !important; } }
+      /* Critic reports use their own readable night-card treatment. */
+      .critic-report-modal.modal { display:flex; flex-direction:column; width:min(780px,calc(100vw - 30px)); max-height:min(840px,calc(100dvh - 30px)); overflow:hidden; border:1px solid rgba(180,164,255,.48); border-radius:26px; background:radial-gradient(circle at 93% 0%,rgba(140,111,249,.42),transparent 30%),linear-gradient(145deg,#111a39,#20275a 55%,#151d45); box-shadow:0 34px 90px rgba(9,11,35,.58); color:#f5f5ff; }
+      .critic-report-modal .modal-head { flex:0 0 auto; padding:19px 22px 17px; border-bottom:1px solid rgba(255,255,255,.12); background:linear-gradient(105deg,rgba(20,27,63,.88),rgba(107,79,213,.32)); }
+      .critic-report-modal .modal-head h2 { max-width:calc(100% - 42px); margin-top:7px; color:#fff; font:850 clamp(25px,4vw,37px)/.98 var(--sans); letter-spacing:-.055em; }
+      .critic-report-modal .modal-head .eyebrow { color:#d5ccff; }
+      .critic-report-modal .modal-close { border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.1); color:#fff; }
+      .critic-report-modal .modal-body { flex:1 1 auto; min-height:0; overflow-y:auto; padding:18px 22px 22px; overscroll-behavior:contain; background:linear-gradient(180deg,rgba(13,20,52,.28),rgba(12,18,45,.16)); }
+      .critic-report-modal .modal-body .profile-dek { margin:2px 0 17px; color:#e7e9ff; font:500 15px/1.62 var(--sans); }
+      .critic-report-modal .critic-saved-strip { margin:0 0 17px; padding:13px 14px; border:1px solid rgba(160,145,255,.46); border-left:4px solid #a98cff; border-radius:15px; background:rgba(120,97,224,.17); color:#edeaff; }
+      .critic-report-modal .critic-saved-strip p { margin:0; color:#ebeaff; font:600 13px/1.55 var(--sans); }
+      .critic-report-modal .critic-saved-strip strong { color:#fff; }
+      .critic-report-modal .critic-saved-strip small { color:#cdd3f1; }
+      .critic-report-modal .data-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+      .critic-report-modal .data-pair,.critic-report-modal .issue-row { border:1px solid rgba(255,255,255,.13); border-radius:16px; background:rgba(255,255,255,.075); box-shadow:none; }
+      .critic-report-modal .data-pair { min-height:92px; padding:13px; }
+      .critic-report-modal .data-pair small,.critic-report-modal .issue-row small { color:#c9bdff; font-weight:850; letter-spacing:.07em; }
+      .critic-report-modal .data-pair span,.critic-report-modal .issue-row p { color:#ecedff; font:500 13px/1.55 var(--sans); }
+      .critic-report-modal .issue-row { padding:14px; }
+      .critic-report-modal .issue-row strong { color:#fff; }
+      .critic-report-modal .issue-list .book-empty { border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#d8ddfa; }
+      .critic-report-modal .modal-body > div > .eyebrow { color:#f2c574; font-weight:850; }
+      .critic-report-modal .modal-foot { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; flex:0 0 auto; padding:12px 20px max(14px,env(safe-area-inset-bottom)); border-top:1px solid rgba(255,255,255,.13); background:rgba(10,15,40,.93); }
+      .critic-report-modal .modal-foot .button { min-width:0; min-height:46px; border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.1); color:#fff; box-shadow:none; }
+      .critic-report-modal .modal-foot .button.gold { border-color:#a68dff; background:linear-gradient(135deg,#896df9,#5d43d5); }
+      .critic-report-modal .modal-foot .button.danger { border-color:rgba(255,147,179,.35); background:rgba(165,52,91,.2); color:#ffe1eb; }
+      .critic-report-modal .modal-foot .button:disabled { opacity:.55; cursor:default; }
+      .critic-more-actions { grid-column:1/-1; border:1px solid rgba(255,255,255,.13); border-radius:13px; background:rgba(255,255,255,.045); }
+      .critic-more-actions summary { min-height:38px; padding:0 12px; display:flex; align-items:center; color:#e6e8ff; cursor:pointer; font:800 12px/1 var(--sans); list-style:none; }
+      .critic-more-actions summary::after { content:'+'; margin-left:auto; color:#c8bbff; font-size:18px; }
+      .critic-more-actions[open] summary::after { content:'–'; }
+      .critic-more-actions > div { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; padding:0 8px 8px; }
+      .critic-more-actions > div .button { min-height:38px; padding:8px; font-size:11px; line-height:1.15; }
+      @media (max-width:760px) { .critic-report-modal.modal { width:calc(100vw - 20px); max-height:calc(100dvh - 16px); border-radius:24px 24px 18px 18px; } .critic-report-modal .modal-head { padding:16px 17px 14px; } .critic-report-modal .modal-head h2 { font-size:29px; } .critic-report-modal .modal-body { padding:15px 15px 17px; } .critic-report-modal .modal-body .profile-dek { font-size:15px; line-height:1.62; } .critic-report-modal .data-list { grid-template-columns:1fr; } .critic-report-modal .data-pair { min-height:auto; } .critic-report-modal .issue-row p { font-size:14px; line-height:1.56; } .critic-report-modal .modal-foot { padding:9px 12px max(10px,env(safe-area-inset-bottom)); } .critic-more-actions > div { grid-template-columns:1fr; } }
     </style>
   </head>
   <body>
@@ -2505,11 +2538,13 @@
         }
         function installCriticReportControls() {
           const deleteButton = document.querySelector('[data-action="delete-critic-report"]'); const id = deleteButton?.dataset.id; const report = id ? criticReports().find(item => item.id === id) : null; if (!report || document.querySelector('.critic-saved-strip')) return;
+          const reportModal = deleteButton?.closest('.modal'); reportModal?.classList.add('critic-report-modal');
           const isCasual = (report.mode || 'strict') === 'casual'; const heading = document.getElementById('modal-title'); if (heading) heading.textContent = isCasual ? `${report.chapterTitle || 'Untitled chapter'} · Casual Reader` : `${report.chapterTitle || 'Untitled chapter'} · Strict Critic · ${Number(report.overallScore || 0).toFixed(1)} / 10`;
           document.querySelectorAll('.modal .eyebrow').forEach(label => { if (label.textContent?.trim().toLowerCase() === 'what is not working yet') label.textContent = isCasual ? 'What a reader may want more of' : 'Craft concerns to consider'; });
           const strip = `<section class="privacy-slip critic-saved-strip"><p><strong>${isCasual ? 'Casual Reader note' : 'Strict Critic note'}:</strong> ${isCasual ? 'This is a saved reader reaction, with no number attached.' : 'This score is one AI reading of this exact draft—not a grade for you or your story. A changed draft, goal, or fresh reading can differ.'}<br><small>Saved privately in this browser${report.createdAt ? ` · ${new Date(report.createdAt).toLocaleString()}` : ''}.</small></p></section>`;
-          document.querySelector('.modal .modal-body')?.insertAdjacentHTML('afterbegin', strip);
-          deleteButton?.insertAdjacentHTML('afterend', `<button class="button" data-action="save-critic-report-note" data-id="${esc(report.id)}">${report.noteId ? 'Saved in Notes' : 'Save report to Notes'}</button><button class="button" data-action="open-critic-shelf">My saved reports</button>`);
+          reportModal?.querySelector('.modal-body')?.insertAdjacentHTML('afterbegin', strip);
+          const footer = deleteButton?.closest('.modal-foot');
+          if (footer) footer.innerHTML = `<button class="button critic-save-report" data-action="save-critic-report-note" data-id="${esc(report.id)}" ${report.noteId ? 'disabled' : ''}>${report.noteId ? 'Saved to Notes' : 'Save to Notes'}</button><button class="button gold critic-done-report" data-action="close-modal">Done</button><details class="critic-more-actions"><summary>More report actions</summary><div><button class="button" data-action="open-critic-shelf">My saved reports</button><button class="button" data-action="file-critic-plan" data-id="${esc(report.id)}">Make fix-it list</button><button class="button danger" data-action="delete-critic-report" data-id="${esc(report.id)}">Delete report</button></div></details>`;
         }
         const criticAreaLabel = area => ({ hook: 'Hook', pacing: 'Pacing', character: 'Character', dialogue: 'Dialogue', clarity: 'Clarity', worldbuilding: 'Worldbuilding', emotional_impact: 'Emotional impact', prose: 'Prose' }[area] || String(area || 'Craft'));
         const draftLabel = key => versionLabel(key);

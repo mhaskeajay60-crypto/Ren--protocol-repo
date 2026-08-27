@@ -312,3 +312,6 @@
 - [x] Add author-selectable Casual Reader and Strict Critic modes so feedback tone and detail match the author’s choice.
 - [x] Make each Critic report an explicit stable local record with a clear save action, saved-report shelf, and non-grade score context.
 - [x] Validate both Critic modes, saved report reopening, score persistence, privacy safeguards, and phone layout; then checkpoint and source-back up the release.
+- [x] Replace the pale, hard-to-read Critic report modal with a high-contrast story-review card that is legible on phones.
+- [x] Compact the Critic report actions into a short, readable phone action bar while preserving report save, saved reports, fix-it list, deletion, and return behavior.
+- [x] Validate Critic report contrast, readability, actions, saved-report behavior, and phone/desktop presentation; then checkpoint and source-back up the visual repair.

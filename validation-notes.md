@@ -1,5 +1,13 @@
 # Validation Notes
 
+## High-Contrast Critic Report Card
+
+The saved Critic report is now styled as a dedicated dark story-review card instead of the pale generic form shown in the author’s phone screenshot. It uses a deep indigo reading surface, white and pale-lilac text with high contrast, larger mobile body text, spaced evidence cards, an independent scroll area, and an anchored action bar. The surrounding Critic screen also uses the less judgmental heading **See what a reader may notice**.
+
+The report action bar now shows only two immediate choices: **Save to Notes** and **Done**. Less frequent actions—**My saved reports**, **Make fix-it list**, and **Delete report**—sit under one short **More report actions** expander. The original report, its scores or non-scored reader reaction, saved note behavior, local report shelf, local fix-it action, deletion action, and return action are retained. No report contents, chapter prose, Masterbook entry, or privacy setting is changed by this visual repair.
+
+The scoped styles and action bindings were audited in the source; `pnpm run check`, `pnpm test` (**59 tests**), `pnpm run build`, and `git diff --check` passed. The updated phone Critic entry was captured at 375 pixels and shows the supportive feedback-mode explanation above the review button. The known runtime-resolved asset-path and large PDF/team bundle warnings remain non-blocking.
+
 ## Casual Reader, Strict Critic, and Private Saved Reports
 
 The chapter feedback tool now asks the author to choose a feedback style. **Casual Reader** is the default: it returns a kind, specific reader reaction with no numerical score. **Strict Critic** is the opt-in craft review: it keeps the detailed eight-area scores and evidence-based improvement suggestions. Both prompts state that they assess the draft, not the author, must cite the supplied chapter rather than invent quotations or reader reactions, and cannot revise manuscript text.
