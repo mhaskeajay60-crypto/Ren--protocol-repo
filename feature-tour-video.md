@@ -28,3 +28,7 @@ The video must accurately say that the main author workspace is browser-local by
 ## Visual Constraints
 
 Use dark midnight-indigo, violet, warm parchment, and gold accents. Present readable, clean interface-inspired scenes with fictional placeholder text only. Do not display real personal names, actual chapters, uploaded files, email addresses, or claimed user reviews.
+
+## Production Status
+
+The narrated scene plan and safe fictional visual preparation are complete. One valid 8-second opening clip was generated and saved as `ren-protocol-tour-01.mp4`; it is an opening scene only, not a complete tour. Further generation is deliberately paused because the author’s free-plan daily video quota was already used for that day. No additional clip will be generated until the quota becomes available again or the author explicitly chooses another production approach.

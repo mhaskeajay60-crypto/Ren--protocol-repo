@@ -257,12 +257,12 @@
 - [x] Design a browser-local Player Backup file that includes only author-selected character stats and progress, with a clear restore preview and no automatic overwrite.
 - [x] Add Player Backup download, file preview, explicit restore, and Keep current data controls without sending information anywhere.
 - [x] Test Player Backup selection, export contents, safe import preview, no-auto-overwrite behavior, privacy boundaries, and phone/desktop layouts; save and back up the release.
-- [ ] Outline a beginner-friendly The Ren Protocol product-tour video using safe example content and plain-English narration.
-- [ ] Prepare visual scenes that demonstrate Desk, Write, World, Plan, Vault, Progress, privacy choices, and Player Backup without exposing author data.
+- [x] Outline a beginner-friendly The Ren Protocol product-tour video using safe example content and plain-English narration.
+- [x] Prepare visual scenes that demonstrate Desk, Write, World, Plan, Vault, Progress, privacy choices, and Player Backup without exposing author data.
 - [ ] Generate and verify a feature-tour video suitable for sharing, then deliver it with simple viewing guidance.
-- [ ] Inventory the current author-facing workflows and identify which experience gaps—not just missing features—keep The Ren Protocol from feeling cohesive.
-- [ ] Research current novel-writing workflows from Sudowrite and comparable worldbuilding, drafting, and planning applications.
-- [ ] Present an honest capability comparison and a small, high-impact completion roadmap that preserves author control and browser-local privacy.
+- [x] Inventory the current author-facing workflows and identify which experience gaps—not just missing features—keep The Ren Protocol from feeling cohesive.
+- [x] Research current novel-writing workflows from Sudowrite and comparable worldbuilding, drafting, and planning applications.
+- [x] Present an honest capability comparison and a small, high-impact completion roadmap that preserves author control and browser-local privacy.
 - [x] Audit the current chapter save/import, PDF chapter import, Masterbook proposal, and desktop feature-navigation paths for the reported access problems.
 - [x] Add a private approval-first Possible Masterbook Updates review after chapter creation or PDF import, with no automatic local or shared canon changes.
 - [x] Make PDF chapter import visible from the main Write and desktop feature paths, with a clear separate-draft preview and Keep private choice.
