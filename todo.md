@@ -315,3 +315,6 @@
 - [x] Replace the pale, hard-to-read Critic report modal with a high-contrast story-review card that is legible on phones.
 - [x] Compact the Critic report actions into a short, readable phone action bar while preserving report save, saved reports, fix-it list, deletion, and return behavior.
 - [x] Validate Critic report contrast, readability, actions, saved-report behavior, and phone/desktop presentation; then checkpoint and source-back up the visual repair.
+- [x] Replace the remaining generic purple-and-white dashboard styling with a cohesive modern story command-center visual system.
+- [x] Refresh the primary Desk, Write, World, Plan, Vault, and Critic entry layouts for clearer hierarchy, stronger contrast, and fewer plain-form surfaces without removing workflows.
+- [x] Validate the visual refresh on native phone and desktop layouts while preserving all local-first author data and explicit approval safeguards; then checkpoint and source-back up the release.

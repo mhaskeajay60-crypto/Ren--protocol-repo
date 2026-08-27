@@ -1,5 +1,13 @@
 # Validation Notes
 
+## Modern Noir Codex Visual Refresh
+
+The author workspace now has one cohesive dark-and-gold **Noir Codex** visual system rather than the earlier mix of pale purple, teal, and generic dashboard panels. The persistent archive rail is deep indigo with an antique-gold protocol line; the working surface uses warm parchment; active actions, markers, and progress signals use gold; and major story titles use the editorial serif already embedded in the app. Form fields and manuscript text stay on calm, high-contrast paper planes for long writing sessions.
+
+Desk, Write, World, Plan, Vault, and Critic were refreshed without changing their data or routes. Desk now reads as an author command center; Write keeps a spacious manuscript plane and clear imported-PDF card; World keeps its visual atlas but uses the shared archive palette; Plan has a dark story-lane hero and gold active lane; Vault uses a matching private-intake surface; and Critic has a calmer reader-guidance entry. Native 375-pixel captures confirmed that headers, Back to Home, dock controls, cards, active lane, and buttons remain readable and touch-accessible. Desktop captures confirmed the rail, working surface, writing desk, atlas, planner, vault, and critic retain clear hierarchy.
+
+No author prose, Masterbook entry, Story Vault item, review, imported file, chapter version, saved report, Team record, or privacy boundary changed. `pnpm run check`, `pnpm test` (**59 tests**), `pnpm run build`, and `git diff --check` passed. The existing runtime-resolved storage-path and large PDF/team bundle warnings remain non-blocking.
+
 ## High-Contrast Critic Report Card
 
 The saved Critic report is now styled as a dedicated dark story-review card instead of the pale generic form shown in the author’s phone screenshot. It uses a deep indigo reading surface, white and pale-lilac text with high contrast, larger mobile body text, spaced evidence cards, an independent scroll area, and an anchored action bar. The surrounding Critic screen also uses the less judgmental heading **See what a reader may notice**.
