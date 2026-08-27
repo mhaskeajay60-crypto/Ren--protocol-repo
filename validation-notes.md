@@ -253,3 +253,11 @@ Home is now a concise Pocket Desk with the current chapter, its local word count
 Creation dialogs for scenes, arcs, notes, and relationships now open with their first useful fields and place remaining fields behind **Add more details only if you need them**. Existing Character Profile guidance continues to keep power, stat, connection, and private-note sections optional. The implementation does not invent story data or silently change canon.
 
 Phone and desktop captures verified the Pocket Desk, fixed dock, word-count badge, More entry, and expanded desktop layout. New focused tests cover safe Pocket Planner lane normalization. `pnpm run check`, `pnpm test` (**45 tests**), `pnpm run build`, and `git diff --check` passed. Production build retains the existing non-blocking large PDF/team chunk and runtime-resolved asset warnings.
+
+## Final Product Release Validation
+
+The final author product loads as the Pocket Story Console. At 375 pixels, the Desk shows a local current-chapter word count, direct Write/World/Plan actions, a Story Vault entry, compact More control, and the fixed five-destination navigation dock without horizontal overflow. The phone shell retains the in-app navigation and adds adequate bottom room above the dock.
+
+The isolated public author workspace stays browser-local. It does not sign in, synchronize local chapters, send Vault content, promote local records to canon, or create group records. The separate `/team` route loads independently and begins with its protected private-workspace boundary; the existing live signed-in Ruler/Writer/Watcher test remains deliberately deferred until the author chooses to test it on desktop.
+
+Final automated checks passed: `pnpm run check`, `pnpm test` (**45 tests**), `pnpm run build`, and `git diff --check`. The build has only the known non-blocking PDF/team chunk-size warnings and runtime-resolved static-asset notices. No author material, secret, fixture, or local browser archive was added to the repository.
