@@ -260,6 +260,7 @@
 - [x] Outline a beginner-friendly The Ren Protocol product-tour video using safe example content and plain-English narration.
 - [x] Prepare visual scenes that demonstrate Desk, Write, World, Plan, Vault, Progress, privacy choices, and Player Backup without exposing author data.
 - [ ] Generate and verify a feature-tour video suitable for sharing, then deliver it with simple viewing guidance.
+- [x] Create and preserve a clear chronological history of The Ren Protocol’s development, decisions, safeguards, and current state.
 - [x] Inventory the current author-facing workflows and identify which experience gaps—not just missing features—keep The Ren Protocol from feeling cohesive.
 - [x] Research current novel-writing workflows from Sudowrite and comparable worldbuilding, drafting, and planning applications.
 - [x] Present an honest capability comparison and a small, high-impact completion roadmap that preserves author control and browser-local privacy.
