@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { characterProfileProgress, characterProfileTier, mergeCharacterProfileRecord, splitCharacterProfileList } from './characterProfile';
+import { appendProfileListItem, characterProfileProgress, characterProfileTier, mergeCharacterProfileRecord, splitCharacterProfileList } from './characterProfile';
 
 describe('character profile helpers', () => {
   it('turns optional talent text into a compact unique dossier list', () => {
@@ -11,7 +11,7 @@ describe('character profile helpers', () => {
   });
 
   it('measures only supplied profile information and keeps an unknown tier neutral', () => {
-    expect(characterProfileProgress({ role: 'Protagonist', profileTalents: 'Strategy', relationships: 'Ryu' })).toEqual({ filled: 3, total: 7 });
+    expect(characterProfileProgress({ role: 'Protagonist', profileTalents: 'Strategy', relationships: 'Ryu' })).toEqual({ filled: 3, total: 8 });
     expect(characterProfileTier({ profileImportance: 'Unconfirmed' })).toBe('Character');
     expect(characterProfileTier({ profileImportance: 'Spotlight' })).toBe('Spotlight');
   });
@@ -27,5 +27,10 @@ describe('character profile helpers', () => {
       profileTalents: 'Strategy',
       profileStats: [{ label: 'HP', value: '120' }],
     });
+  });
+
+  it('adds an approved new skill only once while keeping the existing profile list', () => {
+    expect(appendProfileListItem('Swordplay, Gate sense', 'Rift Step')).toBe('Swordplay, Gate sense, Rift Step');
+    expect(appendProfileListItem('Swordplay, Gate sense', 'gate sense')).toBe('Swordplay, Gate sense');
   });
 });

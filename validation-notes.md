@@ -1,5 +1,15 @@
 # Validation Notes
 
+## Character Cards, Relationship Views, and Chapter Update Review
+
+The Character Codex now displays its existing Character Dossiers as a compact card grid: each author-created card shows a personal sigil, name, role/status preview, existing optional tags, and a direct Dossier action. It does not create portraits, infer character details, or replace existing dossiers. The compact two-column phone card treatment was checked with the empty Masterbook Atlas path; saved characters continue to use the existing dossier record model.
+
+Relationship editor choices now include Family, Love, Friend, Rival, Enemy, Killer / Target, Master / Student, Ally, Unknown, and Complicated. The author may separately select an optional Bond style, **who knows a secret**, private secret knowledge, reader reveal timing, pressure point, and story anchor. The Relationship Web supports author-chosen Relationship Web, Family Tree, and Faction Circle arrangements; these change only how existing saved bonds are viewed. Family Tree does not infer bloodlines, and Faction Circle does not create factions or group membership. Bond colors/dashed styles are only visual labels chosen locally by the author.
+
+Explicitly saved chapters can now offer a private update only when the author writes an exact marker: `@Name dies` or `@Name gains skill: Skill name`. The review window displays the exact detected marker and requires a separate **Approve private status/skill** action. Approval changes only the selected local Character Dossier, adds a source-chapter history entry, and records the approval on that chapter. It does not react to unmarked ordinary prose, does not invoke AI or a network request, and does not change shared Team canon.
+
+The final 375-pixel Connections capture confirmed readable Relationship Web controls, empty guidance, Bond Ledger area, and the dark Chapter Connections tile. The desktop Connections capture confirmed the visual-view picker, Focus Thread picker, legend, and layout with no overlap. The final automated gate passed: `pnpm run check`, `pnpm test` (**53 tests**), `pnpm run build`, and `git diff --check`. The only build messages are the established runtime-resolved static-asset and large PDF/team chunk warnings.
+
 - The standalone document loads successfully in the live preview and the responsive writing workspace renders at desktop and mobile sizes.
 - The Masterbook navigation and add-record modal open correctly.
 - Live validation found that the generic field lookup confused the document’s description metadata with the Masterbook description control. The lookup is now scoped to the active form and safely handles optional values.

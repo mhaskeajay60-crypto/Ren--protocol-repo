@@ -42,16 +42,42 @@ export function atlasRecordType(category: string, record: Record<string, unknown
   return 'Record';
 }
 
-type RelationshipInput = { fromId?: unknown; toId?: unknown; kind?: unknown; stage?: unknown; dynamic?: unknown; tension?: unknown; readerVisibility?: unknown; chapterId?: unknown };
+type RelationshipInput = { fromId?: unknown; toId?: unknown; kind?: unknown; stage?: unknown; dynamic?: unknown; tension?: unknown; readerVisibility?: unknown; chapterId?: unknown; visualStyle?: unknown; secretKnower?: unknown; secretNote?: unknown };
 type CharacterInput = { id?: unknown; name?: unknown };
 
 export const relationshipVisibilityOptions = ['Private to author', 'Visible to reader', 'Reveal later', 'Unclear'] as const;
+export const relationshipKindOptions = ['Family', 'Love', 'Friend', 'Rival', 'Enemy', 'Killer / Target', 'Master / Student', 'Ally', 'Unknown', 'Complicated'] as const;
+export const relationshipVisualStyleOptions = ['Auto from bond', 'Family', 'Love', 'Friend', 'Rival', 'Enemy', 'Killer / Target', 'Master / Student', 'Ally', 'Unknown', 'Hidden secret'] as const;
 
 export function normalizeRelationshipVisibility(value: unknown): (typeof relationshipVisibilityOptions)[number] {
   const requested = String(value || '').trim();
   return relationshipVisibilityOptions.includes(requested as (typeof relationshipVisibilityOptions)[number])
     ? (requested as (typeof relationshipVisibilityOptions)[number])
     : 'Private to author';
+}
+
+export function normalizeRelationshipVisualStyle(value: unknown): (typeof relationshipVisualStyleOptions)[number] {
+  const requested = String(value || '').trim();
+  return relationshipVisualStyleOptions.includes(requested as (typeof relationshipVisualStyleOptions)[number])
+    ? (requested as (typeof relationshipVisualStyleOptions)[number])
+    : 'Auto from bond';
+}
+
+export function relationshipVisualToken(kind: unknown, visualStyle: unknown): string {
+  const source = normalizeRelationshipVisualStyle(visualStyle) === 'Auto from bond'
+    ? String(kind || '').trim()
+    : normalizeRelationshipVisualStyle(visualStyle);
+  const normalized = source.toLowerCase();
+  if (normalized.includes('family')) return 'family';
+  if (normalized.includes('love') || normalized.includes('romance')) return 'love';
+  if (normalized.includes('friend')) return 'friend';
+  if (normalized.includes('rival')) return 'rival';
+  if (normalized.includes('killer')) return 'killer';
+  if (normalized.includes('enemy')) return 'enemy';
+  if (normalized.includes('master') || normalized.includes('mentor')) return 'mentor';
+  if (normalized.includes('ally')) return 'ally';
+  if (normalized.includes('hidden') || normalized.includes('secret')) return 'secret';
+  return 'unknown';
 }
 
 export function savedRelationshipWebLinks(relations: unknown, characters: unknown) {
@@ -82,9 +108,13 @@ export function savedRelationshipWebLinks(relations: unknown, characters: unknow
         tension: String(item.tension || '').trim(),
         readerVisibility: normalizeRelationshipVisibility(item.readerVisibility),
         chapterId: String(item.chapterId || '').trim(),
+        visualStyle: normalizeRelationshipVisualStyle(item.visualStyle),
+        visualToken: relationshipVisualToken(item.kind, item.visualStyle),
+        secretKnower: String(item.secretKnower || '').trim(),
+        secretNote: String(item.secretNote || '').trim(),
       };
     })
-    .filter((relation): relation is { fromId: string; toId: string; from: string; to: string; kind: string; stage: string; dynamic: string; tension: string; readerVisibility: (typeof relationshipVisibilityOptions)[number]; chapterId: string } => Boolean(relation));
+    .filter((relation): relation is { fromId: string; toId: string; from: string; to: string; kind: string; stage: string; dynamic: string; tension: string; readerVisibility: (typeof relationshipVisibilityOptions)[number]; chapterId: string; visualStyle: (typeof relationshipVisualStyleOptions)[number]; visualToken: string; secretKnower: string; secretNote: string } => Boolean(relation));
 }
 
 export function focusedRelationshipWebLinks(relations: unknown, characters: unknown, focusCharacterId: unknown) {

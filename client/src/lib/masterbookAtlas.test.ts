@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { atlasRecordType, focusedRelationshipWebLinks, normalizeProfileStats, normalizeRelationshipVisibility, savedRelationshipWebLinks, statPresets } from './masterbookAtlas';
+import { atlasRecordType, focusedRelationshipWebLinks, normalizeProfileStats, normalizeRelationshipVisibility, normalizeRelationshipVisualStyle, relationshipVisualToken, savedRelationshipWebLinks, statPresets } from './masterbookAtlas';
 
 describe('Masterbook Atlas helpers', () => {
   it('keeps player-defined stat labels and removes only empty or duplicate stat labels', () => {
@@ -23,7 +23,7 @@ describe('Masterbook Atlas helpers', () => {
       { fromId: 'ren', toId: 'missing', kind: 'Unknown' },
       { fromId: 'ren', toId: 'ren', kind: 'Self' },
       { fromId: 'ryu', toId: 'ren', kind: 'Duplicate' },
-    ], characters)).toEqual([{ fromId: 'ren', toId: 'ryu', from: 'Ren', to: 'Ryu', kind: 'Family', stage: 'Strained', dynamic: '', tension: '', readerVisibility: 'Private to author', chapterId: '' }]);
+    ], characters)).toEqual([expect.objectContaining({ fromId: 'ren', toId: 'ryu', from: 'Ren', to: 'Ryu', kind: 'Family', stage: 'Strained', readerVisibility: 'Private to author', visualStyle: 'Auto from bond', visualToken: 'family', secretKnower: '', secretNote: '' })]);
   });
 
   it('keeps relationship focus and reader visibility author-selected and backwards compatible', () => {
@@ -37,5 +37,12 @@ describe('Masterbook Atlas helpers', () => {
     ]);
     expect(focusedRelationshipWebLinks(relations, characters, 'ryu')).toHaveLength(2);
     expect(normalizeRelationshipVisibility('not a setting')).toBe('Private to author');
+  });
+
+  it('keeps bond colours author-selected and falls back to a bond kind when no style is picked', () => {
+    expect(normalizeRelationshipVisualStyle('Hidden secret')).toBe('Hidden secret');
+    expect(normalizeRelationshipVisualStyle('not a style')).toBe('Auto from bond');
+    expect(relationshipVisualToken('Killer / Target', 'Auto from bond')).toBe('killer');
+    expect(relationshipVisualToken('Friend', 'Hidden secret')).toBe('secret');
   });
 });

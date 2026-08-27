@@ -24,6 +24,10 @@ The Focus Thread selector was also tested directly: selecting **Ren** retained R
 
 The edit screen was checked with the isolated sample bond. It presents **Reader knowledge** and **Story anchor** as explicit author-selected dropdowns beside the existing relationship stage, dynamics, and pressure fields. The opening explanation correctly states that the record does not alter a profile, manuscript, or shared canon. Native-phone captures confirmed that the Relationship Web and the secondary Connections ledger now retain readable empty-state and helper text on pale cards.
 
+## Current release verification
+
+Desktop Connections shows the new private Relationship Web visual-view chooser, Focus Thread chooser, bond legend, and empty guidance without overlap. Native 375-pixel phone view keeps the controls in a readable single column and leaves the Pocket dock reachable. The empty Masterbook Atlas remains readable at the same phone size. The dark Chapter Connections title/description contrast was strengthened with a scoped phone rule and its final capture is readable.
+
 ## References
 
 [1]: https://www.pinterest.com/pin/relationship-map-ideas/ "Visual reference search results: relationship-map legends and centered-node layouts"

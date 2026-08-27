@@ -6,6 +6,7 @@ export const characterProfileFieldKeys = [
   'status',
   'profileImportance',
   'description',
+  'profileSkills',
   'profileTalents',
   'profilePowers',
   'profileStrengths',
@@ -46,10 +47,18 @@ export function splitCharacterProfileList(value: unknown, limit = 5): string[] {
     .slice(0, Math.max(1, limit));
 }
 
+export function appendProfileListItem(value: unknown, item: unknown, limit = 12): string {
+  const proposed = String(item || '').trim();
+  const current = splitCharacterProfileList(value, limit);
+  if (!proposed || current.some(existing => existing.toLowerCase() === proposed.toLowerCase())) return current.join(', ');
+  return [...current, proposed].slice(0, Math.max(1, limit)).join(', ');
+}
+
 export function characterProfileProgress(record: CharacterProfileRecord): { filled: number; total: number } {
   const keys = [
     'role',
     'description',
+    'profileSkills',
     'profileTalents',
     'profilePowers',
     'profileStrengths',

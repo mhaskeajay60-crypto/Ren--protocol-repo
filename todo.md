@@ -260,6 +260,13 @@
 - [x] Outline a beginner-friendly The Ren Protocol product-tour video using safe example content and plain-English narration.
 - [x] Prepare visual scenes that demonstrate Desk, Write, World, Plan, Vault, Progress, privacy choices, and Player Backup without exposing author data.
 - [ ] Generate and verify a feature-tour video suitable for sharing, then deliver it with simple viewing guidance.
+- [x] Add simple Character Codex grid cards with a sigil, name, role, and status as the compact entry to existing dossiers.
+- [x] Add author-selected relationship preset choices and visual bond styles for family, love, friendship, rivalry, enemy, killer/target, master/student, ally, and unknown bonds.
+- [x] Add a private per-bond secret-knowledge field for details such as hidden identity, including who knows it and reader reveal timing.
+- [x] Add selectable Relationship Web, Family Tree, and Faction Circle views that only arrange existing author-saved bonds.
+- [x] Add review-first chapter-save suggestions for author-marked character deaths and new skills, with an explicit one-by-one private profile update and no automatic canon change.
+- [x] Validate character cards, relationship presets/secrets/views, chapter-update approvals, existing data compatibility, local-only boundaries, phone/desktop layouts, tests, and build; then checkpoint and source-back up the release.
+- [x] Improve the dark phone Chapter Connections tile text contrast so the saved chapter title and description remain readable.
 - [x] Evaluate the supplied 5-hour feature and stability plan against the current app without applying any suggested changes.
 - [x] Create a detailed current-feature inventory that distinguishes active capabilities from replaced, deferred, and protected features.
 - [x] Create and preserve a clear chronological history of The Ren Protocol’s development, decisions, safeguards, and current state.
