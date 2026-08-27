@@ -271,3 +271,4 @@
 - [x] Confirm the reported phone desktop-style shell came from the browser’s deliberately selected desktop-view mode, not the native Pocket Story Console layout.
 - [x] Preserve the author’s deliberate desktop-view choice rather than forcing a different browser layout; use native phone mode for the touch-optimized console.
 - [x] Add the full Feature Map to the phone More menu so desktop-only browser mode is never needed to discover author tools.
+- [x] Add a clearly labelled protected Team destination to the Feature Map without showing private team data in the browser-local author workspace.
