@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { atlasRecordType, normalizeProfileStats, savedRelationshipWebLinks, statPresets } from './masterbookAtlas';
+import { atlasRecordType, focusedRelationshipWebLinks, normalizeProfileStats, normalizeRelationshipVisibility, savedRelationshipWebLinks, statPresets } from './masterbookAtlas';
 
 describe('Masterbook Atlas helpers', () => {
   it('keeps player-defined stat labels and removes only empty or duplicate stat labels', () => {
@@ -23,6 +23,19 @@ describe('Masterbook Atlas helpers', () => {
       { fromId: 'ren', toId: 'missing', kind: 'Unknown' },
       { fromId: 'ren', toId: 'ren', kind: 'Self' },
       { fromId: 'ryu', toId: 'ren', kind: 'Duplicate' },
-    ], characters)).toEqual([{ fromId: 'ren', toId: 'ryu', from: 'Ren', to: 'Ryu', kind: 'Family', stage: 'Strained', dynamic: '' }]);
+    ], characters)).toEqual([{ fromId: 'ren', toId: 'ryu', from: 'Ren', to: 'Ryu', kind: 'Family', stage: 'Strained', dynamic: '', tension: '', readerVisibility: 'Private to author', chapterId: '' }]);
+  });
+
+  it('keeps relationship focus and reader visibility author-selected and backwards compatible', () => {
+    const characters = [{ id: 'ren', name: 'Ren' }, { id: 'ryu', name: 'Ryu' }, { id: 'mira', name: 'Mira' }];
+    const relations = [
+      { fromId: 'ren', toId: 'ryu', kind: 'Ally', readerVisibility: 'Reveal later', chapterId: 'chapter-03' },
+      { fromId: 'mira', toId: 'ryu', kind: 'Rival', readerVisibility: 'not a setting' },
+    ];
+    expect(focusedRelationshipWebLinks(relations, characters, 'ren')).toEqual([
+      expect.objectContaining({ from: 'Ren', to: 'Ryu', readerVisibility: 'Reveal later', chapterId: 'chapter-03' }),
+    ]);
+    expect(focusedRelationshipWebLinks(relations, characters, 'ryu')).toHaveLength(2);
+    expect(normalizeRelationshipVisibility('not a setting')).toBe('Private to author');
   });
 });

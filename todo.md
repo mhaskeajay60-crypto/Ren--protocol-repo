@@ -272,3 +272,10 @@
 - [x] Preserve the author’s deliberate desktop-view choice rather than forcing a different browser layout; use native phone mode for the touch-optimized console.
 - [x] Add the full Feature Map to the phone More menu so desktop-only browser mode is never needed to discover author tools.
 - [x] Add a clearly labelled protected Team destination to the Feature Map without showing private team data in the browser-local author workspace.
+- [x] Research original game-codex relationship-map patterns and preserve the findings for an author-controlled local Relationship Web update.
+- [x] Add Relationship Web Focus Threads so the author can view one chosen character’s saved bonds without hiding or changing other records.
+- [x] Add explicit private Reader Visibility and Story Anchor fields to a relationship, with no inferred links, canon changes, or group sharing.
+- [x] Upgrade the Bond Ledger presentation with readable bond state, visibility, pressure, and author-selected chapter context on desktop and phone.
+- [x] Test the extended Relationship Web, local data compatibility, privacy boundaries, and phone/desktop layouts; then checkpoint and source-back up the release.
+- [x] Improve the Relationship Web empty-state text contrast in the native phone layout so every instruction remains readable.
+- [x] Improve the Connections ledger empty-state text contrast on phone so the secondary relationship guidance is readable too.

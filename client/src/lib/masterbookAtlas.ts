@@ -42,8 +42,17 @@ export function atlasRecordType(category: string, record: Record<string, unknown
   return 'Record';
 }
 
-type RelationshipInput = { fromId?: unknown; toId?: unknown; kind?: unknown; stage?: unknown; dynamic?: unknown };
+type RelationshipInput = { fromId?: unknown; toId?: unknown; kind?: unknown; stage?: unknown; dynamic?: unknown; tension?: unknown; readerVisibility?: unknown; chapterId?: unknown };
 type CharacterInput = { id?: unknown; name?: unknown };
+
+export const relationshipVisibilityOptions = ['Private to author', 'Visible to reader', 'Reveal later', 'Unclear'] as const;
+
+export function normalizeRelationshipVisibility(value: unknown): (typeof relationshipVisibilityOptions)[number] {
+  const requested = String(value || '').trim();
+  return relationshipVisibilityOptions.includes(requested as (typeof relationshipVisibilityOptions)[number])
+    ? (requested as (typeof relationshipVisibilityOptions)[number])
+    : 'Private to author';
+}
 
 export function savedRelationshipWebLinks(relations: unknown, characters: unknown) {
   const namesById = new Map(
@@ -62,7 +71,24 @@ export function savedRelationshipWebLinks(relations: unknown, characters: unknow
       const key = [fromId, toId].sort().join(':');
       if (!from || !to || fromId === toId || seen.has(key)) return null;
       seen.add(key);
-      return { fromId, toId, from, to, kind: String(item.kind || 'Connection').trim() || 'Connection', stage: String(item.stage || '').trim(), dynamic: String(item.dynamic || '').trim() };
+      return {
+        fromId,
+        toId,
+        from,
+        to,
+        kind: String(item.kind || 'Connection').trim() || 'Connection',
+        stage: String(item.stage || '').trim(),
+        dynamic: String(item.dynamic || '').trim(),
+        tension: String(item.tension || '').trim(),
+        readerVisibility: normalizeRelationshipVisibility(item.readerVisibility),
+        chapterId: String(item.chapterId || '').trim(),
+      };
     })
-    .filter((relation): relation is { fromId: string; toId: string; from: string; to: string; kind: string; stage: string; dynamic: string } => Boolean(relation));
+    .filter((relation): relation is { fromId: string; toId: string; from: string; to: string; kind: string; stage: string; dynamic: string; tension: string; readerVisibility: (typeof relationshipVisibilityOptions)[number]; chapterId: string } => Boolean(relation));
+}
+
+export function focusedRelationshipWebLinks(relations: unknown, characters: unknown, focusCharacterId: unknown) {
+  const focusId = String(focusCharacterId || '').trim();
+  const links = savedRelationshipWebLinks(relations, characters);
+  return focusId ? links.filter(link => link.fromId === focusId || link.toId === focusId) : links;
 }
