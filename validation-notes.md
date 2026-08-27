@@ -2,6 +2,14 @@
 
 ## Chapter PDF Entry Redesign
 
+## Compact Tool Kit and Workspace View Preference
+
+The phone **More** control now opens a compact dark **Tool kit** drawer rather than a long, pale list. Four frequent paths—All tools, Story links, Check a chapter, and Player Backup—are visible immediately as two-by-two cards. The remaining existing actions, including restore, Scene ideas, Notes, optional AI help, and Project settings, stay reachable under one short **More tools** expander. The drawer includes a direct **Workspace view** entry, a visible close control, and a full-width Done action; no tool, chapter, or local record was removed.
+
+Project settings now store an author-chosen local **Workspace view**: **Auto** follows the current screen; **Phone** retains the touch-focused layout; and **Desktop tools** preserves the full author navigation for wider displays. This preference is stored only inside the existing browser-local project archive and does not upload, alter, share, or delete story material. The isolated preview confirmed the selector exposes all three choices and that saving Phone rerenders cleanly.
+
+Native 375-pixel and 1280-pixel captures confirmed the unaffected Phone and Desktop entry layouts remain legible. The compact drawer’s actions and all five expanded actions were inspected through live preview controls. `pnpm run check`, `pnpm test` (**55 tests**), `pnpm run build`, and `git diff --check` passed. The known runtime-resolved static-asset paths and large PDF/team bundle warnings remain non-blocking.
+
 The Write header now treats existing chapter material as a story workflow rather than a technical upload. The visible card asks **Already wrote a chapter?** and explains the sequence in plain language: choose the chapter PDF, read the private preview, and add it as a safe separate First Try. Its actions are **Choose chapter PDF** and **My imported chapters**. The separate Review Masterbook Updates action remains directly below the card so the two jobs are not confused.
 
 The existing import behavior is unchanged: the PDF remains local, stays under the existing 10 MB limit, is previewed before use, never overwrites an existing chapter, and requires the author to choose a separate First Try or Keep private. Desktop and 375-pixel phone captures confirmed the card is clearly visible, does not obscure the chapter list/editor, and remains above the phone dock. `pnpm run check`, `pnpm test` (**53 tests**), `pnpm run build`, and `git diff --check` passed; only the known non-blocking runtime-resolved static-asset and large PDF/team chunk warnings remain.

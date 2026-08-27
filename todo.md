@@ -260,6 +260,10 @@
 - [x] Outline a beginner-friendly The Ren Protocol product-tour video using safe example content and plain-English narration.
 - [x] Prepare visual scenes that demonstrate Desk, Write, World, Plan, Vault, Progress, privacy choices, and Player Backup without exposing author data.
 - [ ] Generate and verify a feature-tour video suitable for sharing, then deliver it with simple viewing guidance.
+- [x] Replace the tall low-contrast phone More sheet with a compact readable tool drawer that keeps every existing action reachable.
+- [x] Clarified the reported “plan boring” wording: the target is the phone More author tools screen, so the Plan workspace remains unchanged in this release.
+- [x] Add a browser-local Workspace view setting for Auto, Phone, and Desktop tools, without changing story records or the public/private boundary.
+- [x] Validate the compact More sheet and Workspace view setting on native phone and desktop layouts; then checkpoint and source-back up the release.
 - [x] Replace the technical chapter-PDF button with a clear, visually connected “Already wrote a chapter?” import card that preserves preview-first separate-draft safety.
 - [x] Validate the redesigned chapter-PDF entry point on desktop and native phone layouts; then checkpoint and source-back up the release.
 - [x] Add a large, touch-friendly Close review action inside the Review Ledger so it remains obvious even in browser desktop view on a phone.
