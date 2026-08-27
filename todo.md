@@ -260,6 +260,9 @@
 - [x] Outline a beginner-friendly The Ren Protocol product-tour video using safe example content and plain-English narration.
 - [x] Prepare visual scenes that demonstrate Desk, Write, World, Plan, Vault, Progress, privacy choices, and Player Backup without exposing author data.
 - [ ] Generate and verify a feature-tour video suitable for sharing, then deliver it with simple viewing guidance.
+- [x] Add a large, touch-friendly Close review action inside the Review Ledger so it remains obvious even in browser desktop view on a phone.
+- [x] Replace the long Folio Details form with a short progressive chapter-details flow that preserves every existing field and saved value.
+- [x] Validate Review exit and Folio Details steps in browser desktop view on a phone as well as the native phone and desktop layouts; then checkpoint and source-back up the release.
 - [x] Repair the reported Review Ledger back/exit route so the author can reliably return to the prior local workspace.
 - [x] Make Relationship Web visual views, bond presets, and secret knowledge directly discoverable from Masterbook and the Feature Map.
 - [x] Validate the repaired Review Ledger and Relationship Web paths on desktop and native phone layouts; then checkpoint and source-back up the release.

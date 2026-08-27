@@ -1,5 +1,13 @@
 # Validation Notes
 
+## Prominent Review Exit and Progressive Folio Details
+
+The Review Ledger now retains the small header close control and adds a full-width **← Close review and return to story** action directly beneath **Review current folio**. The existing in-app Back action also closes Review before navigating to the earlier local workspace. These exit paths only change the review panel’s visible state; they do not run a check, save prose, or change continuity items.
+
+Folio Details is now a three-step local form rather than one large Google-form-like screen. Step 1 is Quick facts (status, point of view, setting), Step 2 is Where it fits (story date, arc, thread), and Step 3 is What it changes (summary, purpose, emotional turn, brief). Every existing field and value is preserved; the form only writes them after the final **Save details** action. The author can use **Keep as it is** at any step without changing anything.
+
+Desktop and 375-pixel phone Write captures remained clear after the repair; the phone view retains direct PDF actions, Masterbook review, visible chapter list, and the fixed Pocket dock. The final automated gate passed: `pnpm run check`, `pnpm test` (**53 tests**), `pnpm run build`, and `git diff --check`. Known build output remains limited to runtime-resolved static asset and large PDF/team chunk warnings.
+
 ## Review Ledger Exit and Relationship Web Discovery Repair
 
 The Review Ledger now has two safe exits. First, the in-app **Back** action closes an open Review Ledger before navigating away from the current workspace. Second, the ledger header has an explicit **Close review** control. This prevents the desktop inspector from remaining open over a different page after the author leaves review. Neither action changes chapter prose, flags, intentions, or author data.
