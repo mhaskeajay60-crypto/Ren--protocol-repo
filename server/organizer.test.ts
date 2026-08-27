@@ -47,6 +47,7 @@ describe("Brain Dump organizer response validation", () => {
 
   it("accepts a direct Claude Critic report with evidence and practical improvement steps", () => {
     const result = parseCriticResponse(JSON.stringify({
+      mode: "strict",
       overallScore: 6.5,
       verdict: "The premise is clear, but the scene delays its central pressure for too long.",
       scores: [
@@ -64,8 +65,24 @@ describe("Brain Dump organizer response validation", () => {
       nextSteps: ["Clarify the immediate consequence before expanding the archive atmosphere."],
     }));
     expect(result.overallScore).toBe(6.5);
+    expect(result.mode).toBe("strict");
     expect(result.issues[0]?.improvement).toContain("Introduce the consequence");
     expect(result.scores).toHaveLength(8);
+  });
+
+  it("accepts a non-scored Casual Reader report without converting it into a grade", () => {
+    const result = parseCriticResponse(JSON.stringify({
+      mode: "casual",
+      overallScore: null,
+      verdict: "The tower awakening creates an immediate sense of danger, and Ren's choice to keep moving makes the chapter easy to follow.",
+      scores: [],
+      strengths: ["The first storm-bell image makes the setting feel active."],
+      issues: [{ severity: "minor", issue: "One abrupt setting shift", evidence: "The chapter moves from the gate to the tower without a transition beat.", whyItMatters: "A reader may need one extra moment to picture the distance and change in danger.", improvement: "If you want a smoother flow, add one short sensory bridge between the gate and tower." }],
+      nextSteps: ["Keep the storm-bell image and consider one bridge sentence only if the jump is meant to feel sudden."],
+    }));
+    expect(result.mode).toBe("casual");
+    expect(result.overallScore).toBeNull();
+    expect(result.scores).toHaveLength(0);
   });
 
   it("accepts separate dialogue and lore workshop proposals for author review", () => {

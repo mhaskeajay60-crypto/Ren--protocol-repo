@@ -306,3 +306,9 @@
 - [x] Replace the three chapter-version tabs with Chapter Draft and Final Draft, migrating existing First Try/Main Draft text safely without overwriting Final Draft.
 - [x] Place author-approved PDF imports into Chapter Draft and provide an explicit author action to copy a draft to Final Draft.
 - [x] Validate two-version migration, PDF import placement, Final Draft preservation, and phone/desktop chapter access; then checkpoint and source-back up the release.
+- [x] Diagnose why the Critic result appears to change across repeated requests and why the saved-report action is not discoverable in the phone report view.
+- [x] Add an explicit local Save this report action, stable saved-report access, and constructive score guidance without altering any chapter text.
+- [x] Validate Critic report saving, reopening, score preservation, privacy safeguards, and phone layout; then checkpoint and source-back up the repair.
+- [x] Add author-selectable Casual Reader and Strict Critic modes so feedback tone and detail match the author’s choice.
+- [x] Make each Critic report an explicit stable local record with a clear save action, saved-report shelf, and non-grade score context.
+- [x] Validate both Critic modes, saved report reopening, score persistence, privacy safeguards, and phone layout; then checkpoint and source-back up the release.

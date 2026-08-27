@@ -1,5 +1,15 @@
 # Validation Notes
 
+## Casual Reader, Strict Critic, and Private Saved Reports
+
+The chapter feedback tool now asks the author to choose a feedback style. **Casual Reader** is the default: it returns a kind, specific reader reaction with no numerical score. **Strict Critic** is the opt-in craft review: it keeps the detailed eight-area scores and evidence-based improvement suggestions. Both prompts state that they assess the draft, not the author, must cite the supplied chapter rather than invent quotations or reader reactions, and cannot revise manuscript text.
+
+Each new result is saved privately in the browser as a distinct report. Before requesting a new result, the app computes a local fingerprint from the exact chapter text, selected draft, focus, style, and author goal. Repeating the same request reopens the existing saved report instead of generating another changing score. A changed chapter, feedback style, focus, or goal is treated as a different deliberate request. Existing reports remain readable as Strict Critic reports.
+
+The report view now identifies the feedback style, explains that a Strict Critic score is one AI reading rather than a grade, and renames harsh phrasing to **Craft concerns to consider** or **What a reader may want more of**. It includes **Save report to Notes**, which creates one separate private Notes Desk record of the report, and **My saved reports**, which opens the local report shelf. Neither action edits chapter prose or Masterbook records.
+
+The Critic form was inspected in the running app and exposes both styles, with Casual Reader selected by default. The Critic home screen and native 375-pixel phone capture show the supportive style explanation above the review action. Structured response parser tests cover both an eight-score Strict Critic response and a non-scored Casual Reader response. `pnpm run check`, `pnpm test` (**59 tests**), and `git diff --check` passed. The project build had already passed after the mode implementation; its known runtime-resolved asset-path and large PDF/team bundle warnings remain non-blocking.
+
 ## Chapter Draft, Final Draft, and PDF Import Repair
 
 The author-facing chapter workspace now uses exactly two visible versions: **Chapter Draft** and **Final Draft**. Existing local archives migrate safely on load: the former Main Draft becomes Chapter Draft, the former Final Draft remains Final Draft, and an older First Try becomes Chapter Draft only when no Main Draft exists. If an archive contains both different First Try and Main Draft text, the former First Try is retained in local recovery metadata rather than silently discarded. No Final Draft is overwritten during that migration.

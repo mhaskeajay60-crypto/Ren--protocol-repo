@@ -66,6 +66,8 @@ export function parseConsistencyResponse(content: string) {
   return consistencyResponseSchema.parse(JSON.parse(content));
 }
 
+const criticModeSchema = z.enum(["casual", "strict"]);
+
 const criticScoreSchema = z.object({
   area: z.enum(["hook", "pacing", "character", "dialogue", "clarity", "worldbuilding", "emotional_impact", "prose"]),
   score: z.number().min(0).max(10),
@@ -81,9 +83,10 @@ const criticIssueSchema = z.object({
 });
 
 export const criticResponseSchema = z.object({
-  overallScore: z.number().min(0).max(10),
+  mode: criticModeSchema.default("strict"),
+  overallScore: z.number().min(0).max(10).nullable(),
   verdict: z.string().min(1).max(1000),
-  scores: z.array(criticScoreSchema).length(8),
+  scores: z.array(criticScoreSchema).max(8),
   strengths: z.array(z.string().min(1).max(420)).min(1).max(6),
   issues: z.array(criticIssueSchema).max(8),
   nextSteps: z.array(z.string().min(1).max(360)).min(1).max(5),
@@ -549,6 +552,7 @@ export const appRouter = router({
         chapterTitle: z.string().max(180),
         chapterText: z.string().min(120, "Add more chapter text before requesting a Critic Report.").max(16000),
         focus: z.enum(["general", "opening", "pacing", "dialogue", "worldbuilding", "tone"]),
+        mode: criticModeSchema.default("casual"),
         authorStandard: z.string().max(1600),
         canonContext: z.string().max(8000),
       }))
@@ -558,11 +562,13 @@ export const appRouter = router({
           messages: [
             {
               role: "system",
-              content: "You are The Ren Protocol's exacting developmental novel critic. Assess only the supplied chapter and supplied canon context. Be candid, specific, and editorially rigorous; do not use flattery as padding, but do not insult or demean the author. Critique the draft, not the person. Give the requested eight 0–10 scores, where 10 means exceptionally controlled and 5 means significant revision is needed. Every criticism must cite a real short piece of evidence or precise scene moment from the supplied chapter. Do not invent quotations, canon, reader reactions, publication outcomes, or comparisons to other books. Preserve intentional ambiguity unless the chapter makes comprehension impossible. Offer practical, intent-preserving improvement steps, never rewrite manuscript prose and never claim changes have been applied.",
+              content: input.mode === "casual"
+                ? "You are The Ren Protocol's Casual Reader. Assess only the supplied chapter and supplied canon context. Speak warmly, honestly, and specifically about the reading experience, never about the author's worth or ability. Do not give any numerical score or rank; set overallScore to null and scores to an empty array. Start with what felt vivid, engaging, or emotionally interesting. Then name only a few moments that confused you, slowed you down, or made you want more, citing real short evidence or a precise scene moment. Treat intentional ambiguity as a possible mystery, not a flaw. Offer gentle, optional next steps, never rewrite manuscript prose and never claim changes have been applied. Do not invent quotations, canon, reader reactions, publication outcomes, or comparisons to other books. Return mode as casual."
+                : "You are The Ren Protocol's Strict Critic. Assess only the supplied chapter and supplied canon context. Be candid, specific, and editorially rigorous; do not use flattery as padding, but do not insult or demean the author. Critique the draft, not the person. Give the requested eight 0–10 craft scores, where 10 means exceptionally controlled and 5 means significant revision is needed. Every criticism must cite a real short piece of evidence or precise scene moment from the supplied chapter. Do not invent quotations, canon, reader reactions, publication outcomes, or comparisons to other books. Preserve intentional ambiguity unless the chapter makes comprehension impossible. Offer practical, intent-preserving improvement steps, never rewrite manuscript prose and never claim changes have been applied. Return mode as strict.",
             },
             {
               role: "user",
-              content: `CHAPTER: ${input.chapterTitle || "Untitled"}\n\nCRITIC FOCUS: ${input.focus}\nAUTHOR'S STANDARD OR GOAL: ${input.authorStandard || "Give a general, uncompromising developmental critique."}\n\nCHAPTER TEXT:\n${input.chapterText}\n\nMASTERBOOK CONTEXT:\n${input.canonContext || "No canon context supplied. Assess only the chapter's internal clarity; do not invent continuity conflicts."}`,
+              content: `CHAPTER: ${input.chapterTitle || "Untitled"}\n\nREVIEW MODE: ${input.mode}\nCRITIC FOCUS: ${input.focus}\nAUTHOR'S STANDARD OR GOAL: ${input.authorStandard || (input.mode === "casual" ? "Tell me how this chapter feels to a thoughtful reader. Be honest, kind, and concrete." : "Give a general, uncompromising developmental critique.")}\n\nCHAPTER TEXT:\n${input.chapterText}\n\nMASTERBOOK CONTEXT:\n${input.canonContext || "No canon context supplied. Assess only the chapter's internal clarity; do not invent continuity conflicts."}`,
             },
           ],
           response_format: {
@@ -573,11 +579,11 @@ export const appRouter = router({
               schema: {
                 type: "object",
                 properties: {
-                  overallScore: { type: "number" },
+                  mode: { type: "string", enum: ["casual", "strict"] },
+                  overallScore: { type: ["number", "null"] },
                   verdict: { type: "string" },
                   scores: {
                     type: "array",
-                    minItems: 8,
                     maxItems: 8,
                     items: {
                       type: "object",
@@ -609,7 +615,7 @@ export const appRouter = router({
                   },
                   nextSteps: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 5 },
                 },
-                required: ["overallScore", "verdict", "scores", "strengths", "issues", "nextSteps"],
+                required: ["mode", "overallScore", "verdict", "scores", "strengths", "issues", "nextSteps"],
                 additionalProperties: false,
               },
             },
@@ -617,7 +623,7 @@ export const appRouter = router({
         });
         const content = response.choices[0]?.message?.content;
         if (!content || typeof content !== "string") throw new Error("Claude returned no usable Critic Report. Please try again.");
-        return parseCriticResponse(content);
+        return { ...parseCriticResponse(content), mode: input.mode };
       }),
 
     dialogue: publicProcedure
