@@ -1,5 +1,11 @@
 # Validation Notes
 
+## Chapter PDF Entry Redesign
+
+The Write header now treats existing chapter material as a story workflow rather than a technical upload. The visible card asks **Already wrote a chapter?** and explains the sequence in plain language: choose the chapter PDF, read the private preview, and add it as a safe separate First Try. Its actions are **Choose chapter PDF** and **My imported chapters**. The separate Review Masterbook Updates action remains directly below the card so the two jobs are not confused.
+
+The existing import behavior is unchanged: the PDF remains local, stays under the existing 10 MB limit, is previewed before use, never overwrites an existing chapter, and requires the author to choose a separate First Try or Keep private. Desktop and 375-pixel phone captures confirmed the card is clearly visible, does not obscure the chapter list/editor, and remains above the phone dock. `pnpm run check`, `pnpm test` (**53 tests**), `pnpm run build`, and `git diff --check` passed; only the known non-blocking runtime-resolved static-asset and large PDF/team chunk warnings remain.
+
 ## Prominent Review Exit and Progressive Folio Details
 
 The Review Ledger now retains the small header close control and adds a full-width **← Close review and return to story** action directly beneath **Review current folio**. The existing in-app Back action also closes Review before navigating to the earlier local workspace. These exit paths only change the review panel’s visible state; they do not run a check, save prose, or change continuity items.
