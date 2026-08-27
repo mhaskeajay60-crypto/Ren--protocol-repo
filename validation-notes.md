@@ -1,5 +1,13 @@
 # Validation Notes
 
+## Chapter Draft, Final Draft, and PDF Import Repair
+
+The author-facing chapter workspace now uses exactly two visible versions: **Chapter Draft** and **Final Draft**. Existing local archives migrate safely on load: the former Main Draft becomes Chapter Draft, the former Final Draft remains Final Draft, and an older First Try becomes Chapter Draft only when no Main Draft exists. If an archive contains both different First Try and Main Draft text, the former First Try is retained in local recovery metadata rather than silently discarded. No Final Draft is overwritten during that migration.
+
+An author-approved chapter PDF now creates a new chapter with its extracted text in **Chapter Draft**. The importer remains local-only, has the existing 10 MB limit and private preview, does not keep the original PDF, and never replaces any existing chapter or Final Draft. The writing desk includes an explicit **Copy to Final Draft** action. It preserves Chapter Draft and asks before replacing an existing Final Draft.
+
+The test preview imported the safe PDF fixture as a 29-word new Chapter Draft, reloaded it through the legacy-version migration, and then copied it to Final Draft with the explicit action. Imported-chapter history identified it as **Local PDF import · Chapter Draft**. Native 375-pixel phone and 1280-pixel desktop captures verified the two tabs, the import card, and the direct actions. `pnpm run check`, `pnpm test` (**58 tests**), `pnpm run build`, and `git diff --check` passed. Existing runtime-resolved asset-path and large PDF/team bundle warnings remain non-blocking.
+
 ## Chapter PDF Entry Redesign
 
 ## Compact Tool Kit and Workspace View Preference

@@ -301,3 +301,8 @@
 - [x] Test the extended Relationship Web, local data compatibility, privacy boundaries, and phone/desktop layouts; then checkpoint and source-back up the release.
 - [x] Improve the Relationship Web empty-state text contrast in the native phone layout so every instruction remains readable.
 - [x] Improve the Connections ledger empty-state text contrast on phone so the secondary relationship guidance is readable too.
+- [x] Diagnose why an author-approved chapter PDF may not appear in the separate First Try, My Draft, or Ready to Share view after import.
+- [x] Repair and validate the PDF-to-separate-First-Try path without overwriting any existing chapter draft, then checkpoint and source-back up the fix.
+- [x] Replace the three chapter-version tabs with Chapter Draft and Final Draft, migrating existing First Try/Main Draft text safely without overwriting Final Draft.
+- [x] Place author-approved PDF imports into Chapter Draft and provide an explicit author action to copy a draft to Final Draft.
+- [x] Validate two-version migration, PDF import placement, Final Draft preservation, and phone/desktop chapter access; then checkpoint and source-back up the release.
